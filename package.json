@@ -1,0 +1,27 @@
+{
+  "name": "quickwise",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "mobile",
+    "backend",
+    "shared"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:mobile\"",
+    "dev:mobile": "cd mobile && npm run start",
+    "dev:backend": "cd backend && npm run dev",
+    "build": "npm run build:shared && npm run build:backend && npm run build:mobile",
+    "build:shared": "cd shared && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "build:mobile": "cd mobile && npm run build",
+    "test": "npm run test:backend && npm run test:mobile",
+    "test:backend": "cd backend && npm test",
+    "test:mobile": "cd mobile && npm test"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^18.0.0",
+    "concurrently": "^7.6.0"
+  }
+}
