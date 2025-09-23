@@ -1,0 +1,233 @@
+# =============================================================================
+# QuickWise 프로젝트 전용 .gitignore
+# =============================================================================
+
+# Node.js Dependencies
+node_modules/
+*/node_modules/
+**/node_modules/
+
+# Package manager files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# =============================================================================
+# React Native / Expo 관련
+# =============================================================================
+
+# Expo
+.expo/
+mobile/.expo/
+.expo-shared/
+
+# Metro bundler cache
+.metro-health-check*
+metro.config.js.bak
+
+# React Native
+mobile/android/
+mobile/ios/
+mobile/.buckconfig
+mobile/.flowconfig
+mobile/.watchmanconfig
+
+# Expo CLI
+mobile/dist/
+mobile/web-build/
+
+# EAS (Expo Application Services)
+mobile/eas.json
+
+# =============================================================================
+# Build outputs
+# =============================================================================
+
+# TypeScript 컴파일 결과
+dist/
+*/dist/
+build/
+*/build/
+lib/
+*/lib/
+
+# Shared 패키지 빌드 결과
+shared/dist/
+
+# Backend 컴파일 결과  
+backend/dist/
+
+# =============================================================================
+# 환경변수 및 설정 파일
+# =============================================================================
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*
+
+# 각 패키지별 환경변수
+mobile/.env*
+backend/.env*
+
+# =============================================================================
+# 로그 파일들
+# =============================================================================
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# =============================================================================
+# IDE 및 에디터 설정
+# =============================================================================
+
+# VS Code (프로젝트별 설정은 유지, 개인 설정만 제외)
+.vscode/launch.json
+.vscode/tasks.json
+.vscode/*.code-workspace
+
+# WebStorm / IntelliJ
+.idea/
+*.iml
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# OS 관련 파일들
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# =============================================================================
+# 테스트 및 커버리지
+# =============================================================================
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output
+
+# Jest
+jest.config.js.bak
+
+# =============================================================================
+# 임시 파일들
+# =============================================================================
+
+# Temporary folders
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Cache directories
+.cache/
+.parcel-cache/
+.eslintcache
+
+# =============================================================================
+# 데이터베이스 파일 (로컬 개발용)
+# =============================================================================
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# MongoDB (로컬)
+data/
+
+# =============================================================================
+# 기타 개발 도구들
+# =============================================================================
+
+# Storybook
+storybook-static/
+
+# Next.js
+.next/
+out/
+
+# Nuxt.js
+.nuxt/
+
+# TypeScript incremental compilation
+*.tsbuildinfo
+
+# ESLint cache
+.eslintcache
+
+# Prettier
+.prettierignore
+
+# Husky
+.husky/_
+
+# =============================================================================
+# 배포 관련
+# =============================================================================
+
+# Serverless Framework
+.serverless/
+
+# Docker
+.dockerignore
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# =============================================================================
+# 개발 중 생성되는 임시 파일들
+# =============================================================================
+
+# 백업 파일
+*.bak
+*.backup
+*.old
+
+# 에러 덤프
+*.stackdump
+core.*
+
+# 개발 메모
+notes.md
+TODO.md
+NOTES.md
