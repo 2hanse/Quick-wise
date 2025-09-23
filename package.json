@@ -17,11 +17,29 @@
     "build:mobile": "cd mobile && npm run build",
     "test": "npm run test:backend && npm run test:mobile",
     "test:backend": "cd backend && npm test",
-    "test:mobile": "cd mobile && npm test"
+    "test:mobile": "cd mobile && npm test",
+    "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md,yml,yaml}\" && eslint \"**/*.{js,ts,jsx,tsx}\" --fix",
+    "lint": "eslint \"**/*.{js,ts,jsx,tsx}\" --max-warnings 0",
+    "lint:fix": "eslint \"**/*.{js,ts,jsx,tsx}\" --fix"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
     "@types/node": "^18.0.0",
-    "concurrently": "^7.6.0"
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
+    "concurrently": "^7.6.0",
+    "eslint": "^8.57.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.0.0"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }
