@@ -11,4 +11,28 @@ module.exports = {
     ecmaVersion: 2022,
     sourceType: "module",
   },
+  rules: {
+    "@typescript-eslint/no-require-imports": [
+      "error",
+      {
+        allow: [
+          "\\.png$",
+          "\\.jpg$",
+          "\\.jpeg$",
+          "\\.gif$",
+          "\\.svg$",
+          "\\.webp$",
+          "\\.json$",
+        ],
+      },
+    ],
+  },
+  overrides: [
+    {
+      files: ["tailwind.config.js"],
+      rules: {
+        "@typescript-eslint/no-require-imports": "off",
+      },
+    },
+  ],
 };
