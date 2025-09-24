@@ -1,30 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Text, View, Animated } from "react-native";
+import useTypewriter from "../hooks/useTypewriter";
+import { FeatureBoxItem, SplashScreenProps } from "../types/splash";
+import {
+  APP_NAME,
+  TYPEWRITER_SPEED,
+  CURSOR_BLINK_DURATION,
+  STEP_ADVICE_COMPLETE,
+  ANIMATION_DURATION,
+  STEP_TIMINGS,
+  DESCRIPTION_TEXTS,
+  FEATURE_BOXES,
+  DOTS,
+} from "../constants/splash";
 import "../../global.css";
-
-const useTypewriter = (text: string, speed: number = 180) => {
-  const [displayText, setDisplayText] = useState("");
-
-  useEffect(() => {
-    let index = 0;
-    const timer = setInterval(() => {
-      if (index < text.length) {
-        setDisplayText(text.slice(0, index + 1));
-        index++;
-      } else {
-        clearInterval(timer);
-      }
-    }, speed);
-
-    return () => clearInterval(timer);
-  }, [text, speed]);
-
-  return displayText;
-};
-
-interface SplashScreenProps {
-  onComplete?: () => void;
-}
 
 const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -38,20 +27,19 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const cursorOpacity = useRef(new Animated.Value(1)).current;
   const loadingPulse = useRef(new Animated.Value(0.7)).current;
 
-  const typedText = useTypewriter("QuickWise", 120);
-  const dots = [{ id: "pulse-a" }, { id: "pulse-b" }, { id: "pulse-c" }];
+  const typedText = useTypewriter(APP_NAME, TYPEWRITER_SPEED);
 
   useEffect(() => {
     const cursorBlink = Animated.loop(
       Animated.sequence([
         Animated.timing(cursorOpacity, {
           toValue: 0.3,
-          duration: 500,
+          duration: CURSOR_BLINK_DURATION,
           useNativeDriver: true,
         }),
         Animated.timing(cursorOpacity, {
           toValue: 1,
-          duration: 500,
+          duration: CURSOR_BLINK_DURATION,
           useNativeDriver: true,
         }),
       ])
@@ -61,17 +49,17 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   }, [cursorOpacity]);
 
   useEffect(() => {
-    if (currentStep >= 4) {
+    if (currentStep >= STEP_ADVICE_COMPLETE) {
       const pulse = Animated.loop(
         Animated.sequence([
           Animated.timing(loadingPulse, {
             toValue: 1,
-            duration: 1200,
+            duration: ANIMATION_DURATION.pulse,
             useNativeDriver: true,
           }),
           Animated.timing(loadingPulse, {
             toValue: 0.7,
-            duration: 1200,
+            duration: ANIMATION_DURATION.pulse,
             useNativeDriver: true,
           }),
         ])
@@ -87,61 +75,56 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         setCurrentStep(1);
         Animated.timing(descriptionAnimation, {
           toValue: 1,
-          duration: 800,
+          duration: ANIMATION_DURATION.description,
           useNativeDriver: true,
         }).start();
-      }, 1500),
+      }, STEP_TIMINGS.description),
 
       setTimeout(() => {
         setCurrentStep(2);
         Animated.timing(scheduleBox, {
           toValue: 1,
-          duration: 600,
+          duration: ANIMATION_DURATION.box,
           useNativeDriver: true,
         }).start();
-      }, 1800),
+      }, STEP_TIMINGS.scheduleBox),
 
       setTimeout(() => {
         setCurrentStep(3);
         Animated.timing(scenarioBox, {
           toValue: 1,
-          duration: 600,
+          duration: ANIMATION_DURATION.box,
           useNativeDriver: true,
         }).start();
-      }, 2100),
+      }, STEP_TIMINGS.scenarioBox),
 
       setTimeout(() => {
         setCurrentStep(4);
         Animated.timing(adviceBox, {
           toValue: 1,
-          duration: 600,
+          duration: ANIMATION_DURATION.box,
           useNativeDriver: true,
         }).start();
-      }, 2400),
+      }, STEP_TIMINGS.adviceBox),
 
       setTimeout(() => {
         Animated.timing(loadingAnimation, {
           toValue: 1,
-          duration: 600,
+          duration: ANIMATION_DURATION.loading,
           useNativeDriver: true,
         }).start();
-      }, 2700),
+      }, STEP_TIMINGS.loading),
 
       setTimeout(() => {
         setLoadingComplete(true);
         onComplete?.();
-      }, 3700),
+      }, STEP_TIMINGS.complete),
     ];
 
     return () => timers.forEach(clearTimeout);
-  }, [
-    onComplete,
-    descriptionAnimation,
-    scheduleBox,
-    scenarioBox,
-    adviceBox,
-    loadingAnimation,
-  ]);
+  }, [onComplete]);
+
+  const boxAnimations = [scheduleBox, scenarioBox, adviceBox];
 
   return (
     <View className="flex-1 bg-white justify-center items-center px-8">
@@ -150,7 +133,7 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           <Text className="text-5xl font-bold text-blue-600 tracking-wide">
             {typedText}
           </Text>
-          {typedText.length < 9 && (
+          {typedText.length < APP_NAME.length && (
             <Animated.Text
               style={{ opacity: cursorOpacity }}
               className="text-5xl font-bold text-gray-400 ml-1"
@@ -166,48 +149,28 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
         className="mb-16"
       >
         <Text className="text-xl text-black text-center font-semibold mb-3">
-          당신의 일정이 성장의 기회가 됩니다.
+          {DESCRIPTION_TEXTS.title}
         </Text>
         <Text className="text-base text-gray-600 text-center leading-6">
-          TED, 세바시 등 전문 강사들의 강연을 {"\n"}내 상황에 맞게 적용해드려요.
+          {DESCRIPTION_TEXTS.subtitle}
         </Text>
       </Animated.View>
+
       <View className="flex-row justify-around w-full px-5 mb-16">
-        <Animated.View
-          style={{ transform: [{ scale: scheduleBox }] }}
-          className="items-center"
-        >
-          <View className="w-14 h-14 bg-blue-50 border-blue-100 rounded-2xl justify-center items-center mb-2">
-            <Text className="text-2xl">📅</Text>
-          </View>
-          <Text className="text-gray-700 text-sm text-center font-medium">
-            일정 연동
-          </Text>
-        </Animated.View>
-
-        <Animated.View
-          style={{ transform: [{ scale: scenarioBox }] }}
-          className="items-center"
-        >
-          <View className="w-14 h-14 bg-blue-50 border-blue-100 rounded-2xl justify-center items-center mb-2">
-            <Text className="text-2xl">🚀</Text>
-          </View>
-          <Text className="text-gray-700 text-sm text-center font-medium">
-            실행 시나리오
-          </Text>
-        </Animated.View>
-
-        <Animated.View
-          style={{ transform: [{ scale: adviceBox }] }}
-          className="items-center"
-        >
-          <View className="w-14 h-14 bg-blue-50 border-blue-100 rounded-2xl justify-center items-center mb-2">
-            <Text className="text-2xl">🎯</Text>
-          </View>
-          <Text className="text-gray-700 text-sm text-center font-medium">
-            맞춤 조언
-          </Text>
-        </Animated.View>
+        {FEATURE_BOXES.map((box: FeatureBoxItem, idx: number) => (
+          <Animated.View
+            key={box.id}
+            style={{ transform: [{ scale: boxAnimations[idx] }] }}
+            className="items-center"
+          >
+            <View className="w-14 h-14 bg-blue-50 border-blue-100 rounded-2xl justify-center items-center mb-2">
+              <Text className="text-2xl">{box.icon}</Text>
+            </View>
+            <Text className="text-gray-700 text-sm text-center font-medium">
+              {box.label}
+            </Text>
+          </Animated.View>
+        ))}
       </View>
 
       <Animated.View
@@ -218,11 +181,11 @@ const SplashScreen = ({ onComplete }: SplashScreenProps) => {
           style={{ opacity: loadingPulse }}
           className="text-gray-500 text-base text-center font-medium"
         >
-          당신만의 성장 코치를 준비하고 있어요...
+          {DESCRIPTION_TEXTS.loading}
         </Animated.Text>
 
         <View className="flex-row justify-center mt-3 space-x-1">
-          {dots.map((dot) => (
+          {DOTS.map((dot) => (
             <Animated.View
               key={dot.id}
               style={{
