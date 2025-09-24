@@ -22,8 +22,13 @@ const useTypewriter = (text: string, speed: number = 180) => {
   return displayText;
 };
 
-const SplashScreen = () => {
+interface SplashScreenProps {
+  onComplete?: () => void;
+}
+
+const SplashScreen = ({ onComplete }: SplashScreenProps) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [, setLoadingComplete] = useState(false);
 
   const descriptionAnimation = useRef(new Animated.Value(0)).current;
   const scheduleBox = useRef(new Animated.Value(0)).current;
@@ -53,10 +58,10 @@ const SplashScreen = () => {
     );
     cursorBlink.start();
     return () => cursorBlink.stop();
-  }, []);
+  }, [cursorOpacity]);
 
   useEffect(() => {
-    if (currentStep > 4 || currentStep === 4) {
+    if (currentStep >= 4) {
       const pulse = Animated.loop(
         Animated.sequence([
           Animated.timing(loadingPulse, {
@@ -74,10 +79,10 @@ const SplashScreen = () => {
       pulse.start();
       return () => pulse.stop();
     }
-  }, [currentStep]);
+  }, [currentStep, loadingPulse]);
 
   useEffect(() => {
-    const timers = [
+    const timers: NodeJS.Timeout[] = [
       setTimeout(() => {
         setCurrentStep(1);
         Animated.timing(descriptionAnimation, {
@@ -121,10 +126,22 @@ const SplashScreen = () => {
           useNativeDriver: true,
         }).start();
       }, 2700),
+
+      setTimeout(() => {
+        setLoadingComplete(true);
+        onComplete?.();
+      }, 3700),
     ];
 
     return () => timers.forEach(clearTimeout);
-  }, []);
+  }, [
+    onComplete,
+    descriptionAnimation,
+    scheduleBox,
+    scenarioBox,
+    adviceBox,
+    loadingAnimation,
+  ]);
 
   return (
     <View className="flex-1 bg-white justify-center items-center px-8">
