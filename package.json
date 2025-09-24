@@ -20,7 +20,10 @@
     "test:mobile": "cd mobile && npm test",
     "format": "prettier --write \"**/*.{js,ts,jsx,tsx,json,md,yml,yaml}\" && eslint \"**/*.{js,ts,jsx,tsx}\" --fix",
     "lint": "eslint \"**/*.{js,ts,jsx,tsx}\" --max-warnings 0",
-    "lint:fix": "eslint \"**/*.{js,ts,jsx,tsx}\" --fix"
+    "lint:fix": "eslint \"**/*.{js,ts,jsx,tsx}\" --fix",
+    "android": "cd mobile && npx expo run:android",
+    "ios": "cd mobile && npx expo run:ios",
+    "start": "cd mobile && npx expo start"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
@@ -41,5 +44,11 @@
     "*.{json,md,yml,yaml}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "expo": "~54.0.9",
+    "expo-splash-screen": "~31.0.10",
+    "react": "19.1.0",
+    "react-native": "0.81.4"
   }
 }
