@@ -25,10 +25,13 @@ const HEADER_TITLE = {
   onboarding2: "어떻게 작동하나요?",
   onboarding3: "구글 캘린더와",
   onboarding3_1: " 연결하세요",
+  onboarding4: "알림을",
+  onboarding4_1: " 켜주세요",
 };
 
 const HEADER_SUBTEXT = {
   onboarding2: "3단계로 일정에 맞는 최적의\n학습 콘텐츠를 추천해드립니다.",
+  onboarding4: "중요한 일정과 분석 결과를 놓치지 않도록 알림을 설정해주세요.",
 };
 
 const ICON_SIZE = 20;
@@ -93,6 +96,19 @@ const GOOGLE_BUTTON = {
   googleSignIn: "Sign in with Google",
 };
 
+const REASON_NOTIFICATION = "알림이 필요한 이유";
+
+const NOTIFICATION_SECTION = {
+  title1: "일정 리마인더",
+  text1: "중요한 회의나 약속을 미리 알려드려요",
+  title2: "주간 분석 리포트",
+  text2: "매주 시간 사용 분석 결과를 받아보세요",
+  title3: "목표 달성 알림",
+  text3: "설정한 목표 달성 여부를 확인할 수 있어요",
+};
+
+const SETTING_NOTIFICATION = "알림 설정하러 가기";
+
 export {
   TIMINGS_DURATION,
   STAGGER_DELAY,
@@ -110,4 +126,7 @@ export {
   REASON_ITEMS,
   PRIVACY_TEXT,
   GOOGLE_BUTTON,
+  REASON_NOTIFICATION,
+  NOTIFICATION_SECTION,
+  SETTING_NOTIFICATION,
 };
