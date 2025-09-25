@@ -11,5 +11,16 @@ interface Step {
   colorClass: string;
 }
 
+interface ScrollEvent {
+  nativeEvent: {
+    contentOffset: { x: number };
+  };
+}
+
+interface OnboardingScreen {
+  component: React.ReactElement;
+  key: string;
+}
+
 export type { iconFamily };
-export { Step };
+export { Step, ScrollEvent, OnboardingScreen };
