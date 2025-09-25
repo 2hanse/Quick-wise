@@ -21,9 +21,16 @@ const DESCRIPTION = [
   { text: "유명 강연을 당신의 일정에 맞춰 추천해드려요." },
 ];
 
-const HEADER_TITLE = "어떻게 작동하나요?";
-const HEADER_SUBTEXT =
-  "3단계로 일정에 맞는 최적의\n학습 콘텐츠를 추천해드립니다.";
+const HEADER_TITLE = {
+  onboarding2: "어떻게 작동하나요?",
+  onboarding3: "구글 캘린더와",
+  onboarding3_1: " 연결하세요",
+};
+
+const HEADER_SUBTEXT = {
+  onboarding2: "3단계로 일정에 맞는 최적의\n학습 콘텐츠를 추천해드립니다.",
+};
+
 const ICON_SIZE = 20;
 
 const STEPS: Step[] = [
@@ -61,6 +68,31 @@ const STEPS: Step[] = [
   },
 ];
 
+const INTERLOCK_REASON = "연동이 필요한 이유";
+const PRIVACY_PROTECTION = "개인정보 보호";
+
+const REASON_ITEMS = {
+  item1: {
+    title: "실시간 일정 동기화",
+    description:
+      "캘린더의 모든 일정을 자동으로 분석하여 시간 사용 패턴을 파악합니다.",
+  },
+  item2: {
+    title: "정확한 분석 결과",
+    description:
+      "회의, 업무, 개인 시간을 구분하여 더욱 세밀한 시간 분석을 제공합니다.",
+  },
+};
+
+const PROTECT_TEXT = "안전하게 보호됩니다";
+
+const PRIVACY_TEXT =
+  "캘린더 데이터는 분석 목적으로만 사용되며, 암호화되어 저장됩니다. 언제든지 연동을 해제할 수 있고, 개인 정보는 절대 외부에 공유되지 않습니다.";
+
+const GOOGLE_BUTTON = {
+  googleSignIn: "Sign in with Google",
+};
+
 export {
   TIMINGS_DURATION,
   STAGGER_DELAY,
@@ -71,5 +103,11 @@ export {
   HEADER_TITLE,
   HEADER_SUBTEXT,
   ICON_SIZE,
+  PROTECT_TEXT,
   STEPS,
+  INTERLOCK_REASON,
+  PRIVACY_PROTECTION,
+  REASON_ITEMS,
+  PRIVACY_TEXT,
+  GOOGLE_BUTTON,
 };

@@ -70,11 +70,11 @@ const OnboardingScreen2 = () => {
     <View className="flex-1 bg-white justify-center items-center px-8 py-12">
       <View className="items-center mb-10">
         <Text className="text-4xl font-bold text-blue-600 text-center mb-3">
-          {HEADER_TITLE}
+          {HEADER_TITLE.onboarding2}
         </Text>
         <View className="w-16 h-0.5 bg-gray-400 mx-auto mb-6"></View>
         <Text className="text-gray-600 text-base text-center whitespace-pre-line">
-          {HEADER_SUBTEXT}
+          {HEADER_SUBTEXT.onboarding2}
         </Text>
       </View>
 
