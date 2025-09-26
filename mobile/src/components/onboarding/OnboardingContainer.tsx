@@ -114,6 +114,19 @@ const OnboardingContainer = () => {
             </TouchableOpacity>
           )}
         </View>
+
+        <View className="px-5 pb-8 pt-5 bg-white">
+          <View className="flex-row justify-center items-center">
+            {screens.map((screen, index) => (
+              <View
+                key={`${screen.key}-indicator`}
+                className={`h-2 mx-1 rounded-full transition-all duration-300 ${
+                  currentIndex === index ? "w-6 bg-blue-500" : "w-2 bg-gray-300"
+                }`}
+              />
+            ))}
+          </View>
+        </View>
       </SafeAreaView>
     </>
   );

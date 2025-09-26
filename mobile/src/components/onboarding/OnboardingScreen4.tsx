@@ -86,13 +86,6 @@ const OnboardingScreen4 = () => {
             {SETTING_NOTIFICATION}
           </Text>
         </View>
-
-        <View className="flex-row">
-          <View className="w-2 h-2 bg-gray-300 rounded-full mr-2"></View>
-          <View className="w-2 h-2 bg-gray-300 rounded-full mr-2"></View>
-          <View className="w-2 h-2 bg-gray-300 rounded-full mr-2"></View>
-          <View className="w-2 h-2 bg-gray-900 rounded-full"></View>
-        </View>
       </View>
     </View>
   );
