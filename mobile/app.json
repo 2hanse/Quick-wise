@@ -2,6 +2,8 @@
   "expo": {
     "name": "QuickWise",
     "slug": "quickwise",
+    "scheme": "quickwise",
+    "platforms": ["ios", "android"],
     "main": "./App.tsx",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,7 +25,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-dev-client"],
+    "plugins": ["expo-dev-client", "expo-web-browser"],
     "extra": {
       "eas": {
         "projectId": "b7bb53d5-7805-422a-951e-2c61f6751e29"
