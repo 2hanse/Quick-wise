@@ -8,10 +8,10 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import OnboardingScreen1 from "./OnboardingScreen1";
-import OnboardingScreen2 from "./OnboardingScreen2";
-import OnboardingScreen3 from "./OnboardingScreen3";
-import OnboardingScreen4 from "./OnboardingScreen4";
+import OnboardingScreen1 from "./OnboardingIntro";
+import OnboardingScreen2 from "./OnboardingGuide";
+import OnboardingScreen3 from "./OnboardingLogin";
+import OnboardingScreen4 from "./OnboardingNotification";
 import { ScrollEvent, OnboardingScreen } from "../../types/onboarding";
 import {
   SCROLL_EVENT_THROTTLE,
