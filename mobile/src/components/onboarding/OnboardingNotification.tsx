@@ -8,7 +8,7 @@ import {
   SETTING_NOTIFICATION,
 } from "../../constants/onboarding";
 
-const OnboardingScreen4 = () => {
+const OnboardingNotification = () => {
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 bg-white justify-center items-center px-8 py-12 flex-col">
@@ -90,4 +90,4 @@ const OnboardingScreen4 = () => {
     </View>
   );
 };
-export default OnboardingScreen4;
+export default OnboardingNotification;

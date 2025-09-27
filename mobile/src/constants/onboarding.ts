@@ -112,10 +112,10 @@ const SCROLL_EVENT_THROTTLE = 16;
 const NAVIGATION_ACTIVE_OPACITY = 0.6;
 
 const SCREEN_KEYS = {
-  SCREEN_1: "screen1",
-  SCREEN_2: "screen2",
-  SCREEN_3: "screen3",
-  SCREEN_4: "screen4",
+  SCREEN_1: "OnboardingIntro",
+  SCREEN_2: "OnboardingGuide",
+  SCREEN_3: "OnboardingLogin",
+  SCREEN_4: "OnboardingNotification",
 } as const;
 
 const NAVIGATION_ICONS = {
