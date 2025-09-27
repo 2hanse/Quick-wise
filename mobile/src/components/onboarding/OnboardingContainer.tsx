@@ -10,7 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import OnboardingScreen1 from "./OnboardingIntro";
 import OnboardingScreen2 from "./OnboardingGuide";
-import OnboardingScreen3 from "./OnboardingLogin";
+import OnboardingLogin from "./OnboardingLogin";
 import OnboardingScreen4 from "./OnboardingNotification";
 import { ScrollEvent, OnboardingScreen } from "../../types/onboarding";
 import {
@@ -29,7 +29,7 @@ const OnboardingContainer = () => {
   const screens: OnboardingScreen[] = [
     { component: <OnboardingScreen1 />, key: SCREEN_KEYS.SCREEN_1 },
     { component: <OnboardingScreen2 />, key: SCREEN_KEYS.SCREEN_2 },
-    { component: <OnboardingScreen3 />, key: SCREEN_KEYS.SCREEN_3 },
+    { component: <OnboardingLogin />, key: SCREEN_KEYS.SCREEN_3 },
     { component: <OnboardingScreen4 />, key: SCREEN_KEYS.SCREEN_4 },
   ];
 

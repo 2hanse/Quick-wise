@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, View, Text } from "react-native";
+import { TouchableOpacity, Image, View, Text } from "react-native";
 import {
   HEADER_TITLE,
   INTERLOCK_REASON,
@@ -10,7 +10,9 @@ import {
   PROTECT_TEXT,
 } from "../../constants/onboarding";
 
-const OnboardingScreen3 = () => {
+const OnboardingLogin = () => {
+  const handleGoogleLogin = () => {};
+
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 bg-white justify-center items-center mt-2 px-8 py-12 flex-col">
@@ -90,7 +92,11 @@ const OnboardingScreen3 = () => {
           </View>
         </View>
 
-        <View className="w-full mb-8 bg-white border border-gray-300 h-14 rounded-lg flex-row items-center justify-center shadow-sm">
+        <TouchableOpacity
+          className="w-full mb-8 bg-white border border-gray-300 h-14 rounded-lg flex-row items-center justify-center shadow-sm"
+          onPress={handleGoogleLogin}
+          activeOpacity={0.7}
+        >
           <View className="w-5 h-5 flex-shrink-0 mr-3 items-center justify-center">
             <Image
               source={require("../../../assets/google-logo.png")}
@@ -100,10 +106,10 @@ const OnboardingScreen3 = () => {
           <Text className="text-gray-700 text-base font-medium">
             {GOOGLE_BUTTON.googleSignIn}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
 
-export default OnboardingScreen3;
+export default OnboardingLogin;
