@@ -9,9 +9,21 @@ import {
   GOOGLE_BUTTON,
   PROTECT_TEXT,
 } from "../../constants/onboarding";
+import { signInWithGoogle } from "../../services/authService";
 
 const OnboardingLogin = () => {
-  const handleGoogleLogin = () => {};
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithGoogle();
+      if (result.type === "success") {
+        return;
+      } else {
+        return;
+      }
+    } catch {
+      return;
+    }
+  };
 
   return (
     <View className="flex-1 bg-white">

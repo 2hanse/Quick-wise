@@ -2,25 +2,34 @@
   "expo": {
     "name": "QuickWise",
     "slug": "quickwise",
-    "scheme": "quickwise",
+    "scheme": "com.anonymous.quickwise",
     "platforms": ["ios", "android"],
     "main": "./App.tsx",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "backgroundColor": "#ffffff"
-    },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.quickwise"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.anonymous.quickwise"
+      "package": "com.anonymous.quickwise",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "com.anonymous.quickwise"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,6 +39,7 @@
       "eas": {
         "projectId": "b7bb53d5-7805-422a-951e-2c61f6751e29"
       }
-    }
+    },
+    "owner": "leehanse"
   }
 }
