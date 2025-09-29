@@ -11,7 +11,7 @@ import {
 } from "../../constants/onboarding";
 import { APP_NAME } from "../../constants/splash";
 
-const OnboardingScreen1 = () => {
+const OnboardingIntro = () => {
   const animations = useRef(
     FEATURES_TEXTS.map(() => new Animated.Value(0))
   ).current;
@@ -82,4 +82,4 @@ const OnboardingScreen1 = () => {
   );
 };
 
-export default OnboardingScreen1;
+export default OnboardingIntro;

@@ -8,10 +8,10 @@ import {
   StatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import OnboardingScreen1 from "./OnboardingIntro";
-import OnboardingScreen2 from "./OnboardingGuide";
-import OnboardingScreen3 from "./OnboardingLogin";
-import OnboardingScreen4 from "./OnboardingNotification";
+import OnboardingIntro from "./OnboardingIntro";
+import OnboardingGuide from "./OnboardingGuide";
+import OnboardingLogin from "./OnboardingLogin";
+import OnboardingNotification from "./OnboardingNotification";
 import { ScrollEvent, OnboardingScreen } from "../../types/onboarding";
 import {
   SCROLL_EVENT_THROTTLE,
@@ -22,15 +22,22 @@ import {
 
 const { width: screenWidth } = Dimensions.get("window");
 
-const OnboardingContainer = () => {
+interface OnboardingContainerProps {
+  onComplete: () => void;
+}
+
+const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
   const screens: OnboardingScreen[] = [
-    { component: <OnboardingScreen1 />, key: SCREEN_KEYS.SCREEN_1 },
-    { component: <OnboardingScreen2 />, key: SCREEN_KEYS.SCREEN_2 },
-    { component: <OnboardingScreen3 />, key: SCREEN_KEYS.SCREEN_3 },
-    { component: <OnboardingScreen4 />, key: SCREEN_KEYS.SCREEN_4 },
+    { component: <OnboardingIntro />, key: SCREEN_KEYS.SCREEN_1 },
+    { component: <OnboardingGuide />, key: SCREEN_KEYS.SCREEN_2 },
+    { component: <OnboardingLogin />, key: SCREEN_KEYS.SCREEN_3 },
+    {
+      component: <OnboardingNotification onComplete={onComplete} />,
+      key: SCREEN_KEYS.SCREEN_4,
+    },
   ];
 
   const handleScroll = (event: ScrollEvent) => {

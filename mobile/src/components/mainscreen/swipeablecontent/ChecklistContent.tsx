@@ -3,15 +3,15 @@ import { View, Text, Pressable } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import type { Checklist, ChecklistItem } from "../../../types/main";
 import mainPageConstants from "../../../constants/main";
-
+import { STORAGE_KEYS } from "../../../constants/storage";
 interface ChecklistContentProps {
   checklist: Checklist;
 }
 
-const CHECKLIST_STORAGE_KEY = "@checklist_state";
-
 const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
   const [items, setItems] = useState<ChecklistItem[]>(checklist.items);
+
+  const storageKey = `${STORAGE_KEYS.CHECKLIST_STATE}_${checklist.id}`;
 
   useEffect(() => {
     loadChecklistState();
@@ -23,9 +23,7 @@ const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
 
   const loadChecklistState = async () => {
     try {
-      const savedState = await AsyncStorage.getItem(
-        `${CHECKLIST_STORAGE_KEY}_${checklist.id}`
-      );
+      const savedState = await AsyncStorage.getItem(storageKey);
       if (savedState) {
         const parsedState = JSON.parse(savedState);
         setItems(parsedState);
@@ -37,10 +35,7 @@ const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
 
   const saveChecklistState = async () => {
     try {
-      await AsyncStorage.setItem(
-        `${CHECKLIST_STORAGE_KEY}_${checklist.id}`,
-        JSON.stringify(items)
-      );
+      await AsyncStorage.setItem(storageKey, JSON.stringify(items));
     } catch (error) {
       console.error("Failed to save checklist state:", error);
     }
