@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import SplashScreen from "./src/components/SplashScreen";
 import OnboardingContainer from "./src/components/onboarding/OnboardingContainer";
 import MainPage from "./src/components/mainscreen/MainScreen";
+import SettingScreen from "./src/components/setting/SettingScreen";
 import BottomNavigation from "./src/components/BottomNavigation";
 import { STORAGE_KEYS } from "./src/constants/storage";
 import { TabName } from "./src/constants/navigation";
@@ -63,6 +64,8 @@ function App() {
     switch (currentTab) {
       case "Home":
         return <MainPage />;
+      case "Setting":
+        return <SettingScreen />;
       default:
         return <MainPage />;
     }
