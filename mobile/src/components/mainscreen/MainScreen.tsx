@@ -6,15 +6,26 @@ import DateHeaderSection from "./DateHeaderSection";
 import NextScheduleSection from "./NextScheduleSection";
 import ScheduleGuideSection from "./ScheduleGuideSection";
 import TodayScheduleSection from "./TodayScheduleSection";
+import EmptyScheduleSection from "./EmptyScheduleSection";
 
 const MainScreen = () => {
+  const hasSchedules =
+    mockCalendar.todaySchedules && mockCalendar.todaySchedules.length > 0;
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView className="flex-1 px-3 pt-3">
         <DateHeaderSection dateInfo={mockCalendar.dateInfo} />
-        <NextScheduleSection schedule={mockCalendar.nextSchedule} />
-        <ScheduleGuideSection swipeContents={mockCalendar.swipeContents} />
-        <TodayScheduleSection schedules={mockCalendar.todaySchedules} />
+
+        {hasSchedules ? (
+          <>
+            <NextScheduleSection schedule={mockCalendar.nextSchedule} />
+            <ScheduleGuideSection swipeContents={mockCalendar.swipeContents} />
+            <TodayScheduleSection schedules={mockCalendar.todaySchedules} />
+          </>
+        ) : (
+          <EmptyScheduleSection />
+        )}
       </ScrollView>
     </SafeAreaView>
   );
