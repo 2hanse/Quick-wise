@@ -10,7 +10,7 @@ import {
   PROTECT_TEXT,
 } from "../../constants/onboarding";
 
-const OnboardingScreen3 = () => {
+const OnboardingLogin = () => {
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 bg-white justify-center items-center mt-2 px-8 py-12 flex-col">
@@ -106,4 +106,4 @@ const OnboardingScreen3 = () => {
   );
 };
 
-export default OnboardingScreen3;
+export default OnboardingLogin;

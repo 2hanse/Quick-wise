@@ -15,7 +15,7 @@ const exampleIcons = [
   <Ionicons name="time" size={ICON_SIZE} color="#9CA3AF" />,
 ];
 
-const OnboardingScreen2 = () => {
+const OnboardingGuide = () => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
   useEffect(() => {
@@ -150,4 +150,4 @@ const OnboardingScreen2 = () => {
   );
 };
 
-export default OnboardingScreen2;
+export default OnboardingGuide;
