@@ -38,9 +38,19 @@ interface DateInfo {
   studySchedules: number;
 }
 
-export interface CalendarData {
+interface CalendarData {
   dateInfo: DateInfo;
   nextSchedule: NextSchedule;
   swipeContents: SwipeContent[];
   todaySchedules: TodaySchedule[];
 }
+
+export {
+  Effect,
+  SwipeContent,
+  Lecture,
+  NextSchedule,
+  TodaySchedule,
+  DateInfo,
+  CalendarData,
+};
