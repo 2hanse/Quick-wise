@@ -19,7 +19,7 @@ const mockMain: CalendarData = {
     {
       id: "comment-content",
       type: "comment",
-      effects: [
+      commentItems: [
         {
           id: "comment-1",
           highlight: "환경 청찬",

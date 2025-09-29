@@ -1,6 +1,6 @@
 export type ScheduleStatus = "completed" | "progress" | "upcoming";
 
-interface Effect {
+interface CommentItem {
   id: string;
   highlight?: string;
   description?: string;
@@ -9,7 +9,7 @@ interface Effect {
 interface SwipeContent {
   id: string;
   type: string;
-  effects?: Effect[];
+  commentItems?: CommentItem[];
   scenario?: Scenario;
   checklist?: Checklist;
 }
@@ -75,7 +75,7 @@ interface Checklist {
 }
 
 export {
-  Effect,
+  CommentItem,
   SwipeContent,
   Lecture,
   NextSchedule,

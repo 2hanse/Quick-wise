@@ -9,7 +9,7 @@ const mainPageConstants = {
       PLAY_BUTTON: "Play",
     },
     SWIPE_CONTENT: {
-      EFFECTS_TITLE: "💡 효과",
+      COMMENTITEM_TITLE: "💡 효과",
     },
     TODAY_SCHEDULE: {
       TITLE: "오늘의 일정",
