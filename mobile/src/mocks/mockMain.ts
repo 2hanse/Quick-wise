@@ -82,6 +82,38 @@ const mockMain: CalendarData = {
     {
       id: "checklist-content",
       type: "checklist",
+      checklist: {
+        id: "checklist-1",
+        title: "체크 리스트",
+        items: [
+          {
+            id: "checklist-item-1",
+            text: "명함 2장 준비했나요?",
+            completed: true,
+          },
+          {
+            id: "checklist-item-2",
+            text: "상대방 회사 최근 뉴스 확인?",
+            completed: true,
+          },
+          {
+            id: "checklist-item-3",
+            text: "공통점 키워드 3개 정했나요?",
+            completed: true,
+          },
+          {
+            id: "checklist-item-4",
+            text: "첫 질문 준비했나요?",
+            completed: false,
+          },
+          {
+            id: "checklist-item-5",
+            text: "심호흡 3번 하고 마음 정리?",
+            completed: false,
+          },
+        ],
+        corePoint: "3초 눈맞춤 → 환경 청찬 → 공통점 인급",
+      },
     },
   ],
   todaySchedules: [

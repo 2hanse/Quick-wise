@@ -11,6 +11,7 @@ interface SwipeContent {
   type: string;
   effects?: Effect[];
   scenario?: Scenario;
+  checklist?: Checklist;
 }
 
 interface Lecture {
@@ -60,6 +61,19 @@ interface Scenario {
   dialogue: DialogueLine[];
 }
 
+interface ChecklistItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+interface Checklist {
+  id: string;
+  title: string;
+  items: ChecklistItem[];
+  corePoint?: string;
+}
+
 export {
   Effect,
   SwipeContent,
@@ -70,4 +84,6 @@ export {
   CalendarData,
   DialogueLine,
   Scenario,
+  ChecklistItem,
+  Checklist,
 };

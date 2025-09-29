@@ -14,6 +14,9 @@ const mainPageConstants = {
     TODAY_SCHEDULE: {
       TITLE: "오늘의 일정",
     },
+    CHECKLIST_KEYPOINT: {
+      TITLE: "오늘의 핵심 포인트",
+    },
   },
   ICONS: {
     DATE_HEADER: "📅",
