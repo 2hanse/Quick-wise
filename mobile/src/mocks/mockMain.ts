@@ -1,6 +1,6 @@
 import type { CalendarData } from "../types/main";
 
-const mockCalendar: CalendarData = {
+const mockMain: CalendarData = {
   dateInfo: {
     date: "9월 18일",
     dayOfWeek: "목요일",
@@ -17,39 +17,71 @@ const mockCalendar: CalendarData = {
   },
   swipeContents: [
     {
-      id: "content-1",
+      id: "comment-content",
       type: "comment",
       effects: [
         {
-          id: "effect-1",
+          id: "comment-1",
           highlight: "환경 청찬",
           description: "자연스러운 대화 시작",
         },
         {
-          id: "effect-2",
+          id: "comment-2",
           highlight: "공통 관심사 발견",
           description: "라포 형성",
         },
         {
-          id: "effect-3",
+          id: "comment-3",
           highlight: "상대방 상황 배려",
           description: "호감도 상승",
         },
         {
-          id: "effect-4",
+          id: "comment-4",
           description: "부드러운 본론 진입",
         },
       ],
     },
     {
-      id: "content-2",
+      id: "scenario-content",
       type: "scenario",
-      effects: [],
+      scenario: {
+        id: "scenario-1",
+        title: "첫 5분이 승부",
+        tags: ["관계 형성", "상대방 상황/감정 고려"],
+        dialogue: [
+          {
+            id: "Conversation-1",
+            speaker: "A",
+            text: "안녕하세요. 찾아뵙게 되어 반갑습니다.",
+          },
+          {
+            id: "Conversation-2",
+            speaker: "B",
+            text: "네, 안녕하세요.",
+          },
+          {
+            id: "Conversation-3",
+            speaker: "A",
+            text: "회의실이 정말 깔끔하네요. 인테리어를 언제 새로 하셨나요?",
+            isHighlight: true,
+          },
+          {
+            id: "Conversation-4",
+            speaker: "B",
+            text: "아, 작년에 리모델링했는데...",
+          },
+          {
+            id: "Conversation-5",
+            speaker: "A",
+            text: "역시 그렇군요. 저희 사무실도 리모델링 고민 중인데 참고할 게 많을 것 같아요.",
+            isHighlight: true,
+          },
+        ],
+      },
     },
     {
-      id: "content-3",
+      id: "checklist-content",
       type: "checklist",
-      effects: [],
     },
   ],
   todaySchedules: [
@@ -77,4 +109,4 @@ const mockCalendar: CalendarData = {
   ],
 };
 
-export default mockCalendar;
+export default mockMain;
