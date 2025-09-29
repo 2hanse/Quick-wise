@@ -12,19 +12,6 @@ import {
 import { signInWithGoogle } from "../../services/authService";
 
 const OnboardingLogin = () => {
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithGoogle();
-      if (result.type === "success") {
-        return;
-      } else {
-        return;
-      }
-    } catch {
-      return;
-    }
-  };
-
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 bg-white justify-center items-center mt-2 px-8 py-12 flex-col">

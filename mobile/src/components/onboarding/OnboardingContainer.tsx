@@ -22,7 +22,11 @@ import {
 
 const { width: screenWidth } = Dimensions.get("window");
 
-const OnboardingContainer = () => {
+interface OnboardingContainerProps {
+  onComplete: () => void;
+}
+
+const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -30,7 +34,10 @@ const OnboardingContainer = () => {
     { component: <OnboardingIntro />, key: SCREEN_KEYS.SCREEN_1 },
     { component: <OnboardingGuide />, key: SCREEN_KEYS.SCREEN_2 },
     { component: <OnboardingLogin />, key: SCREEN_KEYS.SCREEN_3 },
-    { component: <OnboardingNotification />, key: SCREEN_KEYS.SCREEN_4 },
+    {
+      component: <OnboardingNotification onComplete={onComplete} />,
+      key: SCREEN_KEYS.SCREEN_4,
+    },
   ];
 
   const handleScroll = (event: ScrollEvent) => {

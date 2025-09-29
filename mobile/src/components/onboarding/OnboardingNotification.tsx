@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import {
   HEADER_TITLE,
   HEADER_SUBTEXT,
@@ -8,7 +8,13 @@ import {
   SETTING_NOTIFICATION,
 } from "../../constants/onboarding";
 
-const OnboardingNotification = () => {
+interface OnboardingNotificationProps {
+  onComplete: () => void;
+}
+
+const OnboardingNotification = ({
+  onComplete,
+}: OnboardingNotificationProps) => {
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 bg-white justify-center items-center px-8 py-12 flex-col">
@@ -80,14 +86,28 @@ const OnboardingNotification = () => {
           </View>
         </View>
 
-        <View className="w-full mb-8 bg-white border border-gray-300 h-14 rounded-lg flex-row items-center justify-center shadow-sm">
+        <TouchableOpacity
+          className="w-full mb-8 bg-blue-500 h-14 rounded-lg flex-row items-center justify-center shadow-sm active:bg-blue-600"
+          activeOpacity={0.8}
+        >
           <Text className="mr-3">⚙️</Text>
-          <Text className="text-black text-lg font-bold">
+          <Text className="text-white text-lg font-bold">
             {SETTING_NOTIFICATION}
           </Text>
-        </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={onComplete}
+          className="w-full mb-8"
+          activeOpacity={0.7}
+        >
+          <Text className="text-gray-500 text-base text-center">
+            나중에 설정하기
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
 };
+
 export default OnboardingNotification;
