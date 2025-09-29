@@ -1,13 +1,59 @@
-import React from "react";
-import { View, Text } from "react-native";
-import type { Checklist } from "../../../types/main";
+import React, { useState, useEffect } from "react";
+import { View, Text, Pressable } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import type { Checklist, ChecklistItem } from "../../../types/main";
 import mainPageConstants from "../../../constants/main";
 
 interface ChecklistContentProps {
   checklist: Checklist;
 }
 
+const CHECKLIST_STORAGE_KEY = "@checklist_state";
+
 const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
+  const [items, setItems] = useState<ChecklistItem[]>(checklist.items);
+
+  useEffect(() => {
+    loadChecklistState();
+  }, []);
+
+  useEffect(() => {
+    saveChecklistState();
+  }, [items]);
+
+  const loadChecklistState = async () => {
+    try {
+      const savedState = await AsyncStorage.getItem(
+        `${CHECKLIST_STORAGE_KEY}_${checklist.id}`
+      );
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        setItems(parsedState);
+      }
+    } catch (error) {
+      console.error("Failed to load checklist state:", error);
+    }
+  };
+
+  const saveChecklistState = async () => {
+    try {
+      await AsyncStorage.setItem(
+        `${CHECKLIST_STORAGE_KEY}_${checklist.id}`,
+        JSON.stringify(items)
+      );
+    } catch (error) {
+      console.error("Failed to save checklist state:", error);
+    }
+  };
+
+  const toggleItem = (itemId: string) => {
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === itemId ? { ...item, completed: !item.completed } : item
+      )
+    );
+  };
+
   return (
     <View>
       <Text className="text-[17px] font-bold text-[#1a1a1a] mb-3.5">
@@ -15,8 +61,12 @@ const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
       </Text>
 
       <View className="gap-3">
-        {checklist.items.map((item) => (
-          <View key={item.id} className="flex-row items-start gap-3">
+        {items.map((item) => (
+          <Pressable
+            key={item.id}
+            onPress={() => toggleItem(item.id)}
+            className="flex-row items-start gap-3"
+          >
             <View
               className={`w-5 h-5 rounded items-center justify-center ${
                 item.completed ? "bg-[#10b981]" : "bg-[#e5e7eb]"
@@ -35,7 +85,7 @@ const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
             >
               {item.text}
             </Text>
-          </View>
+          </Pressable>
         ))}
       </View>
 

@@ -32,6 +32,9 @@ const mainPageConstants = {
     PROGRESS: "●",
     UPCOMING: "○",
   },
+  STORAGE_KEYS: {
+    CHECKLIST_STATE: "@checklist_state",
+  },
 } as const;
 
 export default mainPageConstants;
