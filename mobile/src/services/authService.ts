@@ -105,10 +105,46 @@ const getCurrentUser = async (): Promise<GoogleUser | null> => {
   }
 };
 
+const signInSilently = async (): Promise<GoogleAuthResult> => {
+  try {
+    const response = await GoogleSignin.signInSilently();
+
+    if (response.type !== "success") {
+      return { type: "cancel" };
+    }
+
+    const tokens = await GoogleSignin.getTokens();
+    const userData = response.data;
+
+    const user: GoogleUser = {
+      id: userData.user.id,
+      email: userData.user.email,
+      name: userData.user.name || "",
+    };
+
+    const googleTokens: GoogleTokens = {
+      accessToken: tokens.accessToken,
+      idToken: tokens.idToken || "",
+      refreshToken: undefined,
+      expiresIn: undefined,
+    };
+
+    return {
+      type: "success",
+      tokens: googleTokens,
+      user,
+    };
+  } catch (error) {
+    console.error(AUTH_MESSAGES.ERROR.SILENT_SIGN_IN, error);
+    return { type: "cancel" };
+  }
+};
+
 export {
   configureGoogleSignIn,
   signInWithGoogle,
   signOutFromGoogle,
   checkSignInStatus,
   getCurrentUser,
+  signInSilently,
 };

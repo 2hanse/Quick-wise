@@ -5,6 +5,7 @@ const AUTH_MESSAGES = {
     SIGN_OUT: "Sign-out error",
     CHECK_STATUS: "Check sign-in status error",
     GET_CURRENT_USER: "Get current user error",
+    SILENT_SIGN_IN: "Silent sign-in error",
   },
 };
 
