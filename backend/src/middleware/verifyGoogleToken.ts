@@ -1,6 +1,13 @@
 import { OAuth2Client } from "google-auth-library";
+import constants from "../constants/messages";
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const clientId = process.env.GOOGLE_CLIENT_ID;
+
+if (!clientId) {
+  throw new Error(constants.ERROR_MESSAGES.GOOGLE_AUTH.CLIENT_ID_NOT_DEFINED);
+}
+
+const client = new OAuth2Client(clientId);
 
 interface GoogleTokenPayload {
   sub: string;
@@ -14,13 +21,13 @@ const verifyGoogleToken = async (
   try {
     const ticket = await client.verifyIdToken({
       idToken,
-      audience: process.env.GOOGLE_CLIENT_ID,
+      audience: clientId,
     });
 
     const payload = ticket.getPayload();
 
     if (!payload) {
-      throw new Error("Invalid token payload");
+      throw new Error(constants.ERROR_MESSAGES.GOOGLE_AUTH.INVALID_PAYLOAD);
     }
 
     return {
@@ -29,8 +36,11 @@ const verifyGoogleToken = async (
       name: payload.name as string,
     };
   } catch (error) {
-    console.error("Google token verification error:", error);
-    throw new Error("Invalid Google token");
+    console.error(
+      constants.ERROR_MESSAGES.GOOGLE_AUTH.VERIFICATION_FAILED,
+      error
+    );
+    throw new Error(constants.ERROR_MESSAGES.GOOGLE_AUTH.INVALID_TOKEN);
   }
 };
 
