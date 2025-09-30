@@ -7,6 +7,10 @@ import {
 } from "../utils/jwtToken";
 import { User } from "../models/User";
 import constants from "../constants/messages";
+import {
+  authenticateToken,
+  AuthRequest,
+} from "../middleware/authenticateToken";
 
 const router = express.Router();
 
@@ -87,6 +91,32 @@ router.post("/refresh", async (req, res) => {
     console.error(constants.ERROR_MESSAGES.AUTH.INVALID_REFRESH_TOKEN, error);
     res.status(401).json({
       error: constants.ERROR_MESSAGES.AUTH.INVALID_REFRESH_TOKEN,
+    });
+  }
+});
+
+router.get("/me", authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).json({
+        error: constants.ERROR_MESSAGES.USER.NOT_FOUND,
+      });
+    }
+
+    res.json({
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    console.error(constants.ERROR_MESSAGES.USER.FAILED_TO_GET_INFO, error);
+    res.status(500).json({
+      error: constants.ERROR_MESSAGES.USER.FAILED_TO_GET_INFO,
     });
   }
 });

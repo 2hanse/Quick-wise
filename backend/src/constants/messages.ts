@@ -25,6 +25,10 @@ const constants = {
       TOKEN_REQUIRED: "Access token is required",
       UNAUTHORIZED: "Unauthorized access",
     },
+    USER: {
+      NOT_FOUND: "User not found",
+      FAILED_TO_GET_INFO: "Failed to get user information",
+    },
   },
   SUCCESS: {
     DATABASE: {
