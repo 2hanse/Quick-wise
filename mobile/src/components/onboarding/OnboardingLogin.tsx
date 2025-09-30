@@ -12,6 +12,10 @@ import {
 import { signInWithGoogle } from "../../services/authService";
 
 const OnboardingLogin = () => {
+  const handleGoogleLogin = async () => {
+    await signInWithGoogle();
+  };
+
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 bg-white justify-center items-center mt-2 px-8 py-12 flex-col">

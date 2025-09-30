@@ -32,7 +32,6 @@ const signInWithGoogle = async (): Promise<GoogleAuthResult> => {
       id: userData.user.id,
       email: userData.user.email,
       name: userData.user.name || "",
-      picture: userData.user.photo || "",
     };
 
     const googleTokens: GoogleTokens = {
@@ -68,4 +67,12 @@ const signInWithGoogle = async (): Promise<GoogleAuthResult> => {
   }
 };
 
-export { configureGoogleSignIn, signInWithGoogle };
+const signOutFromGoogle = async (): Promise<void> => {
+  try {
+    await GoogleSignin.signOut();
+  } catch (error) {
+    console.error("Sign-out error:", error);
+  }
+};
+
+export { configureGoogleSignIn, signInWithGoogle, signOutFromGoogle };
