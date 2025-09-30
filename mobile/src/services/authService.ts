@@ -86,9 +86,29 @@ const checkSignInStatus = async (): Promise<boolean> => {
   }
 };
 
+const getCurrentUser = async (): Promise<GoogleUser | null> => {
+  try {
+    const userInfo = await GoogleSignin.getCurrentUser();
+
+    if (!userInfo) {
+      return null;
+    }
+
+    return {
+      id: userInfo.user.id,
+      email: userInfo.user.email,
+      name: userInfo.user.name || "",
+    };
+  } catch (error) {
+    console.error(AUTH_MESSAGES.ERROR.GET_CURRENT_USER, error);
+    return null;
+  }
+};
+
 export {
   configureGoogleSignIn,
   signInWithGoogle,
   signOutFromGoogle,
   checkSignInStatus,
+  getCurrentUser,
 };

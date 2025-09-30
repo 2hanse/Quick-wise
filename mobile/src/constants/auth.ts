@@ -4,6 +4,7 @@ const AUTH_MESSAGES = {
     GOOGLE_SIGN_IN: "Google Sign-In error",
     SIGN_OUT: "Sign-out error",
     CHECK_STATUS: "Check sign-in status error",
+    GET_CURRENT_USER: "Get current user error",
   },
 };
 
