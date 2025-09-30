@@ -22,6 +22,8 @@ const constants = {
       AUTHENTICATION_FAILED: "Authentication failed",
       REFRESH_TOKEN_REQUIRED: "Refresh token is required",
       INVALID_REFRESH_TOKEN: "Invalid refresh token",
+      TOKEN_REQUIRED: "Access token is required",
+      UNAUTHORIZED: "Unauthorized access",
     },
   },
   SUCCESS: {
