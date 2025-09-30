@@ -1,6 +1,10 @@
 import express from "express";
 import { verifyGoogleToken } from "../middleware/verifyGoogleToken";
-import { generateAccessToken, generateRefreshToken } from "../utils/jwtToken";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  verifyToken,
+} from "../utils/jwtToken";
 import { User } from "../models/User";
 import constants from "../constants/messages";
 
@@ -48,6 +52,41 @@ router.post("/google", async (req, res) => {
     console.error(constants.ERROR_MESSAGES.AUTH.AUTHENTICATION_FAILED, error);
     res.status(401).json({
       error: constants.ERROR_MESSAGES.AUTH.AUTHENTICATION_FAILED,
+    });
+  }
+});
+
+router.post("/refresh", async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(400).json({
+        error: constants.ERROR_MESSAGES.AUTH.REFRESH_TOKEN_REQUIRED,
+      });
+    }
+
+    const decoded = verifyToken(refreshToken);
+
+    const user = await User.findById(decoded.userId);
+
+    if (!user) {
+      return res.status(401).json({
+        error: constants.ERROR_MESSAGES.AUTH.INVALID_REFRESH_TOKEN,
+      });
+    }
+
+    const newAccessToken = generateAccessToken(user._id.toString());
+    const newRefreshToken = generateRefreshToken(user._id.toString());
+
+    res.json({
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    });
+  } catch (error) {
+    console.error(constants.ERROR_MESSAGES.AUTH.INVALID_REFRESH_TOKEN, error);
+    res.status(401).json({
+      error: constants.ERROR_MESSAGES.AUTH.INVALID_REFRESH_TOKEN,
     });
   }
 });
