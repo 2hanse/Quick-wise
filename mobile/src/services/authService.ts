@@ -3,6 +3,7 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import { GoogleAuthResult, GoogleUser, GoogleTokens } from "../types/auth";
+import AUTH_MESSAGES from "../constants/auth";
 
 const configureGoogleSignIn = (): void => {
   GoogleSignin.configure({
@@ -58,11 +59,11 @@ const signInWithGoogle = async (): Promise<GoogleAuthResult> => {
     }
 
     if (typedError.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-      console.error("Play Services not available");
+      console.error(AUTH_MESSAGES.ERROR.PLAY_SERVICES_NOT_AVAILABLE);
       return { type: "cancel" };
     }
 
-    console.error("Google Sign-In error:", error);
+    console.error(AUTH_MESSAGES.ERROR.GOOGLE_SIGN_IN, error);
     return { type: "cancel" };
   }
 };
@@ -71,8 +72,23 @@ const signOutFromGoogle = async (): Promise<void> => {
   try {
     await GoogleSignin.signOut();
   } catch (error) {
-    console.error("Sign-out error:", error);
+    console.error(AUTH_MESSAGES.ERROR.SIGN_OUT, error);
   }
 };
 
-export { configureGoogleSignIn, signInWithGoogle, signOutFromGoogle };
+const checkSignInStatus = async (): Promise<boolean> => {
+  try {
+    const userInfo = await GoogleSignin.getCurrentUser();
+    return userInfo !== null;
+  } catch (error) {
+    console.error(AUTH_MESSAGES.ERROR.CHECK_STATUS, error);
+    return false;
+  }
+};
+
+export {
+  configureGoogleSignIn,
+  signInWithGoogle,
+  signOutFromGoogle,
+  checkSignInStatus,
+};
