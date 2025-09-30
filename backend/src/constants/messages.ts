@@ -1,25 +1,30 @@
 const constants = {
   ERROR_MESSAGES: {
     DATABASE: {
-      MONGODB_URI_NOT_DEFINED: "MONGODB_URI 환경 변수에 정의되지 않았습니다.",
-      CONNECTION_ERROR: "MongoDB 연결에 실패했습니다.",
+      MONGODB_URI_NOT_DEFINED:
+        "MONGODB_URI is not defined in environment variables",
+      CONNECTION_ERROR: "Failed to connect to MongoDB",
     },
     GOOGLE_AUTH: {
       CLIENT_ID_NOT_DEFINED:
-        "GOOGLE_CLIENT_ID가 환경 변수에 정의되지 않았습니다.",
-      INVALID_TOKEN: "유효하지 않은 Google 토큰입니다.",
-      VERIFICATION_FAILED: "Google 토큰 검증에 실패했습니다.",
-      INVALID_PAYLOAD: "유효하지 않은 토큰 페이로드입니다",
+        "GOOGLE_CLIENT_ID is not defined in environment variables",
+      INVALID_TOKEN: "Invalid Google token",
+      VERIFICATION_FAILED: "Google token verification failed",
+      INVALID_PAYLOAD: "Invalid token payload",
     },
     JWT: {
-      SECRET_NOT_DEFINED: "JWT_SECRET이 환경 변수에 정의되지 않았습니다.",
-      INVALID_OR_EXPIRED_TOKEN: "유효하지 않거나 만료된 토큰입니다",
-      JWT_VERIFICATION_FAILED: "JWT 토큰 검증에 실패했습니다.",
+      SECRET_NOT_DEFINED: "JWT_SECRET is not defined in environment variables",
+      INVALID_OR_EXPIRED_TOKEN: "Invalid or expired token",
+      JWT_VERIFICATION_FAILED: "JWT token verification failed",
+    },
+    AUTH: {
+      ID_TOKEN_REQUIRED: "ID token is required",
+      AUTHENTICATION_FAILED: "Authentication failed",
     },
   },
   SUCCESS: {
     DATABASE: {
-      CONNECTION_SUCCESS: "MongoDB 연결 성공",
+      CONNECTION_SUCCESS: "MongoDB connected successfully",
     },
   },
   TOKEN: {
