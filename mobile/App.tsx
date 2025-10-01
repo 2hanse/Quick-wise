@@ -10,26 +10,33 @@ import BottomNavigation from "./src/components/BottomNavigation";
 import { STORAGE_KEYS } from "./src/constants/storage";
 import { TabName } from "./src/constants/navigation";
 import { configureGoogleSignIn } from "./src/services/authService";
+import { hasValidToken } from "./src/utils/tokenStorage";
+import { APP_MESSAGES } from "./src/constants/app";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentTab, setCurrentTab] = useState<TabName>("Home");
 
   useEffect(() => {
     configureGoogleSignIn();
-    checkOnboardingStatus();
+    checkAppStatus();
   }, []);
 
-  const checkOnboardingStatus = async () => {
+  const checkAppStatus = async () => {
     try {
-      const completed = await AsyncStorage.getItem(
-        STORAGE_KEYS.ONBOARDING_COMPLETED
-      );
-      setHasCompletedOnboarding(completed === "true");
+      const [onboardingCompleted, tokenExists] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED),
+        hasValidToken(),
+      ]);
+
+      setHasCompletedOnboarding(onboardingCompleted === "true");
+      setIsLoggedIn(tokenExists);
     } catch (error) {
-      console.error("Failed to check onboarding status:", error);
+      console.error(APP_MESSAGES.ERROR.CHECK_APP_STATUS_FAILED, error);
     }
   };
 
@@ -46,7 +53,7 @@ function App() {
       setShowOnboarding(false);
       setHasCompletedOnboarding(true);
     } catch (error) {
-      console.error("Failed to save onboarding status:", error);
+      console.error(APP_MESSAGES.ERROR.SAVE_ONBOARDING_STATUS_FAILED, error);
     }
   }, []);
 
