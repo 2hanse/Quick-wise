@@ -13,8 +13,9 @@ import {
 import { signInWithGoogle } from "../../services/authService";
 import backendAuthService from "../../services/backendAuthService";
 import { saveTokens } from "../../utils/tokenStorage";
+import { OnboardingLoginProps } from "../../types/onboarding";
 
-const OnboardingLogin = () => {
+const OnboardingLogin = ({ onLoginComplete }: OnboardingLoginProps) => {
   const [loading, setLoading] = useState(false);
 
   const handleGoogleLogin = async () => {
@@ -41,6 +42,10 @@ const OnboardingLogin = () => {
         backendResult.refreshToken,
         backendResult.user
       );
+
+      if (onLoginComplete) {
+        onLoginComplete();
+      }
 
       Alert.alert(
         LOGIN_MESSAGES.SUCCESS_TITLE,

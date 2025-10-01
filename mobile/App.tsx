@@ -6,6 +6,7 @@ import SplashScreen from "./src/components/SplashScreen";
 import OnboardingContainer from "./src/components/onboarding/OnboardingContainer";
 import MainPage from "./src/components/mainscreen/MainScreen";
 import SettingScreen from "./src/components/setting/SettingScreen";
+import LoginRequiredScreen from "./src/components/LoginRequiredScreen";
 import BottomNavigation from "./src/components/BottomNavigation";
 import { STORAGE_KEYS } from "./src/constants/storage";
 import { TabName } from "./src/constants/navigation";
@@ -17,7 +18,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showLoginOnly, setShowLoginOnly] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentTab, setCurrentTab] = useState<TabName>("Home");
 
@@ -44,10 +44,8 @@ function App() {
     setIsLoading(false);
     if (!hasCompletedOnboarding) {
       setShowOnboarding(true);
-    } else if (!isLoggedIn) {
-      setShowLoginOnly(true);
     }
-  }, [hasCompletedOnboarding, isLoggedIn]);
+  }, [hasCompletedOnboarding]);
 
   const handleOnboardingComplete = useCallback(async () => {
     try {
@@ -60,7 +58,6 @@ function App() {
   }, []);
 
   const handleLoginComplete = useCallback(() => {
-    setShowLoginOnly(false);
     setIsLoggedIn(true);
   }, []);
 
@@ -77,13 +74,8 @@ function App() {
       return <OnboardingContainer onComplete={handleOnboardingComplete} />;
     }
 
-    if (showLoginOnly) {
-      return (
-        <OnboardingContainer
-          onComplete={handleLoginComplete}
-          skipToLogin={true}
-        />
-      );
+    if (!isLoggedIn) {
+      return <LoginRequiredScreen onLoginComplete={handleLoginComplete} />;
     }
 
     switch (currentTab) {
@@ -96,7 +88,7 @@ function App() {
     }
   };
 
-  const showBottomNavigation = !isLoading && !showOnboarding && !showLoginOnly;
+  const showBottomNavigation = !isLoading && !showOnboarding && !isLoggedIn;
 
   return (
     <GestureHandlerRootView className="flex-1">
