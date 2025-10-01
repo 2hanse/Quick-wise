@@ -18,7 +18,7 @@ const CALENDAR_CONSTANTS = {
       SELECTED_DAY_BG: "#667eea",
       SELECTED_DAY_TEXT: "#ffffff",
       TODAY_TEXT: "#667eea",
-      TODAY_BG: "#e0e7ff",
+      TRANSPARENT: "transparent",
     },
     FONT_SIZES: {
       MONTH: 18,

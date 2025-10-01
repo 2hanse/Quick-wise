@@ -5,9 +5,17 @@ import { Calendar, DateData } from "react-native-calendars";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 import mockCalendar from "../../mocks/mockCalendar";
 
+const getTodayString = () => {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const CalendarScreen = () => {
   const { THEME, CATEGORY_COLORS } = CALENDAR_CONSTANTS;
-  const today = new Date().toISOString().split("T")[0];
+  const today = getTodayString();
   const [selectedDate, setSelectedDate] = useState(today);
 
   const markedDates = useMemo(() => {
@@ -17,7 +25,6 @@ const CalendarScreen = () => {
         dots?: Array<{ color: string }>;
         selected?: boolean;
         selectedColor?: string;
-        marked?: boolean;
       }
     > = {};
 
@@ -34,14 +41,6 @@ const CalendarScreen = () => {
       }
     });
 
-    if (marked[today] && today !== selectedDate) {
-      marked[today].marked = true;
-    } else if (today !== selectedDate) {
-      marked[today] = {
-        marked: true,
-      };
-    }
-
     if (marked[selectedDate]) {
       marked[selectedDate].selected = true;
       marked[selectedDate].selectedColor = THEME.COLORS.SELECTED_DAY_BG;
@@ -53,7 +52,7 @@ const CalendarScreen = () => {
     }
 
     return marked;
-  }, [CATEGORY_COLORS, selectedDate, today, THEME.COLORS.SELECTED_DAY_BG]);
+  }, [CATEGORY_COLORS, selectedDate, THEME.COLORS.SELECTED_DAY_BG]);
 
   const handleDayPress = (day: DateData) => {
     setSelectedDate(day.dateString);
@@ -74,7 +73,7 @@ const CalendarScreen = () => {
               selectedDayBackgroundColor: THEME.COLORS.SELECTED_DAY_BG,
               selectedDayTextColor: THEME.COLORS.SELECTED_DAY_TEXT,
               todayTextColor: THEME.COLORS.TODAY_TEXT,
-              todayBackgroundColor: THEME.COLORS.TODAY_BG,
+              todayBackgroundColor: THEME.COLORS.TRANSPARENT,
               dayTextColor: THEME.COLORS.TEXT_PRIMARY,
               textDisabledColor: THEME.COLORS.TEXT_DISABLED,
               monthTextColor: THEME.COLORS.TEXT_PRIMARY,
