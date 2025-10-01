@@ -2,37 +2,50 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 import SplashScreen from "./src/components/SplashScreen";
 import OnboardingContainer from "./src/components/onboarding/OnboardingContainer";
 import MainPage from "./src/components/mainscreen/MainScreen";
 import SettingScreen from "./src/components/setting/SettingScreen";
+import LoginRequiredScreen from "./src/components/LoginRequiredScreen";
 import BottomNavigation from "./src/components/BottomNavigation";
 import { STORAGE_KEYS } from "./src/constants/storage";
 import { TabName } from "./src/constants/navigation";
+import { configureGoogleSignIn } from "./src/services/authService";
+import { APP_MESSAGES } from "./src/constants/app";
+import useAuthStore from "./src/stores/authStore";
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAppLoading, setIsAppLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentTab, setCurrentTab] = useState<TabName>("Home");
 
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const isAuthLoading = useAuthStore((state) => state.isLoading);
+  const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+
   useEffect(() => {
-    checkOnboardingStatus();
+    configureGoogleSignIn();
+    checkAppStatus();
   }, []);
 
-  const checkOnboardingStatus = async () => {
+  const checkAppStatus = async () => {
     try {
-      const completed = await AsyncStorage.getItem(
+      const onboardingCompleted = await AsyncStorage.getItem(
         STORAGE_KEYS.ONBOARDING_COMPLETED
       );
-      setHasCompletedOnboarding(completed === "true");
+
+      setHasCompletedOnboarding(onboardingCompleted === "true");
+      await checkAuthStatus();
     } catch (error) {
-      console.error("Failed to check onboarding status:", error);
+      console.error(APP_MESSAGES.ERROR.CHECK_APP_STATUS_FAILED, error);
+    } finally {
+      setIsAppLoading(false);
     }
   };
 
   const handleSplashComplete = useCallback(() => {
-    setIsLoading(false);
     if (!hasCompletedOnboarding) {
       setShowOnboarding(true);
     }
@@ -44,7 +57,7 @@ function App() {
       setShowOnboarding(false);
       setHasCompletedOnboarding(true);
     } catch (error) {
-      console.error("Failed to save onboarding status:", error);
+      console.error(APP_MESSAGES.ERROR.SAVE_ONBOARDING_STATUS_FAILED, error);
     }
   }, []);
 
@@ -53,12 +66,16 @@ function App() {
   };
 
   const renderScreen = () => {
-    if (isLoading) {
+    if (isAppLoading || isAuthLoading) {
       return <SplashScreen onComplete={handleSplashComplete} />;
     }
 
     if (showOnboarding) {
       return <OnboardingContainer onComplete={handleOnboardingComplete} />;
+    }
+
+    if (!isLoggedIn) {
+      return <LoginRequiredScreen />;
     }
 
     switch (currentTab) {
@@ -71,7 +88,8 @@ function App() {
     }
   };
 
-  const showBottomNavigation = !isLoading && !showOnboarding;
+  const showBottomNavigation =
+    !isAppLoading && !isAuthLoading && !showOnboarding && isLoggedIn;
 
   return (
     <GestureHandlerRootView className="flex-1">
@@ -84,6 +102,7 @@ function App() {
           />
         )}
       </View>
+      <Toast />
     </GestureHandlerRootView>
   );
 }

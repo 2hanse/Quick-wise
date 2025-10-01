@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   ScrollView,
@@ -24,9 +24,13 @@ const { width: screenWidth } = Dimensions.get("window");
 
 interface OnboardingContainerProps {
   onComplete: () => void;
+  skipToLogin?: boolean;
 }
 
-const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
+const OnboardingContainer = ({
+  onComplete,
+  skipToLogin = false,
+}: OnboardingContainerProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -39,6 +43,15 @@ const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
       key: SCREEN_KEYS.SCREEN_4,
     },
   ];
+
+  useEffect(() => {
+    if (skipToLogin && scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({
+        x: 2 * screenWidth,
+        animated: false,
+      });
+    }
+  }, [skipToLogin]);
 
   const handleScroll = (event: ScrollEvent) => {
     const contentOffset = event.nativeEvent.contentOffset;
@@ -58,6 +71,10 @@ const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
   };
 
   const goToPrevious = () => {
+    if (skipToLogin && currentIndex === 2) {
+      return;
+    }
+
     if (currentIndex > 0) {
       const prevIndex = currentIndex - 1;
       scrollViewRef.current?.scrollTo({
@@ -67,6 +84,8 @@ const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
       setCurrentIndex(prevIndex);
     }
   };
+
+  const showPreviousButton = skipToLogin ? currentIndex > 2 : currentIndex > 0;
 
   return (
     <>
@@ -85,6 +104,7 @@ const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
             scrollEventThrottle={SCROLL_EVENT_THROTTLE}
             className="flex-1"
             bounces={false}
+            scrollEnabled={!skipToLogin || currentIndex > 2}
           >
             {screens.map((screen) => (
               <View
@@ -97,7 +117,7 @@ const OnboardingContainer = ({ onComplete }: OnboardingContainerProps) => {
             ))}
           </ScrollView>
 
-          {currentIndex > 0 && (
+          {showPreviousButton && (
             <TouchableOpacity
               onPress={goToPrevious}
               className="absolute left-4 top-1/2 -translate-y-1/2 p-2 z-10"

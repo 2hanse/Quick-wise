@@ -2,18 +2,14 @@
   "expo": {
     "name": "QuickWise",
     "slug": "quickwise",
+    "scheme": "com.anonymous.quickwise",
+    "platforms": ["android"],
     "main": "./App.tsx",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "backgroundColor": "#ffffff"
-    },
     "assetBundlePatterns": ["**/*"],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF"
@@ -23,11 +19,12 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-dev-client"],
+    "plugins": ["expo-dev-client", "@react-native-google-signin/google-signin"],
     "extra": {
       "eas": {
         "projectId": "b7bb53d5-7805-422a-951e-2c61f6751e29"
       }
-    }
+    },
+    "owner": "leehanse"
   }
 }

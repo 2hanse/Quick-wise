@@ -1,5 +1,5 @@
-import React from "react";
-import { Image, View, Text } from "react-native";
+import React, { useState } from "react";
+import { TouchableOpacity, Image, View, Text, Alert } from "react-native";
 import {
   HEADER_TITLE,
   INTERLOCK_REASON,
@@ -7,10 +7,60 @@ import {
   REASON_ITEMS,
   PRIVACY_TEXT,
   GOOGLE_BUTTON,
+  LOGIN_MESSAGES,
   PROTECT_TEXT,
 } from "../../constants/onboarding";
+import { signInWithGoogle } from "../../services/authService";
+import backendAuthService from "../../services/backendAuthService";
+import { OnboardingLoginProps } from "../../types/onboarding";
+import useAuthStore from "../../stores/authStore";
 
-const OnboardingLogin = () => {
+const OnboardingLogin = ({ onLoginComplete }: OnboardingLoginProps) => {
+  const [loading, setLoading] = useState(false);
+  const login = useAuthStore((state) => state.login);
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+
+    try {
+      const googleResult = await signInWithGoogle();
+
+      if (googleResult.type === "cancel") {
+        setLoading(false);
+        return;
+      }
+
+      if (!googleResult.tokens?.idToken) {
+        throw new Error(LOGIN_MESSAGES.ERROR_NO_ID_TOKEN);
+      }
+
+      const backendResult = await backendAuthService.loginWithBackend(
+        googleResult.tokens.idToken
+      );
+
+      await login(
+        backendResult.accessToken,
+        backendResult.refreshToken,
+        backendResult.user
+      );
+
+      if (onLoginComplete) {
+        onLoginComplete();
+      }
+
+      Alert.alert(
+        LOGIN_MESSAGES.SUCCESS_TITLE,
+        LOGIN_MESSAGES.SUCCESS_MESSAGE(backendResult.user.name)
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : LOGIN_MESSAGES.ERROR_UNKNOWN;
+      Alert.alert(LOGIN_MESSAGES.ERROR_TITLE, errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <View className="flex-1 bg-white">
       <View className="flex-1 bg-white justify-center items-center mt-2 px-8 py-12 flex-col">
@@ -90,7 +140,12 @@ const OnboardingLogin = () => {
           </View>
         </View>
 
-        <View className="w-full mb-8 bg-white border border-gray-300 h-14 rounded-lg flex-row items-center justify-center shadow-sm">
+        <TouchableOpacity
+          className="w-full mb-8 bg-white border border-gray-300 h-14 rounded-lg flex-row items-center justify-center shadow-sm"
+          onPress={handleGoogleLogin}
+          activeOpacity={0.7}
+          disabled={loading}
+        >
           <View className="w-5 h-5 flex-shrink-0 mr-3 items-center justify-center">
             <Image
               source={require("../../../assets/google-logo.png")}
@@ -98,9 +153,9 @@ const OnboardingLogin = () => {
             />
           </View>
           <Text className="text-gray-700 text-base font-medium">
-            {GOOGLE_BUTTON.googleSignIn}
+            {loading ? GOOGLE_BUTTON.loading : GOOGLE_BUTTON.googleSignIn}
           </Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

@@ -22,5 +22,18 @@ interface OnboardingScreen {
   key: string;
 }
 
+interface OnboardingLoginProps {
+  onLoginComplete?: () => void;
+}
+
+interface LoginRequiredScreenProps {
+  onLoginComplete?: () => void;
+}
 export type { iconFamily };
-export { Step, ScrollEvent, OnboardingScreen };
+export {
+  Step,
+  ScrollEvent,
+  OnboardingScreen,
+  OnboardingLoginProps,
+  LoginRequiredScreenProps,
+};

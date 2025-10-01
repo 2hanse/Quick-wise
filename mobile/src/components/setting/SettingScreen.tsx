@@ -1,10 +1,17 @@
 import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SETTING_CONSTANTS from "../../constants/setting";
-import mockSetting from "../../mocks/mockSetting";
+import useAuthStore from "../../stores/authStore";
 
 const SettingScreen = () => {
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView className="flex-1 px-4 pt-6 pb-24">
@@ -23,7 +30,7 @@ const SettingScreen = () => {
                 {SETTING_CONSTANTS.TEXT.NAME_LABEL}
               </Text>
               <Text className="text-base text-gray-800 font-medium">
-                {mockSetting.name}
+                {user?.name}
               </Text>
             </View>
 
@@ -32,17 +39,21 @@ const SettingScreen = () => {
                 {SETTING_CONSTANTS.TEXT.EMAIL_LABEL}
               </Text>
               <Text className="text-base text-gray-800 font-medium">
-                {mockSetting.email}
+                {user?.email}
               </Text>
             </View>
           </View>
         </View>
 
-        <View className="bg-red-500 rounded-xl p-4 items-center">
+        <TouchableOpacity
+          className="bg-red-500 rounded-xl p-4 items-center"
+          onPress={handleLogout}
+          activeOpacity={0.7}
+        >
           <Text className="text-white text-base font-semibold">
             {SETTING_CONSTANTS.TEXT.LOGOUT_BUTTON}
           </Text>
-        </View>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
