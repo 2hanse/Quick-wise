@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 import SplashScreen from "./src/components/SplashScreen";
 import OnboardingContainer from "./src/components/onboarding/OnboardingContainer";
 import MainPage from "./src/components/mainscreen/MainScreen";
@@ -101,6 +102,7 @@ function App() {
           />
         )}
       </View>
+      <Toast />
     </GestureHandlerRootView>
   );
 }

@@ -55,6 +55,12 @@ interface AuthState {
   checkAuthStatus: () => Promise<void>;
 }
 
+interface RefreshTokenError {
+  code: "REFRESH_FAILED" | "NO_REFRESH_TOKEN" | "NETWORK_ERROR";
+  message: string;
+  originalError?: unknown;
+}
+
 export {
   GoogleUser,
   GoogleTokens,
@@ -64,4 +70,5 @@ export {
   BackendRefreshResponse,
   BackendMeResponse,
   AuthState,
+  RefreshTokenError,
 };

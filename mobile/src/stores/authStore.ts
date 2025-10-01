@@ -17,8 +17,8 @@ const useAuthStore = create<AuthState>((set) => ({
 
   setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
 
-  login: async (accessToken, reefreshToken, user) => {
-    await saveTokensToStorage(accessToken, reefreshToken, user);
+  login: async (accessToken, refreshToken, user) => {
+    await saveTokensToStorage(accessToken, refreshToken, user);
     set({ user, isLoggedIn: true });
   },
 

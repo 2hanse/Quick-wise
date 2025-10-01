@@ -1,6 +1,8 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 import API_CONSTANTS from "../constants/api";
+import { RefreshTokenError } from "../types/auth";
 
 const apiClient = axios.create({
   baseURL: API_CONSTANTS.BASE_URL,
@@ -41,14 +43,19 @@ apiClient.interceptors.response.use(
         );
 
         if (!refreshToken) {
-          throw new Error(API_CONSTANTS.ERROR_MESSAGES.NO_REFRESH_TOKEN);
+          const noTokenError: RefreshTokenError = {
+            code: "NO_REFRESH_TOKEN",
+            message: API_CONSTANTS.TOKEN_REFRESH.NO_REFRESH_TOKEN,
+            originalError: new Error(
+              API_CONSTANTS.ERROR_MESSAGES.NO_REFRESH_TOKEN
+            ),
+          };
+          throw noTokenError;
         }
 
         const response = await axios.post(
           `${API_CONSTANTS.BASE_URL}${API_CONSTANTS.ENDPOINTS.AUTH.REFRESH}`,
-          {
-            refreshToken,
-          }
+          { refreshToken }
         );
 
         const { accessToken, refreshToken: newRefreshToken } = response.data;
@@ -71,6 +78,16 @@ apiClient.interceptors.response.use(
           API_CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN,
           API_CONSTANTS.STORAGE_KEYS.USER,
         ]);
+
+        Toast.show({
+          type: API_CONSTANTS.TOAST.ERROR_TYPE,
+          text1: API_CONSTANTS.TOKEN_REFRESH.FAILED_TITLE,
+          text2: API_CONSTANTS.TOKEN_REFRESH.FAILED_MESSAGE,
+          visibilityTime: API_CONSTANTS.TOAST.DURATION,
+          position: API_CONSTANTS.TOAST.POSITION,
+          topOffset: API_CONSTANTS.TOAST.TOP_OFFSET,
+        });
+
         return Promise.reject(refreshError);
       }
     }
