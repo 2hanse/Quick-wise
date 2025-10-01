@@ -1,17 +1,39 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar } from "react-native-calendars";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
+import mockCalendar from "../../mocks/mockCalendar";
 
 const CalendarScreen = () => {
-  const { THEME } = CALENDAR_CONSTANTS;
+  const { THEME, CATEGORY_COLORS } = CALENDAR_CONSTANTS;
+
+  const markedDates = useMemo(() => {
+    const marked: Record<string, { dots: Array<{ color: string }> }> = {};
+
+    mockCalendar.forEach((event) => {
+      const dateKey = event.startTime.split("T")[0];
+      const color = CATEGORY_COLORS[event.category];
+
+      if (marked[dateKey]) {
+        marked[dateKey].dots?.push({ color });
+      } else {
+        marked[dateKey] = {
+          dots: [{ color }],
+        };
+      }
+    });
+
+    return marked;
+  }, [CATEGORY_COLORS]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1">
         <View className="bg-white rounded-2xl mx-3 mt-3 overflow-hidden border border-gray-200">
           <Calendar
+            markingType="multi-dot"
+            markedDates={markedDates}
             theme={{
               backgroundColor: THEME.COLORS.BACKGROUND,
               calendarBackground: THEME.COLORS.BACKGROUND,

@@ -1,4 +1,14 @@
+import { EventCategory } from "../types/calendar";
+
 const CALENDAR_CONSTANTS = {
+  CATEGORY_COLORS: {
+    [EventCategory.MEETING]: "#ef4444",
+    [EventCategory.PRESENTATION]: "#f59e0b",
+  },
+  CATEGORY_LABELS: {
+    [EventCategory.MEETING]: "회의",
+    [EventCategory.PRESENTATION]: "발표",
+  },
   THEME: {
     COLORS: {
       BACKGROUND: "#ffffff",
