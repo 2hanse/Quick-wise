@@ -9,6 +9,7 @@ const AUTH_MESSAGES = {
     BACKEND_LOGIN_FAILED: "Backend login failed",
     TOKEN_REFRESH_FAILED: "Token refresh failed",
     GET_USER_INFO_FAILED: "Failed to get user info",
+    CHECK_AUTH_STATUS_FAILED: "Failed to check auth status",
   },
   UI: {
     LOGIN_ERROR_DEFAULT: "로그인에 실패했습니다. 다시 시도해주세요.",

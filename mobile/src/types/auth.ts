@@ -40,6 +40,21 @@ interface BackendMeResponse {
   user: BackendUser;
 }
 
+interface AuthState {
+  user: BackendUser | null;
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  setUser: (user: BackendUser | null) => void;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
+  login: (
+    accessToken: string,
+    refreshToken: string,
+    user: BackendUser
+  ) => Promise<void>;
+  logout: () => Promise<void>;
+  checkAuthStatus: () => Promise<void>;
+}
+
 export {
   GoogleUser,
   GoogleTokens,
@@ -48,4 +63,5 @@ export {
   BackendLoginResponse,
   BackendRefreshResponse,
   BackendMeResponse,
+  AuthState,
 };
