@@ -94,6 +94,15 @@ const PRIVACY_TEXT =
 
 const GOOGLE_BUTTON = {
   googleSignIn: "Sign in with Google",
+  loading: "로그인 중...",
+};
+
+const LOGIN_MESSAGES = {
+  SUCCESS_TITLE: "로그인 성공",
+  SUCCESS_MESSAGE: (name: string) => `환영합니다, ${name}님!`,
+  ERROR_TITLE: "로그인 실패",
+  ERROR_NO_ID_TOKEN: "Google ID Token을 받지 못했습니다.",
+  ERROR_UNKNOWN: "알 수 없는 오류가 발생했습니다.",
 };
 
 const REASON_NOTIFICATION = "알림이 필요한 이유";
@@ -140,6 +149,7 @@ export {
   REASON_ITEMS,
   PRIVACY_TEXT,
   GOOGLE_BUTTON,
+  LOGIN_MESSAGES,
   REASON_NOTIFICATION,
   NOTIFICATION_SECTION,
   SETTING_NOTIFICATION,
