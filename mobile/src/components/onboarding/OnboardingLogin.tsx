@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { TouchableOpacity, Image, View, Text, Alert } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   HEADER_TITLE,
   INTERLOCK_REASON,
@@ -13,7 +12,7 @@ import {
 } from "../../constants/onboarding";
 import { signInWithGoogle } from "../../services/authService";
 import backendAuthService from "../../services/backendAuthService";
-import API_CONSTANTS from "../../constants/api";
+import { saveTokens } from "../../utils/tokenStorage";
 
 const OnboardingLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -37,11 +36,11 @@ const OnboardingLogin = () => {
         googleResult.tokens.idToken
       );
 
-      await AsyncStorage.multiSet([
-        [API_CONSTANTS.STORAGE_KEYS.ACCESS_TOKEN, backendResult.accessToken],
-        [API_CONSTANTS.STORAGE_KEYS.REFRESH_TOKEN, backendResult.refreshToken],
-        [API_CONSTANTS.STORAGE_KEYS.USER, JSON.stringify(backendResult.user)],
-      ]);
+      await saveTokens(
+        backendResult.accessToken,
+        backendResult.refreshToken,
+        backendResult.user
+      );
 
       Alert.alert(
         LOGIN_MESSAGES.SUCCESS_TITLE,
