@@ -1,6 +1,13 @@
 import jwt from "jsonwebtoken";
 import constants from "../constants/messages";
 
+const ACCESS_EXPIRATION = constants.TOKEN.ACCESS_TOKEN_EXPIRATION;
+const REFRESH_EXPIRATION = constants.TOKEN.REFRESH_TOKEN_EXPIRATION;
+
+interface TokenPayload {
+  userId: string;
+}
+
 const getJwtSecret = (): string => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -9,29 +16,21 @@ const getJwtSecret = (): string => {
   return secret;
 };
 
-const JWT_SECRET = getJwtSecret();
-const ACCESS_EXPIRATION = constants.TOKEN.ACCESS_TOKEN_EXPIRATION;
-const REFRESH_EXPIRATION = constants.TOKEN.REFRESH_TOKEN_EXPIRATION;
-
-interface TokenPayload {
-  userId: string;
-}
-
 const generateAccessToken = (userId: string): string => {
-  return jwt.sign({ userId }, JWT_SECRET, {
+  return jwt.sign({ userId }, getJwtSecret(), {
     expiresIn: ACCESS_EXPIRATION,
   });
 };
 
 const generateRefreshToken = (userId: string): string => {
-  return jwt.sign({ userId }, JWT_SECRET, {
+  return jwt.sign({ userId }, getJwtSecret(), {
     expiresIn: REFRESH_EXPIRATION,
   });
 };
 
 const verifyToken = (token: string): TokenPayload => {
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as TokenPayload;
+    const decoded = jwt.verify(token, getJwtSecret()) as TokenPayload;
     return decoded;
   } catch (error) {
     console.error(

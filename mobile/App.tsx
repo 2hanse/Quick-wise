@@ -9,6 +9,7 @@ import SettingScreen from "./src/components/setting/SettingScreen";
 import BottomNavigation from "./src/components/BottomNavigation";
 import { STORAGE_KEYS } from "./src/constants/storage";
 import { TabName } from "./src/constants/navigation";
+import { configureGoogleSignIn } from "./src/services/authService";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +18,7 @@ function App() {
   const [currentTab, setCurrentTab] = useState<TabName>("Home");
 
   useEffect(() => {
+    configureGoogleSignIn();
     checkOnboardingStatus();
   }, []);
 
