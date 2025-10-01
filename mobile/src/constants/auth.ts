@@ -6,6 +6,14 @@ const AUTH_MESSAGES = {
     CHECK_STATUS: "Check sign-in status error",
     GET_CURRENT_USER: "Get current user error",
     SILENT_SIGN_IN: "Silent sign-in error",
+    BACKEND_LOGIN_FAILED: "Backend login failed",
+    TOKEN_REFRESH_FAILED: "Token refresh failed",
+    GET_USER_INFO_FAILED: "Failed to get user info",
+  },
+  UI: {
+    LOGIN_ERROR_DEFAULT: "로그인에 실패했습니다. 다시 시도해주세요.",
+    TOKEN_REFRESH_ERROR_DEFAULT: "토큰 갱신에 실패했습니다.",
+    GET_USER_INFO_ERROR_DEFAULT: "사용자 정보를 가져올 수 없습니다.",
   },
 };
 

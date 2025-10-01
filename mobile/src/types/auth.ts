@@ -18,4 +18,34 @@ interface GoogleAuthResult {
   user?: GoogleUser;
 }
 
-export { GoogleUser, GoogleTokens, GoogleAuthResult };
+interface BackendUser {
+  id: string;
+  email: string;
+  name: string;
+  createdAt?: string;
+}
+
+interface BackendLoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: BackendUser;
+}
+
+interface BackendRefreshResponse {
+  accessToken: string;
+  refreshToken: string;
+}
+
+interface BackendMeResponse {
+  user: BackendUser;
+}
+
+export {
+  GoogleUser,
+  GoogleTokens,
+  GoogleAuthResult,
+  BackendUser,
+  BackendLoginResponse,
+  BackendRefreshResponse,
+  BackendMeResponse,
+};
