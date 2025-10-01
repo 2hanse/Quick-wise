@@ -11,15 +11,17 @@ import BottomNavigation from "./src/components/BottomNavigation";
 import { STORAGE_KEYS } from "./src/constants/storage";
 import { TabName } from "./src/constants/navigation";
 import { configureGoogleSignIn } from "./src/services/authService";
-import { hasValidToken } from "./src/utils/tokenStorage";
 import { APP_MESSAGES } from "./src/constants/app";
+import useAuthStore from "./src/stores/authStore";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentTab, setCurrentTab] = useState<TabName>("Home");
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
 
   useEffect(() => {
     configureGoogleSignIn();
@@ -28,13 +30,12 @@ function App() {
 
   const checkAppStatus = async () => {
     try {
-      const [onboardingCompleted, tokenExists] = await Promise.all([
-        AsyncStorage.getItem(STORAGE_KEYS.ONBOARDING_COMPLETED),
-        hasValidToken(),
-      ]);
+      const onboardingCompleted = await AsyncStorage.getItem(
+        STORAGE_KEYS.ONBOARDING_COMPLETED
+      );
 
       setHasCompletedOnboarding(onboardingCompleted === "true");
-      setIsLoggedIn(tokenExists);
+      await checkAuthStatus();
     } catch (error) {
       console.error(APP_MESSAGES.ERROR.CHECK_APP_STATUS_FAILED, error);
     }
@@ -57,10 +58,6 @@ function App() {
     }
   }, []);
 
-  const handleLoginComplete = useCallback(() => {
-    setIsLoggedIn(true);
-  }, []);
-
   const handleTabPress = (tab: TabName) => {
     setCurrentTab(tab);
   };
@@ -75,7 +72,7 @@ function App() {
     }
 
     if (!isLoggedIn) {
-      return <LoginRequiredScreen onLoginComplete={handleLoginComplete} />;
+      return <LoginRequiredScreen />;
     }
 
     switch (currentTab) {

@@ -12,11 +12,12 @@ import {
 } from "../../constants/onboarding";
 import { signInWithGoogle } from "../../services/authService";
 import backendAuthService from "../../services/backendAuthService";
-import { saveTokens } from "../../utils/tokenStorage";
 import { OnboardingLoginProps } from "../../types/onboarding";
+import useAuthStore from "../../stores/authStore";
 
 const OnboardingLogin = ({ onLoginComplete }: OnboardingLoginProps) => {
   const [loading, setLoading] = useState(false);
+  const login = useAuthStore((state) => state.login);
 
   const handleGoogleLogin = async () => {
     setLoading(true);
@@ -37,7 +38,7 @@ const OnboardingLogin = ({ onLoginComplete }: OnboardingLoginProps) => {
         googleResult.tokens.idToken
       );
 
-      await saveTokens(
+      await login(
         backendResult.accessToken,
         backendResult.refreshToken,
         backendResult.user

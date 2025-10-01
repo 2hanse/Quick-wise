@@ -27,7 +27,7 @@ interface OnboardingLoginProps {
 }
 
 interface LoginRequiredScreenProps {
-  onLoginComplete: () => void;
+  onLoginComplete?: () => void;
 }
 export type { iconFamily };
 export {
