@@ -12,4 +12,9 @@ interface CalendarEvent {
   category: EventCategory;
 }
 
-export { EventCategory, CalendarEvent };
+interface CalendarScreenProps {
+  selectedDate: string;
+  onDateSelect: (date: string) => void;
+}
+
+export { EventCategory, CalendarEvent, CalendarScreenProps };

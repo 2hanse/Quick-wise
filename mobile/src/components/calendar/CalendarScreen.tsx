@@ -1,15 +1,24 @@
-import React, { useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Calendar } from "react-native-calendars";
+import { Calendar, DateData } from "react-native-calendars";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 import mockCalendar from "../../mocks/mockCalendar";
 
 const CalendarScreen = () => {
   const { THEME, CATEGORY_COLORS } = CALENDAR_CONSTANTS;
+  const today = new Date().toISOString().split("T")[0];
+  const [selectedDate, setSelectedDate] = useState(today);
 
   const markedDates = useMemo(() => {
-    const marked: Record<string, { dots: Array<{ color: string }> }> = {};
+    const marked: Record<
+      string,
+      {
+        dots?: Array<{ color: string }>;
+        selected?: boolean;
+        selectedColor?: string;
+      }
+    > = {};
 
     mockCalendar.forEach((event) => {
       const dateKey = event.startTime.split("T")[0];
@@ -24,8 +33,22 @@ const CalendarScreen = () => {
       }
     });
 
+    if (marked[selectedDate]) {
+      marked[selectedDate].selected = true;
+      marked[selectedDate].selectedColor = THEME.COLORS.SELECTED_DAY_BG;
+    } else {
+      marked[selectedDate] = {
+        selected: true,
+        selectedColor: THEME.COLORS.SELECTED_DAY_BG,
+      };
+    }
+
     return marked;
-  }, [CATEGORY_COLORS]);
+  }, [CATEGORY_COLORS, selectedDate, THEME.COLORS.SELECTED_DAY_BG]);
+
+  const handleDayPress = (day: DateData) => {
+    setSelectedDate(day.dateString);
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -34,6 +57,7 @@ const CalendarScreen = () => {
           <Calendar
             markingType="multi-dot"
             markedDates={markedDates}
+            onDayPress={handleDayPress}
             theme={{
               backgroundColor: THEME.COLORS.BACKGROUND,
               calendarBackground: THEME.COLORS.BACKGROUND,
