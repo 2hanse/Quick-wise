@@ -85,7 +85,7 @@ function App() {
     }
   };
 
-  const showBottomNavigation = !isLoading && !showOnboarding && !isLoggedIn;
+  const showBottomNavigation = !isLoading && !showOnboarding && isLoggedIn;
 
   return (
     <GestureHandlerRootView className="flex-1">
