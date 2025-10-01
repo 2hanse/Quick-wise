@@ -15,12 +15,13 @@ import { APP_MESSAGES } from "./src/constants/app";
 import useAuthStore from "./src/stores/authStore";
 
 function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAppLoading, setIsAppLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentTab, setCurrentTab] = useState<TabName>("Home");
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const isAuthLoading = useAuthStore((state) => state.isLoading);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
 
   useEffect(() => {
@@ -38,11 +39,12 @@ function App() {
       await checkAuthStatus();
     } catch (error) {
       console.error(APP_MESSAGES.ERROR.CHECK_APP_STATUS_FAILED, error);
+    } finally {
+      setIsAppLoading(false);
     }
   };
 
   const handleSplashComplete = useCallback(() => {
-    setIsLoading(false);
     if (!hasCompletedOnboarding) {
       setShowOnboarding(true);
     }
@@ -63,7 +65,7 @@ function App() {
   };
 
   const renderScreen = () => {
-    if (isLoading) {
+    if (isAppLoading || isAuthLoading) {
       return <SplashScreen onComplete={handleSplashComplete} />;
     }
 
@@ -85,7 +87,8 @@ function App() {
     }
   };
 
-  const showBottomNavigation = !isLoading && !showOnboarding && isLoggedIn;
+  const showBottomNavigation =
+    !isAppLoading && !isAuthLoading && !showOnboarding && isLoggedIn;
 
   return (
     <GestureHandlerRootView className="flex-1">
