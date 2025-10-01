@@ -17,6 +17,7 @@ const CalendarScreen = () => {
         dots?: Array<{ color: string }>;
         selected?: boolean;
         selectedColor?: string;
+        marked?: boolean;
       }
     > = {};
 
@@ -33,6 +34,14 @@ const CalendarScreen = () => {
       }
     });
 
+    if (marked[today] && today !== selectedDate) {
+      marked[today].marked = true;
+    } else if (today !== selectedDate) {
+      marked[today] = {
+        marked: true,
+      };
+    }
+
     if (marked[selectedDate]) {
       marked[selectedDate].selected = true;
       marked[selectedDate].selectedColor = THEME.COLORS.SELECTED_DAY_BG;
@@ -44,7 +53,7 @@ const CalendarScreen = () => {
     }
 
     return marked;
-  }, [CATEGORY_COLORS, selectedDate, THEME.COLORS.SELECTED_DAY_BG]);
+  }, [CATEGORY_COLORS, selectedDate, today, THEME.COLORS.SELECTED_DAY_BG]);
 
   const handleDayPress = (day: DateData) => {
     setSelectedDate(day.dateString);
@@ -65,6 +74,7 @@ const CalendarScreen = () => {
               selectedDayBackgroundColor: THEME.COLORS.SELECTED_DAY_BG,
               selectedDayTextColor: THEME.COLORS.SELECTED_DAY_TEXT,
               todayTextColor: THEME.COLORS.TODAY_TEXT,
+              todayBackgroundColor: THEME.COLORS.TODAY_BG,
               dayTextColor: THEME.COLORS.TEXT_PRIMARY,
               textDisabledColor: THEME.COLORS.TEXT_DISABLED,
               monthTextColor: THEME.COLORS.TEXT_PRIMARY,
