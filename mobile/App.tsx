@@ -17,7 +17,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [showLoginOnly, setShowLoginOnly] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentTab, setCurrentTab] = useState<TabName>("Home");
 
@@ -44,8 +44,10 @@ function App() {
     setIsLoading(false);
     if (!hasCompletedOnboarding) {
       setShowOnboarding(true);
+    } else if (!isLoggedIn) {
+      setShowLoginOnly(true);
     }
-  }, [hasCompletedOnboarding]);
+  }, [hasCompletedOnboarding, isLoggedIn]);
 
   const handleOnboardingComplete = useCallback(async () => {
     try {
@@ -55,6 +57,11 @@ function App() {
     } catch (error) {
       console.error(APP_MESSAGES.ERROR.SAVE_ONBOARDING_STATUS_FAILED, error);
     }
+  }, []);
+
+  const handleLoginComplete = useCallback(() => {
+    setShowLoginOnly(false);
+    setIsLoggedIn(true);
   }, []);
 
   const handleTabPress = (tab: TabName) => {
@@ -70,6 +77,15 @@ function App() {
       return <OnboardingContainer onComplete={handleOnboardingComplete} />;
     }
 
+    if (showLoginOnly) {
+      return (
+        <OnboardingContainer
+          onComplete={handleLoginComplete}
+          skipToLogin={true}
+        />
+      );
+    }
+
     switch (currentTab) {
       case "Home":
         return <MainPage />;
@@ -80,7 +96,7 @@ function App() {
     }
   };
 
-  const showBottomNavigation = !isLoading && !showOnboarding;
+  const showBottomNavigation = !isLoading && !showOnboarding && !showLoginOnly;
 
   return (
     <GestureHandlerRootView className="flex-1">
