@@ -6,9 +6,9 @@ const NAVIGATION_CONSTANTS = {
       LABEL: "Home",
     },
     LEARNING: {
-      NAME: "Learning" as const,
-      ICON: "🎯",
-      LABEL: "Learning",
+      NAME: "Calendar" as const,
+      ICON: "📅",
+      LABEL: "Calendar",
     },
     ANALYSIS: {
       NAME: "Analysis" as const,
