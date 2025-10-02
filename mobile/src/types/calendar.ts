@@ -21,9 +21,15 @@ interface DayEventsSectionProps {
   events: CalendarEvent[];
 }
 
+interface CalendarHeaderProps {
+  currentMonth: Date;
+  onToday: () => void;
+}
+
 export {
   EventCategory,
   CalendarEvent,
   EventListItemProps,
   DayEventsSectionProps,
+  CalendarHeaderProps,
 };

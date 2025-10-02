@@ -14,8 +14,23 @@ const CALENDAR_CONSTANTS = {
     [EventCategory.PRESENTATION]: "👨‍🏫",
   },
   DAY_NAMES: ["일", "월", "화", "수", "목", "금", "토"],
+  MONTH_NAMES: [
+    "1월",
+    "2월",
+    "3월",
+    "4월",
+    "5월",
+    "6월",
+    "7월",
+    "8월",
+    "9월",
+    "10월",
+    "11월",
+    "12월",
+  ],
   MESSAGES: {
     EMPTY_EVENTS: "이 날은 일정이 없습니다",
+    TODAY_BUTTON: "오늘",
   },
   THEME: {
     COLORS: {
