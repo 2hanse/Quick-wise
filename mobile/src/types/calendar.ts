@@ -26,10 +26,15 @@ interface CalendarHeaderProps {
   onToday: () => void;
 }
 
+interface CalendarScreenProps {
+  onNavigateToHome: () => void;
+}
+
 export {
   EventCategory,
   CalendarEvent,
   EventListItemProps,
   DayEventsSectionProps,
   CalendarHeaderProps,
+  CalendarScreenProps,
 };

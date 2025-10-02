@@ -85,7 +85,9 @@ function App() {
           <MainPage onNavigateToCalendar={() => handleTabPress("Calendar")} />
         );
       case "Calendar":
-        return <CalendarScreen />;
+        return (
+          <CalendarScreen onNavigateToHome={() => handleTabPress("Home")} />
+        );
       case "Setting":
         return <SettingScreen />;
       default:
