@@ -31,11 +31,20 @@ const DayEventsSection = ({ selectedDate, events }: DayEventsSectionProps) => {
           {formattedDate}의 일정
         </Text>
       </View>
-      <ScrollView className="flex-1 px-4">
-        {filteredEvents.map((event) => (
-          <EventListItem key={event.id} event={event} />
-        ))}
-      </ScrollView>
+      {filteredEvents.length === 0 ? (
+        <View className="flex-1 items-center justify-center py-12">
+          <Text className="text-[48px] mb-3">📅</Text>
+          <Text className="text-[15px] text-gray-500">
+            {CALENDAR_CONSTANTS.MESSAGES.EMPTY_EVENTS}
+          </Text>
+        </View>
+      ) : (
+        <ScrollView className="flex-1 px-4">
+          {filteredEvents.map((event) => (
+            <EventListItem key={event.id} event={event} />
+          ))}
+        </ScrollView>
+      )}
     </View>
   );
 };
