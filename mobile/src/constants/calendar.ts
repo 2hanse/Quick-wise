@@ -9,6 +9,10 @@ const CALENDAR_CONSTANTS = {
     [EventCategory.MEETING]: "회의",
     [EventCategory.PRESENTATION]: "발표",
   },
+  CATEGORY_ICONS: {
+    [EventCategory.MEETING]: "👥💬",
+    [EventCategory.PRESENTATION]: "👨‍🏫",
+  },
   THEME: {
     COLORS: {
       BACKGROUND: "#ffffff",
