@@ -4,6 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Calendar, DateData } from "react-native-calendars";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 import mockCalendar from "../../mocks/mockCalendar";
+import CalendarHeader from "./CalendarHeader";
+import DayEventsSection from "./DayEventsSection";
 
 const getTodayString = () => {
   const now = new Date();
@@ -17,6 +19,7 @@ const CalendarScreen = () => {
   const { THEME, CATEGORY_COLORS } = CALENDAR_CONSTANTS;
   const today = getTodayString();
   const [selectedDate, setSelectedDate] = useState(today);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const markedDates = useMemo(() => {
     const marked: Record<
@@ -58,11 +61,20 @@ const CalendarScreen = () => {
     setSelectedDate(day.dateString);
   };
 
+  const handleToday = () => {
+    const todayDate = new Date();
+    setCurrentMonth(todayDate);
+    setSelectedDate(getTodayString());
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <CalendarHeader currentMonth={currentMonth} onToday={handleToday} />
       <View className="flex-1">
         <View className="bg-white rounded-2xl mx-3 mt-3 overflow-hidden border border-gray-200">
           <Calendar
+            key={currentMonth.toISOString()}
+            current={currentMonth.toISOString().split("T")[0]}
             markingType="multi-dot"
             markedDates={markedDates}
             onDayPress={handleDayPress}
@@ -84,6 +96,7 @@ const CalendarScreen = () => {
             }}
           />
         </View>
+        <DayEventsSection selectedDate={selectedDate} events={mockCalendar} />
       </View>
     </SafeAreaView>
   );

@@ -10,8 +10,8 @@ const CALENDAR_CONSTANTS = {
     [EventCategory.PRESENTATION]: "발표",
   },
   CATEGORY_ICONS: {
-    [EventCategory.MEETING]: "👥💬",
-    [EventCategory.PRESENTATION]: "👨‍🏫",
+    [EventCategory.MEETING]: "👥",
+    [EventCategory.PRESENTATION]: "🗣️",
   },
   DAY_NAMES: ["일", "월", "화", "수", "목", "금", "토"],
   MONTH_NAMES: [
