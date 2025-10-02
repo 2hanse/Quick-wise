@@ -74,6 +74,10 @@ interface Checklist {
   corePoint?: string;
 }
 
+interface MainScreenProps {
+  onNavigateToCalendar: () => void;
+}
+
 export {
   CommentItem,
   SwipeContent,
@@ -86,4 +90,5 @@ export {
   Scenario,
   ChecklistItem,
   Checklist,
+  MainScreenProps,
 };

@@ -81,13 +81,17 @@ function App() {
 
     switch (currentTab) {
       case "Home":
-        return <MainPage />;
+        return (
+          <MainPage onNavigateToCalendar={() => handleTabPress("Calendar")} />
+        );
       case "Calendar":
         return <CalendarScreen />;
       case "Setting":
         return <SettingScreen />;
       default:
-        return <MainPage />;
+        return (
+          <MainPage onNavigateToCalendar={() => handleTabPress("Calendar")} />
+        );
     }
   };
 
