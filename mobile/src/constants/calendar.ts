@@ -13,6 +13,7 @@ const CALENDAR_CONSTANTS = {
     [EventCategory.MEETING]: "👥💬",
     [EventCategory.PRESENTATION]: "👨‍🏫",
   },
+  DAY_NAMES: ["일", "월", "화", "수", "목", "금", "토"],
   THEME: {
     COLORS: {
       BACKGROUND: "#ffffff",

@@ -16,4 +16,14 @@ interface EventListItemProps {
   event: CalendarEvent;
 }
 
-export { EventCategory, CalendarEvent, EventListItemProps };
+interface DayEventsSectionProps {
+  selectedDate: string;
+  events: CalendarEvent[];
+}
+
+export {
+  EventCategory,
+  CalendarEvent,
+  EventListItemProps,
+  DayEventsSectionProps,
+};
