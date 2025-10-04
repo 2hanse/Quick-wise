@@ -6,6 +6,7 @@ import Toast from "react-native-toast-message";
 import SplashScreen from "./src/components/SplashScreen";
 import OnboardingContainer from "./src/components/onboarding/OnboardingContainer";
 import MainPage from "./src/components/mainscreen/MainScreen";
+import CalendarScreen from "./src/components/calendar/CalendarScreen";
 import SettingScreen from "./src/components/setting/SettingScreen";
 import LoginRequiredScreen from "./src/components/LoginRequiredScreen";
 import BottomNavigation from "./src/components/BottomNavigation";
@@ -80,11 +81,19 @@ function App() {
 
     switch (currentTab) {
       case "Home":
-        return <MainPage />;
+        return (
+          <MainPage onNavigateToCalendar={() => handleTabPress("Calendar")} />
+        );
+      case "Calendar":
+        return (
+          <CalendarScreen onNavigateToHome={() => handleTabPress("Home")} />
+        );
       case "Setting":
         return <SettingScreen />;
       default:
-        return <MainPage />;
+        return (
+          <MainPage onNavigateToCalendar={() => handleTabPress("Calendar")} />
+        );
     }
   };
 

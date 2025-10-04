@@ -1,0 +1,6 @@
+const DATE_UTILS_CONSTANTS = {
+  CALENDAR_GRID_SIZE: 42,
+  DAYS_IN_WEEK: 7,
+} as const;
+
+export default DATE_UTILS_CONSTANTS;
