@@ -37,6 +37,11 @@ interface DateCell {
   isToday: boolean;
 }
 
+interface MonthCalendarProps {
+  currentMonth: Date;
+  onDayPress: (dateString: string) => void;
+}
+
 export {
   EventCategory,
   CalendarEvent,
@@ -45,4 +50,5 @@ export {
   CalendarHeaderProps,
   CalendarScreenProps,
   DateCell,
+  MonthCalendarProps,
 };
