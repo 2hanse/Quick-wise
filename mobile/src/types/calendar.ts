@@ -41,6 +41,7 @@ interface MonthCalendarProps {
   currentMonth: Date;
   onDayPress: (dateString: string) => void;
   markedDates?: Record<string, MarkedDate>;
+  selectedDate?: string;
 }
 
 interface MarkedDate {

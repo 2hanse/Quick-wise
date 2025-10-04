@@ -9,6 +9,7 @@ const MonthCalendar = ({
   currentMonth,
   onDayPress,
   markedDates = {},
+  selectedDate,
 }: MonthCalendarProps) => {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
@@ -60,23 +61,61 @@ const MonthCalendar = ({
 
       weeks.push(
         <View key={weekKey} className="flex-row">
-          {weekDates.map((dateCell) => (
-            <TouchableOpacity
-              key={dateCell.dateString}
-              className="flex-1 items-center py-2"
-              onPress={() => onDayPress(dateCell.dateString)}
-              activeOpacity={0.7}
-            >
-              <Text
-                className={`text-[15px] ${
-                  dateCell.isCurrentMonth ? "text-gray-900" : "text-gray-400"
-                }`}
+          {weekDates.map((dateCell) => {
+            const isSelected = dateCell.dateString === selectedDate;
+            const isToday = dateCell.isToday;
+
+            let backgroundColor: string =
+              CALENDAR_CONSTANTS.THEME.COLORS.TRANSPARENT;
+            let textColor: string;
+
+            if (isToday) {
+              backgroundColor = CALENDAR_CONSTANTS.THEME.COLORS.TODAY_HIGHLIGHT;
+              textColor = CALENDAR_CONSTANTS.THEME.COLORS.TODAY_TEXT;
+            } else if (isSelected) {
+              backgroundColor = CALENDAR_CONSTANTS.THEME.COLORS.SELECTED_DAY_BG;
+              textColor = CALENDAR_CONSTANTS.THEME.COLORS.SELECTED_DAY_TEXT;
+            } else {
+              textColor = dateCell.isCurrentMonth
+                ? CALENDAR_CONSTANTS.THEME.COLORS.TEXT_PRIMARY
+                : CALENDAR_CONSTANTS.THEME.COLORS.TEXT_DISABLED;
+            }
+
+            return (
+              <View
+                key={dateCell.dateString}
+                className="flex-1 items-center py-2"
               >
-                {dateCell.date.getDate()}
-              </Text>
-              {renderDots(dateCell.dateString)}
-            </TouchableOpacity>
-          ))}
+                <TouchableOpacity
+                  onPress={() => onDayPress(dateCell.dateString)}
+                  activeOpacity={0.7}
+                >
+                  <View
+                    className="items-center justify-center"
+                    style={{
+                      width: CALENDAR_CONSTANTS.THEME.LAYOUT.DAY_CIRCLE_SIZE,
+                      height: CALENDAR_CONSTANTS.THEME.LAYOUT.DAY_CIRCLE_SIZE,
+                      borderRadius:
+                        CALENDAR_CONSTANTS.THEME.LAYOUT.DAY_CIRCLE_SIZE / 2,
+                      backgroundColor: backgroundColor,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: CALENDAR_CONSTANTS.THEME.FONT_SIZES.DAY,
+                        fontWeight: isSelected || isToday ? "600" : "normal",
+                        color: textColor,
+                      }}
+                    >
+                      {dateCell.date.getDate()}
+                    </Text>
+                  </View>
+                  {renderDots(dateCell.dateString)}
+                </TouchableOpacity>
+              </View>
+            );
+          })}
         </View>
       );
     }

@@ -38,9 +38,10 @@ const CALENDAR_CONSTANTS = {
       TEXT_PRIMARY: "#1a1a1a",
       TEXT_SECONDARY: "#6b7280",
       TEXT_DISABLED: "#d1d5db",
-      SELECTED_DAY_BG: "#667eea",
-      SELECTED_DAY_TEXT: "#ffffff",
-      TODAY_TEXT: "#667eea",
+      SELECTED_DAY_BG: "#dbeafe",
+      SELECTED_DAY_TEXT: "#1a1a1a",
+      TODAY_TEXT: "#ffffff",
+      TODAY_HIGHLIGHT: "#3b82f6",
       TRANSPARENT: "transparent",
     },
     FONT_SIZES: {
@@ -53,6 +54,7 @@ const CALENDAR_CONSTANTS = {
     },
     LAYOUT: {
       HEIGHT: 400,
+      DAY_CIRCLE_SIZE: 36,
     },
   },
 } as const;

@@ -86,6 +86,7 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
               currentMonth={currentMonth}
               onDayPress={handleDayPress}
               markedDates={markedDates}
+              selectedDate={selectedDate}
             />
           </View>
           <DayEventsSection selectedDate={selectedDate} events={mockCalendar} />
