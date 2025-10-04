@@ -30,6 +30,13 @@ interface CalendarScreenProps {
   onNavigateToHome: () => void;
 }
 
+interface DateCell {
+  date: Date;
+  dateString: string;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+}
+
 export {
   EventCategory,
   CalendarEvent,
@@ -37,4 +44,5 @@ export {
   DayEventsSectionProps,
   CalendarHeaderProps,
   CalendarScreenProps,
+  DateCell,
 };
