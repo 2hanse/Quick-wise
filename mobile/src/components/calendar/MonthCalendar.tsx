@@ -5,7 +5,11 @@ import CALENDAR_CONSTANTS from "../../constants/calendar";
 import DATE_UTILS_CONSTANTS from "../../constants/dateUtils";
 import { MonthCalendarProps } from "../../types/calendar";
 
-const MonthCalendar = ({ currentMonth, onDayPress }: MonthCalendarProps) => {
+const MonthCalendar = ({
+  currentMonth,
+  onDayPress,
+  markedDates = {},
+}: MonthCalendarProps) => {
   const year = currentMonth.getFullYear();
   const month = currentMonth.getMonth();
   const dates = getMonthDates(year, month);
@@ -19,6 +23,23 @@ const MonthCalendar = ({ currentMonth, onDayPress }: MonthCalendarProps) => {
               {day}
             </Text>
           </View>
+        ))}
+      </View>
+    );
+  };
+
+  const renderDots = (dateString: string) => {
+    const marked = markedDates[dateString];
+    if (!marked?.dots || marked.dots.length === 0) return null;
+
+    return (
+      <View className="flex-row gap-1 mt-1">
+        {marked.dots.map((dot, dotIndex) => (
+          <View
+            key={`${dateString}-${dot.color}-${dotIndex}`}
+            className="w-1 h-1 rounded-full"
+            style={{ backgroundColor: dot.color }}
+          />
         ))}
       </View>
     );
@@ -53,6 +74,7 @@ const MonthCalendar = ({ currentMonth, onDayPress }: MonthCalendarProps) => {
               >
                 {dateCell.date.getDate()}
               </Text>
+              {renderDots(dateCell.dateString)}
             </TouchableOpacity>
           ))}
         </View>

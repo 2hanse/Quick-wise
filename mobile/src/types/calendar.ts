@@ -40,6 +40,11 @@ interface DateCell {
 interface MonthCalendarProps {
   currentMonth: Date;
   onDayPress: (dateString: string) => void;
+  markedDates?: Record<string, MarkedDate>;
+}
+
+interface MarkedDate {
+  dots: Array<{ color: string }>;
 }
 
 export {
@@ -51,4 +56,5 @@ export {
   CalendarScreenProps,
   DateCell,
   MonthCalendarProps,
+  MarkedDate,
 };
