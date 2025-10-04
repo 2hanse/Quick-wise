@@ -66,6 +66,18 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
     return marked;
   }, [CATEGORY_COLORS]);
 
+  const handlePrevMonth = () => {
+    const prevMonth = new Date(currentMonth);
+    prevMonth.setMonth(prevMonth.getMonth() - 1);
+    setCurrentMonth(prevMonth);
+  };
+
+  const handleNextMonth = () => {
+    const nextMonth = new Date(currentMonth);
+    nextMonth.setMonth(nextMonth.getMonth() + 1);
+    setCurrentMonth(nextMonth);
+  };
+
   const handleDayPress = (dateString: string) => {
     setSelectedDate(dateString);
   };
@@ -79,7 +91,12 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1" {...panResponder.panHandlers}>
-        <CalendarHeader currentMonth={currentMonth} onToday={handleToday} />
+        <CalendarHeader
+          currentMonth={currentMonth}
+          onToday={handleToday}
+          onPrevMonth={handlePrevMonth}
+          onNextMonth={handleNextMonth}
+        />
         <View className="flex-1">
           <View className="bg-white rounded-2xl mx-3 overflow-hidden border border-gray-200">
             <MonthCalendar

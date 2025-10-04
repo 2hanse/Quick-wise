@@ -24,6 +24,8 @@ interface DayEventsSectionProps {
 interface CalendarHeaderProps {
   currentMonth: Date;
   onToday: () => void;
+  onPrevMonth: () => void;
+  onNextMonth: () => void;
 }
 
 interface CalendarScreenProps {

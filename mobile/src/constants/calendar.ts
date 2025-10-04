@@ -13,6 +13,10 @@ const CALENDAR_CONSTANTS = {
     [EventCategory.MEETING]: "👥",
     [EventCategory.PRESENTATION]: "🗣️",
   },
+  NAVIGATION_ICONS: {
+    PREV: "<",
+    NEXT: ">",
+  },
   DAY_NAMES: ["일", "월", "화", "수", "목", "금", "토"],
   MONTH_NAMES: [
     "1월",
