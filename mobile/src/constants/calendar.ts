@@ -57,7 +57,6 @@ const CALENDAR_CONSTANTS = {
       MONTH: "bold" as const,
     },
     LAYOUT: {
-      HEIGHT: 400,
       DAY_CIRCLE_SIZE: 36,
     },
   },
