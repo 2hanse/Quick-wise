@@ -10,7 +10,11 @@ const configureGoogleSignIn = (): void => {
     webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID_WEB,
     offlineAccess: true,
     forceCodeForRefreshToken: true,
-    scopes: ["profile", "email"],
+    scopes: [
+      "profile",
+      "email",
+      "https://www.googleapis.com/auth/calendar.readonly",
+    ],
   });
 };
 
