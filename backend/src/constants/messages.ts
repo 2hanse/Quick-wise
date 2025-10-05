@@ -30,16 +30,32 @@ const constants = {
       NOT_FOUND: "User not found",
       FAILED_TO_GET_INFO: "Failed to get user information",
     },
+    CALENDAR: {
+      GOOGLE_ACCESS_TOKEN_NOT_FOUND: "Google access token not found for user",
+      FAILED_TO_FETCH_EVENTS: "Failed to fetch calendar events",
+      INVALID_DATE_RANGE: "Invalid date range provided",
+      GOOGLE_API_ERROR: "Google Calendar API error",
+      TOKEN_EXPIRED: "Google access token has expired",
+    },
   },
   SUCCESS: {
     DATABASE: {
       CONNECTION_SUCCESS: "MongoDB connected successfully",
+    },
+    CALENDAR: {
+      EVENTS_FETCHED: "Calendar events fetched successfully",
     },
   },
   TOKEN: {
     ACCESS_TOKEN_EXPIRATION: "15m",
     REFRESH_TOKEN_EXPIRATION: "7d",
     GOOGLE_TOKEN_DEFAULT_EXPIRATION: 3600,
+  },
+  GOOGLE_CALENDAR: {
+    API_BASE_URL: "https://www.googleapis.com/calendar/v3",
+    DEFAULT_CALENDAR_ID: "primary",
+    DEFAULT_MAX_RESULTS: 100,
+    DEFAULT_TIME_ZONE: "Asia/Seoul",
   },
 } as const;
 
