@@ -1,3 +1,5 @@
+type EventStatus = "confirmed" | "tentative" | "cancelled";
+
 interface GoogleCalendarEvent {
   id: string;
   summary: string;
@@ -29,6 +31,7 @@ interface CalendarEvent {
   location?: string;
   description?: string;
   isAllDay: boolean;
+  status?: EventStatus;
 }
 
 interface CalendarEventQuery {
@@ -37,6 +40,7 @@ interface CalendarEventQuery {
   maxResults?: number;
 }
 
+export type { EventStatus };
 export {
   GoogleCalendarEvent,
   GoogleCalendarListResponse,

@@ -36,6 +36,8 @@ const constants = {
       INVALID_DATE_RANGE: "Invalid date range provided",
       GOOGLE_API_ERROR: "Google Calendar API error",
       TOKEN_EXPIRED: "Google access token has expired",
+      PERMISSION_DENIED: "Calendar access permission denied",
+      SERVER_ERROR: "Google Calendar server error",
     },
   },
   SUCCESS: {
@@ -56,6 +58,14 @@ const constants = {
     DEFAULT_CALENDAR_ID: "primary",
     DEFAULT_MAX_RESULTS: 100,
     DEFAULT_TIME_ZONE: "Asia/Seoul",
+    ORDER_BY: "startTime",
+    SINGLE_EVENTS: true,
+    EVENT_STATUS: {
+      CONFIRMED: "confirmed",
+      TENTATIVE: "tentative",
+      CANCELLED: "cancelled",
+    },
+    DEFAULT_TITLE: "제목 없음",
   },
 } as const;
 
