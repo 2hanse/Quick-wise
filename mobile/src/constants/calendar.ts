@@ -35,6 +35,11 @@ const CALENDAR_CONSTANTS = {
   MESSAGES: {
     EMPTY_EVENTS: "이 날은 일정이 없습니다",
     TODAY_BUTTON: "오늘",
+    LOADING_EVENTS: "일정을 불러오는 중...",
+    ERROR_FETCH_EVENTS: "일정을 불러오는데 실패했습니다",
+  },
+  LOG_PREFIXES: {
+    FETCH_ERROR: "[Calendar Fetch Error]",
   },
   THEME: {
     COLORS: {

@@ -58,6 +58,14 @@ interface CalendarEventsResponse {
   events: CalendarEvent[];
 }
 
+interface CalendarState {
+  events: CalendarEvent[];
+  isLoading: boolean;
+  error: string | null;
+  fetchEvents: (startDate: string, endDate: string) => Promise<void>;
+  clearEvents: () => void;
+}
+
 export {
   EventCategory,
   CalendarEvent,
@@ -69,4 +77,5 @@ export {
   MonthCalendarProps,
   MarkedDate,
   CalendarEventsResponse,
+  CalendarState,
 };
