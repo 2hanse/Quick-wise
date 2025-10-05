@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDatabase } from "./config/database";
 import authRoutes from "./routes/authRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
+import errorHandler from "./middleware/errorHandler";
 
 dotenv.config();
 
@@ -14,6 +15,8 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/calendar", calendarRoutes);
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 

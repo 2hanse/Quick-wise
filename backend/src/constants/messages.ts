@@ -67,6 +67,10 @@ const constants = {
     },
     DEFAULT_TITLE: "제목 없음",
   },
+  LOG_PREFIXES: {
+    CALENDAR_ERROR: "[Calendar API Error]",
+    GENERAL_ERROR: "[Error]",
+  },
 } as const;
 
 export default constants;
