@@ -10,6 +10,9 @@ interface CalendarEvent {
   endTime: string;
   location?: string;
   category: EventCategory;
+  description?: string;
+  isAllDay: boolean;
+  status?: "confirmed" | "tentative" | "cancelled";
 }
 
 interface EventListItemProps {
@@ -50,6 +53,11 @@ interface MarkedDate {
   dots: Array<{ color: string }>;
 }
 
+interface CalendarEventsResponse {
+  message: string;
+  events: CalendarEvent[];
+}
+
 export {
   EventCategory,
   CalendarEvent,
@@ -60,4 +68,5 @@ export {
   DateCell,
   MonthCalendarProps,
   MarkedDate,
+  CalendarEventsResponse,
 };
