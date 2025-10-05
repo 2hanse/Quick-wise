@@ -52,6 +52,8 @@ const CALENDAR_CONSTANTS = {
       TODAY_TEXT: "#ffffff",
       TODAY_HIGHLIGHT: "#3b82f6",
       TRANSPARENT: "transparent",
+      LOADING_INDICATOR: "#3b82f6",
+      ERROR_TEXT: "#ef4444",
     },
     FONT_SIZES: {
       MONTH: 18,

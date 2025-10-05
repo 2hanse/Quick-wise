@@ -1,8 +1,7 @@
-import React, { useState, useMemo, useRef } from "react";
-import { View, PanResponder } from "react-native";
+import React, { useState, useMemo, useRef, useEffect } from "react";
+import { View, PanResponder, ActivityIndicator, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
-import mockCalendar from "../../mocks/mockCalendar";
 import CalendarHeader from "./CalendarHeader";
 import DayEventsSection from "./DayEventsSection";
 import MonthCalendar from "./MonthCalendar";
@@ -12,20 +11,21 @@ import {
   GESTURE_ACTIVATION_THRESHOLD,
 } from "../../constants/gesture";
 import { CalendarScreenProps } from "../../types/calendar";
-
-const getTodayString = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
+import useCalendarStore from "../../stores/calendarStore";
+import { getMonthRange, getTodayString } from "../../utils/dateUtils";
 
 const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
   const { CATEGORY_COLORS } = CALENDAR_CONSTANTS;
   const today = getTodayString();
   const [selectedDate, setSelectedDate] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+
+  const { events, isLoading, error, fetchEvents } = useCalendarStore();
+
+  useEffect(() => {
+    const { startDate, endDate } = getMonthRange(currentMonth);
+    fetchEvents(startDate, endDate);
+  }, [currentMonth, fetchEvents]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -50,7 +50,7 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
   const markedDates = useMemo(() => {
     const marked: Record<string, { dots: Array<{ color: string }> }> = {};
 
-    mockCalendar.forEach((event) => {
+    events.forEach((event) => {
       const dateKey = event.startTime.split("T")[0];
       const color = CATEGORY_COLORS[event.category];
 
@@ -64,7 +64,7 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
     });
 
     return marked;
-  }, [CATEGORY_COLORS]);
+  }, [events, CATEGORY_COLORS]);
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(currentMonth);
@@ -106,7 +106,27 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
               selectedDate={selectedDate}
             />
           </View>
-          <DayEventsSection selectedDate={selectedDate} events={mockCalendar} />
+          {isLoading ? (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator
+                size="large"
+                color={CALENDAR_CONSTANTS.THEME.COLORS.LOADING_INDICATOR}
+              />
+              <Text className="mt-4 text-gray-600">
+                {CALENDAR_CONSTANTS.MESSAGES.LOADING_EVENTS}
+              </Text>
+            </View>
+          ) : error ? (
+            <View className="flex-1 items-center justify-center">
+              <Text
+                style={{ color: CALENDAR_CONSTANTS.THEME.COLORS.ERROR_TEXT }}
+              >
+                {error}
+              </Text>
+            </View>
+          ) : (
+            <DayEventsSection selectedDate={selectedDate} events={events} />
+          )}
         </View>
       </View>
     </SafeAreaView>

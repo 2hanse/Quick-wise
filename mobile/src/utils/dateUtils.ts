@@ -73,4 +73,28 @@ const getMonthDates = (year: number, month: number): DateCell[] => {
   return dates;
 };
 
-export { getMonthDates, formatDateString, isToday, isSameDate };
+const getMonthRange = (date: Date) => {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const startDate = new Date(year, month, 1);
+  const endDate = new Date(year, month + 1, 0);
+
+  return {
+    startDate: formatDateString(startDate),
+    endDate: formatDateString(endDate),
+  };
+};
+
+const getTodayString = (): string => {
+  const now = new Date();
+  return formatDateString(now);
+};
+
+export {
+  getMonthDates,
+  formatDateString,
+  isToday,
+  isSameDate,
+  getMonthRange,
+  getTodayString,
+};
