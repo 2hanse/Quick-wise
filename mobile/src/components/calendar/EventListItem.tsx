@@ -4,8 +4,7 @@ import type { EventListItemProps } from "../../types/calendar";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 
 const EventListItem = ({ event }: EventListItemProps) => {
-  const { CATEGORY_COLORS, CATEGORY_LABELS, CATEGORY_ICONS } =
-    CALENDAR_CONSTANTS;
+  const { CATEGORY_COLORS, CATEGORY_LABELS } = CALENDAR_CONSTANTS;
 
   const startTime = new Date(event.startTime).toLocaleTimeString("ko-KR", {
     hour: "2-digit",
@@ -19,9 +18,13 @@ const EventListItem = ({ event }: EventListItemProps) => {
     hour12: false,
   });
 
-  const categoryColor = CATEGORY_COLORS[event.category];
-  const categoryLabel = CATEGORY_LABELS[event.category];
-  const categoryIcon = CATEGORY_ICONS[event.category];
+  const categoryColor = event.category
+    ? CATEGORY_COLORS[event.category]
+    : CATEGORY_COLORS.DEFAULT;
+
+  const categoryLabel = event.category
+    ? CATEGORY_LABELS[event.category]
+    : CATEGORY_LABELS.DEFAULT;
 
   return (
     <View className="py-3 border-b border-gray-100">
@@ -30,7 +33,6 @@ const EventListItem = ({ event }: EventListItemProps) => {
           className="px-2.5 py-1 rounded-md flex-row items-center gap-1"
           style={{ backgroundColor: `${categoryColor}15` }}
         >
-          <Text className="text-[12px]">{categoryIcon}</Text>
           <Text
             className="text-[12px] font-semibold"
             style={{ color: categoryColor }}

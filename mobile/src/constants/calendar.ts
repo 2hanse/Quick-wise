@@ -4,10 +4,12 @@ const CALENDAR_CONSTANTS = {
   CATEGORY_COLORS: {
     [EventCategory.MEETING]: "#ef4444",
     [EventCategory.PRESENTATION]: "#f59e0b",
+    DEFAULT: "#3b82f6",
   },
   CATEGORY_LABELS: {
     [EventCategory.MEETING]: "회의",
     [EventCategory.PRESENTATION]: "발표",
+    DEFAULT: "일반",
   },
   CATEGORY_ICONS: {
     [EventCategory.MEETING]: "👥",
@@ -43,6 +45,34 @@ const CALENDAR_CONSTANTS = {
     FETCH_ERROR: "[Calendar Fetch Error]",
     CREATE_ERROR: "[Calendar Create Error]",
   },
+  FORM: {
+    LABELS: {
+      TITLE: "제목",
+      START_TIME: "시작 시간",
+      END_TIME: "종료 시간",
+      ALL_DAY: "종일",
+      LOCATION: "위치",
+      DESCRIPTION: "설명",
+    },
+    PLACEHOLDERS: {
+      TITLE: "일정 제목을 입력하세요",
+      LOCATION: "장소를 입력하세요 (선택)",
+      DESCRIPTION: "상세 설명을 입력하세요 (선택)",
+    },
+    BUTTONS: {
+      SAVE: "저장",
+      CANCEL: "취소",
+    },
+    MODAL_TITLE: "새 일정 추가",
+    ALERT_TITLES: {
+      INPUT_ERROR: "입력 오류",
+      TIME_ERROR: "시간 오류",
+    },
+    VALIDATION: {
+      TITLE_REQUIRED: "제목을 입력해주세요",
+      TIME_INVALID: "종료 시간이 시작 시간보다 빨라요",
+    },
+  },
   THEME: {
     COLORS: {
       BACKGROUND: "#ffffff",
@@ -56,6 +86,9 @@ const CALENDAR_CONSTANTS = {
       TRANSPARENT: "transparent",
       LOADING_INDICATOR: "#3b82f6",
       ERROR_TEXT: "#ef4444",
+      SWITCH_TRACK_FALSE: "#d1d5db",
+      SWITCH_TRACK_TRUE: "#3b82f6",
+      SWITCH_THUMB: "#ffffff",
     },
     FONT_SIZES: {
       MONTH: 18,

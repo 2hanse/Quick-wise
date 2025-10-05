@@ -22,6 +22,7 @@ interface EventListItemProps {
 interface DayEventsSectionProps {
   selectedDate: string;
   events: CalendarEvent[];
+  onAddEvent: () => void;
 }
 
 interface CalendarHeaderProps {

@@ -5,12 +5,13 @@ import CALENDAR_CONSTANTS from "../../constants/calendar";
 import CalendarHeader from "./CalendarHeader";
 import DayEventsSection from "./DayEventsSection";
 import MonthCalendar from "./MonthCalendar";
+import CreateEventModal from "./CreateEventModal";
 import {
   SWIPE_THRESHOLD,
   SWIPE_VELOCITY_THRESHOLD,
   GESTURE_ACTIVATION_THRESHOLD,
 } from "../../constants/gesture";
-import { CalendarScreenProps } from "../../types/calendar";
+import { CalendarScreenProps, CreateEventRequest } from "../../types/calendar";
 import useCalendarStore from "../../stores/calendarStore";
 import { getMonthRange, getTodayString } from "../../utils/dateUtils";
 
@@ -19,8 +20,10 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
   const today = getTodayString();
   const [selectedDate, setSelectedDate] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
 
-  const { events, isLoading, error, fetchEvents } = useCalendarStore();
+  const { events, isLoading, error, fetchEvents, createEvent } =
+    useCalendarStore();
 
   useEffect(() => {
     const { startDate, endDate } = getMonthRange(currentMonth);
@@ -52,7 +55,10 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
 
     events.forEach((event) => {
       const dateKey = event.startTime.split("T")[0];
-      const color = CATEGORY_COLORS[event.category];
+
+      const color = event.category
+        ? CATEGORY_COLORS[event.category]
+        : "#3b82f6";
 
       if (marked[dateKey]) {
         marked[dateKey].dots.push({ color });
@@ -86,6 +92,18 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
     const todayDate = new Date();
     setCurrentMonth(todayDate);
     setSelectedDate(getTodayString());
+  };
+
+  const handleAddEvent = () => {
+    setIsAddEventModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsAddEventModalVisible(false);
+  };
+
+  const handleSaveEvent = async (eventData: CreateEventRequest) => {
+    await createEvent(eventData);
   };
 
   return (
@@ -125,10 +143,21 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
               </Text>
             </View>
           ) : (
-            <DayEventsSection selectedDate={selectedDate} events={events} />
+            <DayEventsSection
+              selectedDate={selectedDate}
+              events={events}
+              onAddEvent={handleAddEvent}
+            />
           )}
         </View>
       </View>
+
+      <CreateEventModal
+        visible={isAddEventModalVisible}
+        selectedDate={selectedDate}
+        onClose={handleCloseModal}
+        onSave={handleSaveEvent}
+      />
     </SafeAreaView>
   );
 };
