@@ -9,10 +9,10 @@ interface CalendarEvent {
   startTime: string;
   endTime: string;
   location?: string;
-  category: EventCategory;
+  category?: EventCategory;
   description?: string;
   isAllDay: boolean;
-  status?: "confirmed" | "tentative" | "cancelled";
+  status: "confirmed" | "tentative" | "cancelled";
 }
 
 interface EventListItemProps {
@@ -56,6 +56,22 @@ interface MarkedDate {
 interface CalendarEventsResponse {
   message: string;
   events: CalendarEvent[];
+  tokenRefreshed: boolean;
+}
+
+interface CreateEventRequest {
+  title: string;
+  startTime: string;
+  endTime: string;
+  location?: string;
+  description?: string;
+  isAllDay: boolean;
+}
+
+interface CreateEventResponse {
+  message: string;
+  event: CalendarEvent;
+  tokenRefreshed: boolean;
 }
 
 interface CalendarState {
@@ -63,6 +79,7 @@ interface CalendarState {
   isLoading: boolean;
   error: string | null;
   fetchEvents: (startDate: string, endDate: string) => Promise<void>;
+  createEvent: (eventData: CreateEventRequest) => Promise<void>;
   clearEvents: () => void;
 }
 
@@ -77,5 +94,7 @@ export {
   MonthCalendarProps,
   MarkedDate,
   CalendarEventsResponse,
+  CreateEventRequest,
+  CreateEventResponse,
   CalendarState,
 };

@@ -47,6 +47,31 @@ interface GoogleTokenRefreshResponse {
   token_type: string;
 }
 
+interface CreateEventRequest {
+  title: string;
+  startTime: string;
+  endTime: string;
+  location?: string;
+  description?: string;
+  isAllDay: boolean;
+}
+
+interface GoogleCreateEventRequest {
+  summary: string;
+  start: {
+    dateTime?: string;
+    date?: string;
+    timeZone: string;
+  };
+  end: {
+    dateTime?: string;
+    date?: string;
+    timeZone: string;
+  };
+  location?: string;
+  description?: string;
+}
+
 export type { EventStatus };
 export {
   GoogleCalendarEvent,
@@ -54,4 +79,6 @@ export {
   CalendarEvent,
   CalendarEventQuery,
   GoogleTokenRefreshResponse,
+  CreateEventRequest,
+  GoogleCreateEventRequest,
 };

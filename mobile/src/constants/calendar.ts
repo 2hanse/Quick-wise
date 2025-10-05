@@ -37,9 +37,11 @@ const CALENDAR_CONSTANTS = {
     TODAY_BUTTON: "오늘",
     LOADING_EVENTS: "일정을 불러오는 중...",
     ERROR_FETCH_EVENTS: "일정을 불러오는데 실패했습니다",
+    ERROR_CREATE_EVENT: "일정 생성에 실패했습니다",
   },
   LOG_PREFIXES: {
     FETCH_ERROR: "[Calendar Fetch Error]",
+    CREATE_ERROR: "[Calendar Create Error]",
   },
   THEME: {
     COLORS: {

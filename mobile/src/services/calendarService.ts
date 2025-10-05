@@ -1,6 +1,10 @@
 import apiClient from "../utils/apiClient";
 import API_CONSTANTS from "../constants/api";
-import { CalendarEventsResponse } from "../types/calendar";
+import {
+  CalendarEventsResponse,
+  CreateEventRequest,
+  CreateEventResponse,
+} from "../types/calendar";
 
 const fetchCalendarEvents = async (
   startDate: string,
@@ -19,4 +23,14 @@ const fetchCalendarEvents = async (
   return response.data;
 };
 
-export default fetchCalendarEvents;
+const createCalendarEvent = async (
+  eventData: CreateEventRequest
+): Promise<CreateEventResponse> => {
+  const response = await apiClient.post<CreateEventResponse>(
+    API_CONSTANTS.ENDPOINTS.CALENDAR.EVENTS,
+    eventData
+  );
+  return response.data;
+};
+
+export { fetchCalendarEvents, createCalendarEvent };

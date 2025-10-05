@@ -40,6 +40,11 @@ const constants = {
       TOKEN_EXPIRED: "Google access token has expired",
       PERMISSION_DENIED: "Calendar access permission denied",
       SERVER_ERROR: "Google Calendar server error",
+      INVALID_EVENT_DATA: "Invalid event data provided",
+      REQUIRED_FIELD_MISSING: "Required field is missing",
+      INVALID_TIME_FORMAT: "Invalid time format",
+      END_TIME_BEFORE_START: "End time must be after start time",
+      FAILED_TO_CREATE_EVENT: "Failed to create calendar event",
     },
   },
   SUCCESS: {
@@ -48,6 +53,7 @@ const constants = {
     },
     CALENDAR: {
       EVENTS_FETCHED: "Calendar events fetched successfully",
+      EVENT_CREATED: "Calendar event created successfully",
     },
     GOOGLE_AUTH: {
       TOKEN_REFRESHED: "Google access token refreshed successfully",
@@ -77,10 +83,14 @@ const constants = {
     GRANT_TYPE_REFRESH: "refresh_token",
     CONTENT_TYPE_FORM: "application/x-www-form-urlencoded",
   },
+  HTTP: {
+    CONTENT_TYPE_JSON: "application/json",
+  },
   LOG_PREFIXES: {
     CALENDAR_ERROR: "[Calendar API Error]",
     GENERAL_ERROR: "[Error]",
     TOKEN_REFRESH: "[Token Refresh]",
+    EVENT_CREATE: "[Event Create]",
   },
 } as const;
 
