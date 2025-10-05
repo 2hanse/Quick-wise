@@ -11,6 +11,7 @@ const constants = {
       INVALID_TOKEN: "Invalid Google token",
       VERIFICATION_FAILED: "Google token verification failed",
       INVALID_PAYLOAD: "Invalid token payload",
+      ACCESS_TOKEN_REQUIRED: "Google access token is required",
     },
     JWT: {
       SECRET_NOT_DEFINED: "JWT_SECRET is not defined in environment variables",
@@ -38,6 +39,7 @@ const constants = {
   TOKEN: {
     ACCESS_TOKEN_EXPIRATION: "15m",
     REFRESH_TOKEN_EXPIRATION: "7d",
+    GOOGLE_TOKEN_DEFAULT_EXPIRATION: 3600,
   },
 } as const;
 
