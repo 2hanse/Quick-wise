@@ -12,6 +12,8 @@ const constants = {
       VERIFICATION_FAILED: "Google token verification failed",
       INVALID_PAYLOAD: "Invalid token payload",
       ACCESS_TOKEN_REQUIRED: "Google access token is required",
+      REFRESH_TOKEN_NOT_FOUND: "Google refresh token not found for user",
+      TOKEN_REFRESH_FAILED: "Failed to refresh Google access token",
     },
     JWT: {
       SECRET_NOT_DEFINED: "JWT_SECRET is not defined in environment variables",
@@ -47,6 +49,9 @@ const constants = {
     CALENDAR: {
       EVENTS_FETCHED: "Calendar events fetched successfully",
     },
+    GOOGLE_AUTH: {
+      TOKEN_REFRESHED: "Google access token refreshed successfully",
+    },
   },
   TOKEN: {
     ACCESS_TOKEN_EXPIRATION: "15m",
@@ -67,9 +72,15 @@ const constants = {
     },
     DEFAULT_TITLE: "제목 없음",
   },
+  GOOGLE_OAUTH: {
+    TOKEN_URL: "https://oauth2.googleapis.com/token",
+    GRANT_TYPE_REFRESH: "refresh_token",
+    CONTENT_TYPE_FORM: "application/x-www-form-urlencoded",
+  },
   LOG_PREFIXES: {
     CALENDAR_ERROR: "[Calendar API Error]",
     GENERAL_ERROR: "[Error]",
+    TOKEN_REFRESH: "[Token Refresh]",
   },
 } as const;
 

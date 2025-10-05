@@ -4,7 +4,7 @@ import {
   AuthRequest,
 } from "../middleware/authenticateToken";
 import { User } from "../models/User";
-import { fetchCalendarEvents } from "../services/googleCalendarService";
+import { getCalendarEvents } from "../services/googleCalendarService";
 import validateDateRange from "../utils/dateValidator";
 import constants from "../constants/messages";
 
@@ -51,15 +51,16 @@ router.get("/events", authenticateToken, async (req: AuthRequest, res) => {
       });
     }
 
-    const events = await fetchCalendarEvents(
-      user.googleAccessToken,
-      startDate as string,
-      endDate as string
+    const { events, tokenRefreshed } = await getCalendarEvents(
+      user,
+      startDate,
+      endDate
     );
 
     res.json({
       message: constants.SUCCESS.CALENDAR.EVENTS_FETCHED,
       events,
+      tokenRefreshed,
     });
   } catch (error) {
     const errorMessage =
@@ -69,7 +70,11 @@ router.get("/events", authenticateToken, async (req: AuthRequest, res) => {
 
     console.error(constants.LOG_PREFIXES.CALENDAR_ERROR, errorMessage, error);
 
-    if (errorMessage === constants.ERROR_MESSAGES.CALENDAR.TOKEN_EXPIRED) {
+    if (
+      errorMessage === constants.ERROR_MESSAGES.CALENDAR.TOKEN_EXPIRED ||
+      errorMessage ===
+        constants.ERROR_MESSAGES.GOOGLE_AUTH.REFRESH_TOKEN_NOT_FOUND
+    ) {
       return res.status(401).json({ error: errorMessage });
     }
 
@@ -77,7 +82,10 @@ router.get("/events", authenticateToken, async (req: AuthRequest, res) => {
       return res.status(403).json({ error: errorMessage });
     }
 
-    if (errorMessage === constants.ERROR_MESSAGES.CALENDAR.GOOGLE_API_ERROR) {
+    if (
+      errorMessage === constants.ERROR_MESSAGES.CALENDAR.GOOGLE_API_ERROR ||
+      errorMessage === constants.ERROR_MESSAGES.GOOGLE_AUTH.TOKEN_REFRESH_FAILED
+    ) {
       return res.status(502).json({ error: errorMessage });
     }
 

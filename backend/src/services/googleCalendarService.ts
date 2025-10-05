@@ -5,7 +5,9 @@ import {
   GoogleCalendarListResponse,
   CalendarEvent,
   EventStatus,
+  GoogleTokenRefreshResponse,
 } from "../types/calendar";
+import { IUser } from "../models/User";
 
 const fetchCalendarEvents = async (
   accessToken: string,
@@ -77,4 +79,92 @@ const convertToCalendarEvent = (
   };
 };
 
-export { fetchCalendarEvents };
+const refreshGoogleAccessToken = async (
+  refreshToken: string
+): Promise<{ accessToken: string; expiresIn: number }> => {
+  try {
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      throw new Error(
+        constants.ERROR_MESSAGES.GOOGLE_AUTH.CLIENT_ID_NOT_DEFINED
+      );
+    }
+
+    const response = await axios.post<GoogleTokenRefreshResponse>(
+      constants.GOOGLE_OAUTH.TOKEN_URL,
+      {
+        client_id: clientId,
+        client_secret: clientSecret,
+        refresh_token: refreshToken,
+        grant_type: constants.GOOGLE_OAUTH.GRANT_TYPE_REFRESH,
+      },
+      {
+        headers: {
+          "Content-Type": constants.GOOGLE_OAUTH.CONTENT_TYPE_FORM,
+        },
+      }
+    );
+
+    return {
+      accessToken: response.data.access_token,
+      expiresIn: response.data.expires_in,
+    };
+  } catch (error) {
+    console.error(constants.LOG_PREFIXES.TOKEN_REFRESH, error);
+    throw new Error(constants.ERROR_MESSAGES.GOOGLE_AUTH.TOKEN_REFRESH_FAILED);
+  }
+};
+
+const isTokenExpiredError = (error: unknown): boolean => {
+  return (
+    error instanceof Error &&
+    error.message === constants.ERROR_MESSAGES.CALENDAR.TOKEN_EXPIRED
+  );
+};
+
+const getCalendarEvents = async (
+  user: IUser,
+  startDate: string,
+  endDate: string
+): Promise<{ events: CalendarEvent[]; tokenRefreshed: boolean }> => {
+  if (!user.googleAccessToken) {
+    throw new Error(
+      constants.ERROR_MESSAGES.CALENDAR.GOOGLE_ACCESS_TOKEN_NOT_FOUND
+    );
+  }
+  try {
+    const events = await fetchCalendarEvents(
+      user.googleAccessToken,
+      startDate,
+      endDate
+    );
+    return { events, tokenRefreshed: false };
+  } catch (error) {
+    if (!isTokenExpiredError(error)) {
+      throw error;
+    }
+
+    if (!user.googleRefreshToken) {
+      throw new Error(
+        constants.ERROR_MESSAGES.GOOGLE_AUTH.REFRESH_TOKEN_NOT_FOUND
+      );
+    }
+
+    const { accessToken, expiresIn } = await refreshGoogleAccessToken(
+      user.googleRefreshToken
+    );
+
+    user.googleAccessToken = accessToken;
+    const tokenExpiresAt = new Date();
+    tokenExpiresAt.setSeconds(tokenExpiresAt.getSeconds() + expiresIn);
+    user.tokenExpiresAt = tokenExpiresAt;
+    await user.save();
+
+    const events = await fetchCalendarEvents(accessToken, startDate, endDate);
+    return { events, tokenRefreshed: true };
+  }
+};
+
+export { fetchCalendarEvents, getCalendarEvents };

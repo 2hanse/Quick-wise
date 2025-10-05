@@ -2,7 +2,7 @@ type EventStatus = "confirmed" | "tentative" | "cancelled";
 
 interface GoogleCalendarEvent {
   id: string;
-  summary: string;
+  summary?: string;
   description?: string;
   location?: string;
   start: {
@@ -31,7 +31,7 @@ interface CalendarEvent {
   location?: string;
   description?: string;
   isAllDay: boolean;
-  status?: EventStatus;
+  status: EventStatus;
 }
 
 interface CalendarEventQuery {
@@ -40,10 +40,18 @@ interface CalendarEventQuery {
   maxResults?: number;
 }
 
+interface GoogleTokenRefreshResponse {
+  access_token: string;
+  expires_in: number;
+  scope: string;
+  token_type: string;
+}
+
 export type { EventStatus };
 export {
   GoogleCalendarEvent,
   GoogleCalendarListResponse,
   CalendarEvent,
   CalendarEventQuery,
+  GoogleTokenRefreshResponse,
 };
