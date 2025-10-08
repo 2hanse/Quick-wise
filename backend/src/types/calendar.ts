@@ -34,12 +34,6 @@ interface CalendarEvent {
   status: EventStatus;
 }
 
-interface CalendarEventQuery {
-  startDate: string;
-  endDate: string;
-  maxResults?: number;
-}
-
 interface GoogleTokenRefreshResponse {
   access_token: string;
   expires_in: number;
@@ -86,7 +80,6 @@ export {
   GoogleCalendarEvent,
   GoogleCalendarListResponse,
   CalendarEvent,
-  CalendarEventQuery,
   GoogleTokenRefreshResponse,
   CreateEventRequest,
   GoogleCreateEventRequest,

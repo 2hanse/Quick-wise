@@ -8,11 +8,18 @@ import {
 const convertToCalendarEvent = (
   googleEvent: GoogleCalendarEvent
 ): CalendarEvent => {
+  const startTime = googleEvent.start.dateTime || googleEvent.start.date;
+  const endTime = googleEvent.end.dateTime || googleEvent.end.date;
+
+  if (!startTime || !endTime) {
+    throw new Error(constants.ERROR_MESSAGES.CALENDAR.INVALID_EVENT_DATA);
+  }
+
   const isAllDay = !googleEvent.start.dateTime;
-  const startTime = googleEvent.start.dateTime || googleEvent.start.date || "";
-  const endTime = googleEvent.end.dateTime || googleEvent.end.date || "";
+
   const status = (googleEvent.status ||
     constants.GOOGLE_CALENDAR.EVENT_STATUS.CONFIRMED) as EventStatus;
+
   return {
     id: googleEvent.id,
     title: googleEvent.summary || constants.GOOGLE_CALENDAR.DEFAULT_TITLE,
@@ -29,16 +36,19 @@ const convertToGoogleTimeFormat = (
   time: string,
   isAllDay: boolean
 ): { dateTime?: string; date?: string; timeZone: string } => {
+  const timeZone = constants.GOOGLE_CALENDAR.DEFAULT_TIME_ZONE;
+
   if (isAllDay) {
+    const dateOnly = time.includes("T") ? time.split("T")[0] : time;
     return {
-      date: time.split("T")[0],
-      timeZone: constants.GOOGLE_CALENDAR.DEFAULT_TIME_ZONE,
+      date: dateOnly,
+      timeZone,
     };
   }
 
   return {
     dateTime: time,
-    timeZone: constants.GOOGLE_CALENDAR.DEFAULT_TIME_ZONE,
+    timeZone,
   };
 };
 
