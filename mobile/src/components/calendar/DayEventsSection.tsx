@@ -8,6 +8,7 @@ const DayEventsSection = ({
   selectedDate,
   events,
   onAddEvent,
+  onEditEvent,
 }: DayEventsSectionProps) => {
   const filteredEvents = useMemo(() => {
     const filtered = events.filter((event) => {
@@ -52,7 +53,7 @@ const DayEventsSection = ({
       ) : (
         <ScrollView className="flex-1 px-4">
           {filteredEvents.map((event) => (
-            <EventListItem key={event.id} event={event} />
+            <EventListItem key={event.id} event={event} onPress={onEditEvent} />
           ))}
         </ScrollView>
       )}

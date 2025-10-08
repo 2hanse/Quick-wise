@@ -5,13 +5,17 @@ import CALENDAR_CONSTANTS from "../../constants/calendar";
 import CalendarHeader from "./CalendarHeader";
 import DayEventsSection from "./DayEventsSection";
 import MonthCalendar from "./MonthCalendar";
-import CreateEventModal from "./CreateEventModal";
+import EventModal from "./EventModal";
 import {
   SWIPE_THRESHOLD,
   SWIPE_VELOCITY_THRESHOLD,
   GESTURE_ACTIVATION_THRESHOLD,
 } from "../../constants/gesture";
-import { CalendarScreenProps, CreateEventRequest } from "../../types/calendar";
+import {
+  CalendarScreenProps,
+  CreateEventRequest,
+  CalendarEvent,
+} from "../../types/calendar";
 import useCalendarStore from "../../stores/calendarStore";
 import { getMonthRange, getTodayString } from "../../utils/dateUtils";
 
@@ -21,8 +25,11 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
   const [selectedDate, setSelectedDate] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [isAddEventModalVisible, setIsAddEventModalVisible] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
+    null
+  );
 
-  const { events, isLoading, error, fetchEvents, createEvent } =
+  const { events, isLoading, error, fetchEvents, createEvent, updateEvent } =
     useCalendarStore();
 
   useEffect(() => {
@@ -95,15 +102,29 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
   };
 
   const handleAddEvent = () => {
+    setSelectedEvent(null);
+    setIsAddEventModalVisible(true);
+  };
+
+  const handleEditEvent = (event: CalendarEvent) => {
+    setSelectedEvent(event);
     setIsAddEventModalVisible(true);
   };
 
   const handleCloseModal = () => {
     setIsAddEventModalVisible(false);
+    setSelectedEvent(null);
   };
 
-  const handleSaveEvent = async (eventData: CreateEventRequest) => {
-    await createEvent(eventData);
+  const handleSaveEvent = async (
+    eventId: string | null,
+    eventData: CreateEventRequest
+  ) => {
+    if (eventId) {
+      await updateEvent(eventId, eventData);
+    } else {
+      await createEvent(eventData);
+    }
   };
 
   return (
@@ -147,14 +168,16 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
               selectedDate={selectedDate}
               events={events}
               onAddEvent={handleAddEvent}
+              onEditEvent={handleEditEvent}
             />
           )}
         </View>
       </View>
 
-      <CreateEventModal
+      <EventModal
         visible={isAddEventModalVisible}
         selectedDate={selectedDate}
+        event={selectedEvent}
         onClose={handleCloseModal}
         onSave={handleSaveEvent}
       />

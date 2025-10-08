@@ -4,6 +4,8 @@ import {
   CalendarEventsResponse,
   CreateEventRequest,
   CreateEventResponse,
+  UpdateEventRequest,
+  UpdateEventResponse,
 } from "../types/calendar";
 
 const fetchCalendarEvents = async (
@@ -33,4 +35,16 @@ const createCalendarEvent = async (
   return response.data;
 };
 
-export { fetchCalendarEvents, createCalendarEvent };
+const updateCalendarEvent = async (
+  eventId: string,
+  eventData: UpdateEventRequest
+): Promise<UpdateEventResponse> => {
+  const response = await apiClient.put<UpdateEventResponse>(
+    `${API_CONSTANTS.ENDPOINTS.CALENDAR.EVENTS}/${eventId}`,
+    eventData
+  );
+
+  return response.data;
+};
+
+export { fetchCalendarEvents, createCalendarEvent, updateCalendarEvent };

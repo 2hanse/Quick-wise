@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -10,27 +10,49 @@ import {
   Alert,
 } from "react-native";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
-import { CreateEventRequest } from "../../types/calendar";
+import { CalendarEvent, CreateEventRequest } from "../../types/calendar";
 
-interface CreateEventModalProps {
+interface EventModalProps {
   visible: boolean;
   selectedDate: string;
+  event?: CalendarEvent | null;
   onClose: () => void;
-  onSave: (eventData: CreateEventRequest) => void;
+  onSave: (eventId: string | null, eventData: CreateEventRequest) => void;
 }
 
-const CreateEventModal = ({
+const EventModal = ({
   visible,
   selectedDate,
+  event,
   onClose,
   onSave,
-}: CreateEventModalProps) => {
+}: EventModalProps) => {
   const [title, setTitle] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [isAllDay, setIsAllDay] = useState(false);
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+
+  const isEditMode = !!event;
+
+  useEffect(() => {
+    if (event) {
+      setTitle(event.title);
+      setStartTime(event.startTime);
+      setEndTime(event.endTime);
+      setIsAllDay(event.isAllDay);
+      setLocation(event.location || "");
+      setDescription(event.description || "");
+    } else {
+      setTitle("");
+      setStartTime("");
+      setEndTime("");
+      setIsAllDay(false);
+      setLocation("");
+      setDescription("");
+    }
+  }, [event, visible]);
 
   const handleSave = () => {
     if (!title.trim()) {
@@ -66,7 +88,7 @@ const CreateEventModal = ({
       isAllDay,
     };
 
-    onSave(eventData);
+    onSave(event?.id || null, eventData);
     handleClose();
   };
 
@@ -91,7 +113,9 @@ const CreateEventModal = ({
         <View className="bg-white rounded-t-3xl h-[80%]">
           <View className="p-4 border-b border-gray-200">
             <Text className="text-[20px] font-bold text-center">
-              {CALENDAR_CONSTANTS.FORM.MODAL_TITLE}
+              {isEditMode
+                ? CALENDAR_CONSTANTS.FORM.EDIT_MODAL_TITLE
+                : CALENDAR_CONSTANTS.FORM.MODAL_TITLE}
             </Text>
           </View>
 
@@ -209,4 +233,4 @@ const CreateEventModal = ({
   );
 };
 
-export default CreateEventModal;
+export default EventModal;

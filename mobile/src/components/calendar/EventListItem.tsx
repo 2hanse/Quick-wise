@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import type { EventListItemProps } from "../../types/calendar";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 
-const EventListItem = ({ event }: EventListItemProps) => {
+const EventListItem = ({ event, onPress }: EventListItemProps) => {
   const { CATEGORY_COLORS, CATEGORY_LABELS } = CALENDAR_CONSTANTS;
 
   const startTime = new Date(event.startTime).toLocaleTimeString("ko-KR", {
@@ -27,10 +27,14 @@ const EventListItem = ({ event }: EventListItemProps) => {
     : CATEGORY_LABELS.DEFAULT;
 
   return (
-    <View className="py-3 border-b border-gray-100">
+    <TouchableOpacity
+      onPress={() => onPress(event)}
+      activeOpacity={0.7}
+      className="py-3 border-b border-gray-100"
+    >
       <View className="flex-row items-center gap-2 mb-1">
         <View
-          className="px-2.5 py-1 rounded-md flex-row items-center gap-1"
+          className="px-2.5 py-1 rounded-md"
           style={{ backgroundColor: `${categoryColor}15` }}
         >
           <Text
@@ -48,7 +52,7 @@ const EventListItem = ({ event }: EventListItemProps) => {
       {event.location && (
         <Text className="text-[13px] text-gray-500">{event.location}</Text>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 

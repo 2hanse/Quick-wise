@@ -1,8 +1,13 @@
 import { create } from "zustand";
-import { CalendarState, CreateEventRequest } from "../types/calendar";
+import {
+  CalendarState,
+  CreateEventRequest,
+  UpdateEventRequest,
+} from "../types/calendar";
 import {
   fetchCalendarEvents,
   createCalendarEvent,
+  updateCalendarEvent,
 } from "../services/calendarService";
 import CALENDAR_CONSTANTS from "../constants/calendar";
 
@@ -38,6 +43,26 @@ const useCalendarStore = create<CalendarState>((set, get) => ({
       console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.CREATE_ERROR, error);
       set({
         error: CALENDAR_CONSTANTS.MESSAGES.ERROR_CREATE_EVENT,
+        isLoading: false,
+      });
+    }
+  },
+
+  updateEvent: async (eventId: string, eventData: UpdateEventRequest) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await updateCalendarEvent(eventId, eventData);
+      const currentEvents = get().events;
+      set({
+        events: currentEvents.map((event) =>
+          event.id === eventId ? response.event : event
+        ),
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.UPDATE_ERROR, error);
+      set({
+        error: CALENDAR_CONSTANTS.MESSAGES.ERROR_UPDATE_EVENT,
         isLoading: false,
       });
     }

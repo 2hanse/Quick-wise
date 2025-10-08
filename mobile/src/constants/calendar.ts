@@ -40,10 +40,12 @@ const CALENDAR_CONSTANTS = {
     LOADING_EVENTS: "일정을 불러오는 중...",
     ERROR_FETCH_EVENTS: "일정을 불러오는데 실패했습니다",
     ERROR_CREATE_EVENT: "일정 생성에 실패했습니다",
+    ERROR_UPDATE_EVENT: "일정 수정에 실패했습니다",
   },
   LOG_PREFIXES: {
     FETCH_ERROR: "[Calendar Fetch Error]",
     CREATE_ERROR: "[Calendar Create Error]",
+    UPDATE_ERROR: "[Calendar Update Error]",
   },
   FORM: {
     LABELS: {
@@ -53,6 +55,7 @@ const CALENDAR_CONSTANTS = {
       ALL_DAY: "종일",
       LOCATION: "위치",
       DESCRIPTION: "설명",
+      MODAL_TITLE: "새 일정 추가",
     },
     PLACEHOLDERS: {
       TITLE: "일정 제목을 입력하세요",
@@ -64,6 +67,7 @@ const CALENDAR_CONSTANTS = {
       CANCEL: "취소",
     },
     MODAL_TITLE: "새 일정 추가",
+    EDIT_MODAL_TITLE: "일정 수정",
     ALERT_TITLES: {
       INPUT_ERROR: "입력 오류",
       TIME_ERROR: "시간 오류",

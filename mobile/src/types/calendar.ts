@@ -17,12 +17,14 @@ interface CalendarEvent {
 
 interface EventListItemProps {
   event: CalendarEvent;
+  onPress: (event: CalendarEvent) => void;
 }
 
 interface DayEventsSectionProps {
   selectedDate: string;
   events: CalendarEvent[];
   onAddEvent: () => void;
+  onEditEvent: (event: CalendarEvent) => void;
 }
 
 interface CalendarHeaderProps {
@@ -69,7 +71,22 @@ interface CreateEventRequest {
   isAllDay: boolean;
 }
 
+interface UpdateEventRequest {
+  title: string;
+  startTime: string;
+  endTime: string;
+  location?: string;
+  description?: string;
+  isAllDay: boolean;
+}
+
 interface CreateEventResponse {
+  message: string;
+  event: CalendarEvent;
+  tokenRefreshed: boolean;
+}
+
+interface UpdateEventResponse {
   message: string;
   event: CalendarEvent;
   tokenRefreshed: boolean;
@@ -81,6 +98,10 @@ interface CalendarState {
   error: string | null;
   fetchEvents: (startDate: string, endDate: string) => Promise<void>;
   createEvent: (eventData: CreateEventRequest) => Promise<void>;
+  updateEvent: (
+    eventId: string,
+    eventData: UpdateEventRequest
+  ) => Promise<void>;
   clearEvents: () => void;
 }
 
@@ -96,6 +117,8 @@ export {
   MarkedDate,
   CalendarEventsResponse,
   CreateEventRequest,
+  UpdateEventRequest,
   CreateEventResponse,
+  UpdateEventResponse,
   CalendarState,
 };
