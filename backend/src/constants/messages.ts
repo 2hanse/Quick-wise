@@ -47,6 +47,7 @@ const constants = {
       FAILED_TO_CREATE_EVENT: "Failed to create calendar event",
       EVENT_NOT_FOUND: "Calendar event not found",
       FAILED_TO_UPDATE_EVENT: "Failed to update calendar event",
+      FAILED_TO_DELETE_EVENT: "Failed to delete calendar event",
     },
   },
   SUCCESS: {
@@ -57,6 +58,7 @@ const constants = {
       EVENTS_FETCHED: "Calendar events fetched successfully",
       EVENT_CREATED: "Calendar event created successfully",
       EVENT_UPDATED: "Calendar event updated successfully",
+      EVENT_DELETED: "Calendar event deleted successfully",
     },
     GOOGLE_AUTH: {
       TOKEN_REFRESHED: "Google access token refreshed successfully",
@@ -95,6 +97,7 @@ const constants = {
     TOKEN_REFRESH: "[Token Refresh]",
     EVENT_CREATE: "[Event Create]",
     EVENT_UPDATE: "[Event Update]",
+    EVENT_DELETE: "[Event Delete]",
   },
 } as const;
 
