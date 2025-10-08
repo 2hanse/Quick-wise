@@ -72,6 +72,15 @@ interface GoogleCreateEventRequest {
   description?: string;
 }
 
+interface UpdateEventRequest {
+  title: string;
+  startTime: string;
+  endTime: string;
+  location?: string;
+  description?: string;
+  isAllDay: boolean;
+}
+
 export type { EventStatus };
 export {
   GoogleCalendarEvent,
@@ -81,4 +90,5 @@ export {
   GoogleTokenRefreshResponse,
   CreateEventRequest,
   GoogleCreateEventRequest,
+  UpdateEventRequest,
 };

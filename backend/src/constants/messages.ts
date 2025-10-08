@@ -45,6 +45,8 @@ const constants = {
       INVALID_TIME_FORMAT: "Invalid time format",
       END_TIME_BEFORE_START: "End time must be after start time",
       FAILED_TO_CREATE_EVENT: "Failed to create calendar event",
+      EVENT_NOT_FOUND: "Calendar event not found",
+      FAILED_TO_UPDATE_EVENT: "Failed to update calendar event",
     },
   },
   SUCCESS: {
@@ -54,6 +56,7 @@ const constants = {
     CALENDAR: {
       EVENTS_FETCHED: "Calendar events fetched successfully",
       EVENT_CREATED: "Calendar event created successfully",
+      EVENT_UPDATED: "Calendar event updated successfully",
     },
     GOOGLE_AUTH: {
       TOKEN_REFRESHED: "Google access token refreshed successfully",
@@ -91,6 +94,7 @@ const constants = {
     GENERAL_ERROR: "[Error]",
     TOKEN_REFRESH: "[Token Refresh]",
     EVENT_CREATE: "[Event Create]",
+    EVENT_UPDATE: "[Event Update]",
   },
 } as const;
 
