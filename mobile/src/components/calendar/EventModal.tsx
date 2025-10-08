@@ -11,6 +11,14 @@ import {
 } from "react-native";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 import { CalendarEvent, CreateEventRequest } from "../../types/calendar";
+import {
+  formatEventDateTime,
+  formatEndDateTime,
+} from "../../utils/calendar/dateFormatter";
+import {
+  validateEventTime,
+  validateEventTitle,
+} from "../../utils/calendar/eventValidator";
 
 interface EventModalProps {
   visible: boolean;
@@ -55,7 +63,7 @@ const EventModal = ({
   }, [event, visible]);
 
   const handleSave = () => {
-    if (!title.trim()) {
+    if (!validateEventTitle(title)) {
       Alert.alert(
         CALENDAR_CONSTANTS.FORM.ALERT_TITLES.INPUT_ERROR,
         CALENDAR_CONSTANTS.FORM.VALIDATION.TITLE_REQUIRED
@@ -63,15 +71,14 @@ const EventModal = ({
       return;
     }
 
-    const startDateTime = isAllDay
-      ? `${selectedDate}T00:00:00+09:00`
-      : startTime || `${selectedDate}T09:00:00+09:00`;
+    const startDateTime = formatEventDateTime(
+      selectedDate,
+      startTime,
+      isAllDay
+    );
+    const endDateTime = formatEndDateTime(selectedDate, endTime, isAllDay);
 
-    const endDateTime = isAllDay
-      ? `${selectedDate}T23:59:59+09:00`
-      : endTime || `${selectedDate}T10:00:00+09:00`;
-
-    if (new Date(endDateTime) <= new Date(startDateTime)) {
+    if (!validateEventTime(startDateTime, endDateTime)) {
       Alert.alert(
         CALENDAR_CONSTANTS.FORM.ALERT_TITLES.TIME_ERROR,
         CALENDAR_CONSTANTS.FORM.VALIDATION.TIME_INVALID
