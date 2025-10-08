@@ -4,10 +4,8 @@ import {
   AuthRequest,
 } from "../middleware/authenticateToken";
 import { User } from "../models/User";
-import {
-  getCalendarEvents,
-  createCalendarEvent,
-} from "../services/googleCalendarService";
+import { getCalendarEvents } from "../services/calendar/calendarReader";
+import { createCalendarEvent } from "../services/calendar/calendarCreator";
 import validateDateRange from "../utils/dateValidator";
 import constants from "../constants/messages";
 import { CreateEventRequest } from "../types/calendar";
