@@ -18,6 +18,7 @@ interface CalendarEvent {
 interface EventListItemProps {
   event: CalendarEvent;
   onPress: (event: CalendarEvent) => void;
+  onDelete: (eventId: string) => void;
 }
 
 interface DayEventsSectionProps {
@@ -25,6 +26,7 @@ interface DayEventsSectionProps {
   events: CalendarEvent[];
   onAddEvent: () => void;
   onEditEvent: (event: CalendarEvent) => void;
+  onDeleteEvent: (eventId: string) => void;
 }
 
 interface CalendarHeaderProps {
@@ -92,6 +94,11 @@ interface UpdateEventResponse {
   tokenRefreshed: boolean;
 }
 
+interface DeleteEventResponse {
+  message: string;
+  tokenRefreshed: boolean;
+}
+
 interface CalendarState {
   events: CalendarEvent[];
   isLoading: boolean;
@@ -102,6 +109,7 @@ interface CalendarState {
     eventId: string,
     eventData: UpdateEventRequest
   ) => Promise<void>;
+  deleteEvent: (eventId: string) => Promise<void>;
   clearEvents: () => void;
 }
 
@@ -120,5 +128,6 @@ export {
   UpdateEventRequest,
   CreateEventResponse,
   UpdateEventResponse,
+  DeleteEventResponse,
   CalendarState,
 };

@@ -8,6 +8,7 @@ import {
   fetchCalendarEvents,
   createCalendarEvent,
   updateCalendarEvent,
+  deleteCalendarEvent,
 } from "../services/calendarService";
 import CALENDAR_CONSTANTS from "../constants/calendar";
 
@@ -63,6 +64,24 @@ const useCalendarStore = create<CalendarState>((set, get) => ({
       console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.UPDATE_ERROR, error);
       set({
         error: CALENDAR_CONSTANTS.MESSAGES.ERROR_UPDATE_EVENT,
+        isLoading: false,
+      });
+    }
+  },
+
+  deleteEvent: async (eventId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      await deleteCalendarEvent(eventId);
+      const currentEvents = get().events;
+      set({
+        events: currentEvents.filter((event) => event.id !== eventId),
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.DELETE_ERROR, error);
+      set({
+        error: CALENDAR_CONSTANTS.MESSAGES.ERROR_DELETE_EVENT,
         isLoading: false,
       });
     }

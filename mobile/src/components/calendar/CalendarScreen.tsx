@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { View, PanResponder, ActivityIndicator, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 import CalendarHeader from "./CalendarHeader";
 import DayEventsSection from "./DayEventsSection";
@@ -29,8 +30,15 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
     null
   );
 
-  const { events, isLoading, error, fetchEvents, createEvent, updateEvent } =
-    useCalendarStore();
+  const {
+    events,
+    isLoading,
+    error,
+    fetchEvents,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+  } = useCalendarStore();
 
   useEffect(() => {
     const { startDate, endDate } = getMonthRange(currentMonth);
@@ -111,6 +119,17 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
     setIsAddEventModalVisible(true);
   };
 
+  const handleDeleteEvent = async (eventId: string) => {
+    await deleteEvent(eventId);
+    Toast.show({
+      type: CALENDAR_CONSTANTS.TOAST.TYPES.SUCCESS,
+      text1: CALENDAR_CONSTANTS.MESSAGES.EVENT_DELETED,
+      position: CALENDAR_CONSTANTS.TOAST.POSITION.BOTTOM,
+      visibilityTime: CALENDAR_CONSTANTS.TOAST.SETTINGS.VISIBILITY_TIME,
+      bottomOffset: CALENDAR_CONSTANTS.TOAST.SETTINGS.BOTTOM_OFFSET,
+    });
+  };
+
   const handleCloseModal = () => {
     setIsAddEventModalVisible(false);
     setSelectedEvent(null);
@@ -169,6 +188,7 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
               events={events}
               onAddEvent={handleAddEvent}
               onEditEvent={handleEditEvent}
+              onDeleteEvent={handleDeleteEvent}
             />
           )}
         </View>
@@ -181,6 +201,7 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
         onClose={handleCloseModal}
         onSave={handleSaveEvent}
       />
+      <Toast />
     </SafeAreaView>
   );
 };

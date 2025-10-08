@@ -41,11 +41,15 @@ const CALENDAR_CONSTANTS = {
     ERROR_FETCH_EVENTS: "일정을 불러오는데 실패했습니다",
     ERROR_CREATE_EVENT: "일정 생성에 실패했습니다",
     ERROR_UPDATE_EVENT: "일정 수정에 실패했습니다",
+    ERROR_DELETE_EVENT: "일정 삭제에 실패했습니다",
+    EVENT_DELETED: "일정이 삭제되었습니다",
+    CONFIRM_DELETE: "이 일정을 삭제하시겠습니까?",
   },
   LOG_PREFIXES: {
     FETCH_ERROR: "[Calendar Fetch Error]",
     CREATE_ERROR: "[Calendar Create Error]",
     UPDATE_ERROR: "[Calendar Update Error]",
+    DELETE_ERROR: "[Calendar Delete Error]",
   },
   FORM: {
     LABELS: {
@@ -65,16 +69,30 @@ const CALENDAR_CONSTANTS = {
     BUTTONS: {
       SAVE: "저장",
       CANCEL: "취소",
+      DELETE: "삭제",
     },
     MODAL_TITLE: "새 일정 추가",
     EDIT_MODAL_TITLE: "일정 수정",
     ALERT_TITLES: {
       INPUT_ERROR: "입력 오류",
       TIME_ERROR: "시간 오류",
+      DELETE_CONFIRM: "삭제 확인",
     },
     VALIDATION: {
       TITLE_REQUIRED: "제목을 입력해주세요",
       TIME_INVALID: "종료 시간이 시작 시간보다 빨라요",
+    },
+  },
+  TOAST: {
+    TYPES: {
+      SUCCESS: "success",
+    },
+    POSITION: {
+      BOTTOM: "bottom",
+    },
+    SETTINGS: {
+      VISIBILITY_TIME: 3000,
+      BOTTOM_OFFSET: 100,
     },
   },
   THEME: {
@@ -93,6 +111,7 @@ const CALENDAR_CONSTANTS = {
       SWITCH_TRACK_FALSE: "#d1d5db",
       SWITCH_TRACK_TRUE: "#3b82f6",
       SWITCH_THUMB: "#ffffff",
+      DELETE_BACKGROUND: "#ef4444",
     },
     FONT_SIZES: {
       MONTH: 18,
@@ -104,6 +123,13 @@ const CALENDAR_CONSTANTS = {
     },
     LAYOUT: {
       DAY_CIRCLE_SIZE: 36,
+    },
+    SWIPEABLE: {
+      DELETE_WIDTH: 80,
+      CONTENT_MARGIN: 8,
+      ICON_SIZE: 32,
+      FRICTION: 2,
+      THRESHOLD: 60,
     },
   },
 } as const;

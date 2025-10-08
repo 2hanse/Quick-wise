@@ -6,6 +6,7 @@ import {
   CreateEventResponse,
   UpdateEventRequest,
   UpdateEventResponse,
+  DeleteEventResponse,
 } from "../types/calendar";
 
 const fetchCalendarEvents = async (
@@ -47,4 +48,19 @@ const updateCalendarEvent = async (
   return response.data;
 };
 
-export { fetchCalendarEvents, createCalendarEvent, updateCalendarEvent };
+const deleteCalendarEvent = async (
+  eventId: string
+): Promise<DeleteEventResponse> => {
+  const response = await apiClient.delete<DeleteEventResponse>(
+    `${API_CONSTANTS.ENDPOINTS.CALENDAR.EVENTS}/${eventId}`
+  );
+
+  return response.data;
+};
+
+export {
+  fetchCalendarEvents,
+  createCalendarEvent,
+  updateCalendarEvent,
+  deleteCalendarEvent,
+};
