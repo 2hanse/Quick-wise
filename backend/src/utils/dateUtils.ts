@@ -7,11 +7,17 @@ const formatDateString = (date: Date): string => {
 
 const getTodayDateRange = (): { startDate: string; endDate: string } => {
   const today = new Date();
-  const dateString = formatDateString(today);
+
+  const startDate = new Date(today);
+  startDate.setHours(0, 0, 0, 0);
+
+  const endDate = new Date(today);
+  endDate.setDate(endDate.getDate() + 1);
+  endDate.setHours(23, 59, 59, 999);
 
   return {
-    startDate: dateString,
-    endDate: dateString,
+    startDate: formatDateString(startDate),
+    endDate: formatDateString(endDate),
   };
 };
 

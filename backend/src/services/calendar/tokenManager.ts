@@ -14,15 +14,16 @@ const refreshGoogleAccessToken = async (
         constants.ERROR_MESSAGES.GOOGLE_AUTH.CLIENT_ID_NOT_DEFINED
       );
     }
+    const params = new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      refresh_token: refreshToken,
+      grant_type: constants.GOOGLE_OAUTH.GRANT_TYPE_REFRESH,
+    });
 
     const response = await axios.post<GoogleTokenRefreshResponse>(
       constants.GOOGLE_OAUTH.TOKEN_URL,
-      {
-        client_id: clientId,
-        client_secret: clientSecret,
-        refresh_token: refreshToken,
-        grant_type: constants.GOOGLE_OAUTH.GRANT_TYPE_REFRESH,
-      },
+      params.toString(),
       {
         headers: {
           "Content-Type": constants.GOOGLE_OAUTH.CONTENT_TYPE_FORM,

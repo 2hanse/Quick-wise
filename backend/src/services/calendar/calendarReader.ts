@@ -18,13 +18,16 @@ const fetchCalendarEvents = async (
   endDate: string
 ): Promise<CalendarEvent[]> => {
   try {
+    const timeMin = new Date(startDate).toISOString();
+    const timeMax = new Date(endDate).toISOString();
+
     const response = await axios.get<GoogleCalendarListResponse>(
       `${constants.GOOGLE_CALENDAR.API_BASE_URL}/calendars/${constants.GOOGLE_CALENDAR.DEFAULT_CALENDAR_ID}/events`,
       {
         ...createAxiosConfig(accessToken),
         params: {
-          timeMin: new Date(startDate).toISOString(),
-          timeMax: new Date(endDate).toISOString(),
+          timeMin,
+          timeMax,
           maxResults: constants.GOOGLE_CALENDAR.DEFAULT_MAX_RESULTS,
           singleEvents: constants.GOOGLE_CALENDAR.SINGLE_EVENTS,
           orderBy: constants.GOOGLE_CALENDAR.ORDER_BY,
