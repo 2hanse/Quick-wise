@@ -6,6 +6,7 @@ import {
   createEvent,
   updateEvent,
   deleteEvent,
+  syncEvents,
 } from "../controllers/calendarController";
 import {
   validateDateRangeQuery,
@@ -30,5 +31,7 @@ router.put(
 );
 
 router.delete("/events/:id", authenticateToken, validateEventId, deleteEvent);
+
+router.post("/sync", authenticateToken, validateDateRangeQuery, syncEvents);
 
 export default router;

@@ -60,6 +60,7 @@ const constants = {
       EVENT_CREATED: "Calendar event created successfully",
       EVENT_UPDATED: "Calendar event updated successfully",
       EVENT_DELETED: "Calendar event deleted successfully",
+      SYNC_COMPLETED: "Calendar sync completed successfully",
     },
     GOOGLE_AUTH: {
       TOKEN_REFRESHED: "Google access token refreshed successfully",
