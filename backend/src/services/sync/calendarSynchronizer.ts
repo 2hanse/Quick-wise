@@ -1,6 +1,6 @@
 import { IUser } from "../../models/User";
 import { Event } from "../../models/Event";
-import { getCalendarEvents } from "./calendarReader";
+import { getCalendarEvents } from "../calendar/calendarReader";
 import constants from "../../constants/messages";
 
 const syncCalendarEvents = async (
