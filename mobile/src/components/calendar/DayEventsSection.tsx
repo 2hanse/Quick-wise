@@ -1,10 +1,16 @@
 import React, { useMemo } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import type { DayEventsSectionProps } from "../../types/calendar";
 import EventListItem from "./EventListItem";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 
-const DayEventsSection = ({ selectedDate, events }: DayEventsSectionProps) => {
+const DayEventsSection = ({
+  selectedDate,
+  events,
+  onAddEvent,
+  onEditEvent,
+  onDeleteEvent,
+}: DayEventsSectionProps) => {
   const filteredEvents = useMemo(() => {
     const filtered = events.filter((event) => {
       const eventDate = event.startTime.split("T")[0];
@@ -26,10 +32,17 @@ const DayEventsSection = ({ selectedDate, events }: DayEventsSectionProps) => {
 
   return (
     <View className="flex-1 bg-white mx-3 mt-3 rounded-2xl border border-gray-200">
-      <View className="p-4 border-b border-gray-200">
+      <View className="flex-row items-center justify-between p-4 border-b border-gray-200">
         <Text className="text-[17px] font-bold text-gray-900">
           {formattedDate}의 일정
         </Text>
+        <TouchableOpacity
+          onPress={onAddEvent}
+          className="w-8 h-8 items-center justify-center bg-blue-500 rounded-full"
+          activeOpacity={0.7}
+        >
+          <Text className="text-white text-[20px] font-bold">+</Text>
+        </TouchableOpacity>
       </View>
       {filteredEvents.length === 0 ? (
         <View className="flex-1 items-center justify-center py-12">
@@ -41,7 +54,12 @@ const DayEventsSection = ({ selectedDate, events }: DayEventsSectionProps) => {
       ) : (
         <ScrollView className="flex-1 px-4">
           {filteredEvents.map((event) => (
-            <EventListItem key={event.id} event={event} />
+            <EventListItem
+              key={event.id}
+              event={event}
+              onPress={onEditEvent}
+              onDelete={onDeleteEvent}
+            />
           ))}
         </ScrollView>
       )}

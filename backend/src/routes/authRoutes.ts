@@ -16,7 +16,8 @@ const router = express.Router();
 
 router.post("/google", async (req, res) => {
   try {
-    const { idToken } = req.body;
+    const { idToken, googleAccessToken, googleRefreshToken, expiresIn } =
+      req.body;
 
     if (!idToken) {
       return res.status(400).json({
@@ -24,7 +25,18 @@ router.post("/google", async (req, res) => {
       });
     }
 
+    if (!googleAccessToken) {
+      return res.status(400).json({
+        error: constants.ERROR_MESSAGES.GOOGLE_AUTH.ACCESS_TOKEN_REQUIRED,
+      });
+    }
+
     const googleUser = await verifyGoogleToken(idToken);
+
+    const tokenExpiresAt = new Date();
+    const expirationSeconds =
+      expiresIn || constants.TOKEN.GOOGLE_TOKEN_DEFAULT_EXPIRATION;
+    tokenExpiresAt.setSeconds(tokenExpiresAt.getSeconds() + expirationSeconds);
 
     let user = await User.findOne({ googleId: googleUser.sub });
 
@@ -33,9 +45,14 @@ router.post("/google", async (req, res) => {
         googleId: googleUser.sub,
         email: googleUser.email,
         name: googleUser.name,
+        googleAccessToken,
+        googleRefreshToken,
         lastLoginAt: new Date(),
       });
     } else {
+      user.googleAccessToken = googleAccessToken;
+      user.googleRefreshToken = googleRefreshToken;
+      user.tokenExpiresAt = tokenExpiresAt;
       user.lastLoginAt = new Date();
       await user.save();
     }

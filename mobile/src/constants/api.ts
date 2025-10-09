@@ -10,7 +10,11 @@ const API_CONSTANTS = {
       REFRESH: "/auth/refresh",
       ME: "/auth/me",
     },
-  },
+    CALENDAR: {
+      EVENTS: "/calendar/events",
+      TODAY: "/calendar/today",
+    },
+  } as const,
   STORAGE_KEYS: {
     ACCESS_TOKEN: "accessToken",
     REFRESH_TOKEN: "refreshToken",

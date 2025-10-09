@@ -4,6 +4,9 @@ interface IUser extends Document {
   googleId: string;
   email: string;
   name: string;
+  googleAccessToken?: string;
+  googleRefreshToken?: string;
+  tokenExpiresAt?: Date;
   createdAt: Date;
   lastLoginAt: Date;
 }
@@ -24,6 +27,15 @@ const UserSchema: Schema = new Schema(
     name: {
       type: String,
       required: true,
+    },
+    googleAccessToken: {
+      type: String,
+    },
+    googleRefreshToken: {
+      type: String,
+    },
+    tokenExpiresAt: {
+      type: Date,
     },
     lastLoginAt: {
       type: Date,

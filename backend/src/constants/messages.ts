@@ -11,6 +11,9 @@ const constants = {
       INVALID_TOKEN: "Invalid Google token",
       VERIFICATION_FAILED: "Google token verification failed",
       INVALID_PAYLOAD: "Invalid token payload",
+      ACCESS_TOKEN_REQUIRED: "Google access token is required",
+      REFRESH_TOKEN_NOT_FOUND: "Google refresh token not found for user",
+      TOKEN_REFRESH_FAILED: "Failed to refresh Google access token",
     },
     JWT: {
       SECRET_NOT_DEFINED: "JWT_SECRET is not defined in environment variables",
@@ -29,15 +32,72 @@ const constants = {
       NOT_FOUND: "User not found",
       FAILED_TO_GET_INFO: "Failed to get user information",
     },
+    CALENDAR: {
+      GOOGLE_ACCESS_TOKEN_NOT_FOUND: "Google access token not found for user",
+      FAILED_TO_FETCH_EVENTS: "Failed to fetch calendar events",
+      INVALID_DATE_RANGE: "Invalid date range provided",
+      GOOGLE_API_ERROR: "Google Calendar API error",
+      TOKEN_EXPIRED: "Google access token has expired",
+      PERMISSION_DENIED: "Calendar access permission denied",
+      SERVER_ERROR: "Google Calendar server error",
+      INVALID_EVENT_DATA: "Invalid event data provided",
+      REQUIRED_FIELD_MISSING: "Required field is missing",
+      INVALID_TIME_FORMAT: "Invalid time format",
+      END_TIME_BEFORE_START: "End time must be after start time",
+      FAILED_TO_CREATE_EVENT: "Failed to create calendar event",
+      EVENT_NOT_FOUND: "Calendar event not found",
+      FAILED_TO_UPDATE_EVENT: "Failed to update calendar event",
+      FAILED_TO_DELETE_EVENT: "Failed to delete calendar event",
+    },
   },
   SUCCESS: {
     DATABASE: {
       CONNECTION_SUCCESS: "MongoDB connected successfully",
     },
+    CALENDAR: {
+      EVENTS_FETCHED: "Calendar events fetched successfully",
+      EVENT_CREATED: "Calendar event created successfully",
+      EVENT_UPDATED: "Calendar event updated successfully",
+      EVENT_DELETED: "Calendar event deleted successfully",
+    },
+    GOOGLE_AUTH: {
+      TOKEN_REFRESHED: "Google access token refreshed successfully",
+    },
   },
   TOKEN: {
     ACCESS_TOKEN_EXPIRATION: "15m",
     REFRESH_TOKEN_EXPIRATION: "7d",
+    GOOGLE_TOKEN_DEFAULT_EXPIRATION: 3600,
+  },
+  GOOGLE_CALENDAR: {
+    API_BASE_URL: "https://www.googleapis.com/calendar/v3",
+    DEFAULT_CALENDAR_ID: "primary",
+    DEFAULT_MAX_RESULTS: 100,
+    DEFAULT_TIME_ZONE: "Asia/Seoul",
+    ORDER_BY: "startTime",
+    SINGLE_EVENTS: true,
+    EVENT_STATUS: {
+      CONFIRMED: "confirmed",
+      TENTATIVE: "tentative",
+      CANCELLED: "cancelled",
+    },
+    DEFAULT_TITLE: "제목 없음",
+  },
+  GOOGLE_OAUTH: {
+    TOKEN_URL: "https://oauth2.googleapis.com/token",
+    GRANT_TYPE_REFRESH: "refresh_token",
+    CONTENT_TYPE_FORM: "application/x-www-form-urlencoded",
+  },
+  HTTP: {
+    CONTENT_TYPE_JSON: "application/json",
+  },
+  LOG_PREFIXES: {
+    CALENDAR_ERROR: "[Calendar API Error]",
+    GENERAL_ERROR: "[Error]",
+    TOKEN_REFRESH: "[Token Refresh]",
+    EVENT_CREATE: "[Event Create]",
+    EVENT_UPDATE: "[Event Update]",
+    EVENT_DELETE: "[Event Delete]",
   },
 } as const;
 

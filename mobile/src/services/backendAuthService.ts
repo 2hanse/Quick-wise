@@ -8,13 +8,19 @@ import {
 } from "../types/auth";
 
 const loginWithBackend = async (
-  idToken: string
+  idToken: string,
+  googleAccessToken: string,
+  googleRefreshToken?: string,
+  expiresIn?: number
 ): Promise<BackendLoginResponse> => {
   try {
     const response = await apiClient.post<BackendLoginResponse>(
       API_CONSTANTS.ENDPOINTS.AUTH.GOOGLE,
       {
         idToken,
+        googleAccessToken,
+        googleRefreshToken,
+        expiresIn,
       }
     );
 

@@ -28,6 +28,8 @@ const mainPageConstants = {
         REST: "휴식",
       },
     },
+    LOADING: "일정을 불러오는 중...",
+    ERROR_LOAD_FAILED: "일정을 불러오는데 실패했습니다",
   },
   ICONS: {
     DATE_HEADER: "📅",
@@ -43,14 +45,52 @@ const mainPageConstants = {
       WALKING: "🚶",
       REST: "☕️",
     },
+    ERROR: "⚠️",
   },
   STATUS_ICONS: {
     COMPLETED: "✓",
     PROGRESS: "●",
     UPCOMING: "○",
   },
+  STATUS_BADGES: {
+    COMPLETED: "완료",
+    PROGRESS: "진행중",
+    UPCOMING: "예정",
+  },
+  STATUS_VALUES: {
+    COMPLETED: "completed" as const,
+    PROGRESS: "progress" as const,
+    UPCOMING: "upcoming" as const,
+  },
+  TIME_FORMAT: {
+    ALL_DAY: "종일",
+    AM: "오전",
+    PM: "오후",
+    MIDNIGHT_HOUR: 0,
+    NOON_HOUR: 12,
+    MINUTE_PAD_LENGTH: 2,
+    MINUTE_PAD_CHAR: "0",
+  },
+  TIME_CONVERSION: {
+    MILLISECONDS_TO_MINUTES: 1000 * 60,
+  },
+  DATE_FORMAT: {
+    MONTH_SUFFIX: "월",
+    DAY_SUFFIX: "일",
+    DAY_OF_WEEK_SUFFIX: "요일",
+  },
+  DAY_OF_WEEK: ["일", "월", "화", "수", "목", "금", "토"],
+  SCHEDULE_STATUS: {
+    PROGRESS_THRESHOLD_MINUTES: 60,
+  },
   STORAGE_KEYS: {
     CHECKLIST_STATE: "@checklist_state",
+  },
+  LOG_PREFIXES: {
+    MAIN_SCREEN: "[MainScreen]",
+  },
+  LOG_MESSAGES: {
+    FAILED_TO_LOAD: "Failed to load today schedules",
   },
 } as const;
 

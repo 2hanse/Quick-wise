@@ -12,6 +12,12 @@ module.exports = {
     sourceType: "module",
   },
   rules: {
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        argsIgnorePattern: "^_",
+      },
+    ],
     "@typescript-eslint/no-require-imports": [
       "error",
       {

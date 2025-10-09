@@ -1,70 +1,35 @@
-import React, { useState, useMemo, useRef } from "react";
-import { View, PanResponder } from "react-native";
+import React, { useState } from "react";
+import { View, ActivityIndicator, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
-import mockCalendar from "../../mocks/mockCalendar";
 import CalendarHeader from "./CalendarHeader";
 import DayEventsSection from "./DayEventsSection";
 import MonthCalendar from "./MonthCalendar";
-import {
-  SWIPE_THRESHOLD,
-  SWIPE_VELOCITY_THRESHOLD,
-  GESTURE_ACTIVATION_THRESHOLD,
-} from "../../constants/gesture";
+import EventModal from "./EventModal";
 import { CalendarScreenProps } from "../../types/calendar";
-
-const getTodayString = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
+import { getTodayString } from "../../utils/dateUtils";
+import useCalendarData from "../../hooks/calendar/useCalendarData";
+import useCalendarGesture from "../../hooks/calendar/useCalendarGesture";
+import useEventModal from "../../hooks/calendar/useEventModal";
 
 const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
-  const { CATEGORY_COLORS } = CALENDAR_CONSTANTS;
   const today = getTodayString();
   const [selectedDate, setSelectedDate] = useState(today);
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => false,
-      onMoveShouldSetPanResponder: (_, gestureState) => {
-        const { dx, dy } = gestureState;
-        return (
-          Math.abs(dx) > Math.abs(dy) &&
-          Math.abs(dx) > GESTURE_ACTIVATION_THRESHOLD
-        );
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        const { dx, vx } = gestureState;
-
-        if (dx > SWIPE_THRESHOLD || vx > SWIPE_VELOCITY_THRESHOLD / 1000) {
-          onNavigateToHome();
-        }
-      },
-    })
-  ).current;
-
-  const markedDates = useMemo(() => {
-    const marked: Record<string, { dots: Array<{ color: string }> }> = {};
-
-    mockCalendar.forEach((event) => {
-      const dateKey = event.startTime.split("T")[0];
-      const color = CATEGORY_COLORS[event.category];
-
-      if (marked[dateKey]) {
-        marked[dateKey].dots.push({ color });
-      } else {
-        marked[dateKey] = {
-          dots: [{ color }],
-        };
-      }
-    });
-
-    return marked;
-  }, [CATEGORY_COLORS]);
+  const { events, isLoading, error, markedDates } =
+    useCalendarData(currentMonth);
+  const panResponder = useCalendarGesture(onNavigateToHome);
+  const {
+    isAddEventModalVisible,
+    selectedEvent,
+    handleAddEvent,
+    handleEditEvent,
+    handleDeleteEvent,
+    handleCloseModal,
+    handleSaveEvent,
+  } = useEventModal();
 
   const handlePrevMonth = () => {
     const prevMonth = new Date(currentMonth);
@@ -106,9 +71,44 @@ const CalendarScreen = ({ onNavigateToHome }: CalendarScreenProps) => {
               selectedDate={selectedDate}
             />
           </View>
-          <DayEventsSection selectedDate={selectedDate} events={mockCalendar} />
+          {isLoading ? (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator
+                size="large"
+                color={CALENDAR_CONSTANTS.THEME.COLORS.LOADING_INDICATOR}
+              />
+              <Text className="mt-4 text-gray-600">
+                {CALENDAR_CONSTANTS.MESSAGES.LOADING_EVENTS}
+              </Text>
+            </View>
+          ) : error ? (
+            <View className="flex-1 items-center justify-center">
+              <Text
+                style={{ color: CALENDAR_CONSTANTS.THEME.COLORS.ERROR_TEXT }}
+              >
+                {error}
+              </Text>
+            </View>
+          ) : (
+            <DayEventsSection
+              selectedDate={selectedDate}
+              events={events}
+              onAddEvent={handleAddEvent}
+              onEditEvent={handleEditEvent}
+              onDeleteEvent={handleDeleteEvent}
+            />
+          )}
         </View>
       </View>
+
+      <EventModal
+        visible={isAddEventModalVisible}
+        selectedDate={selectedDate}
+        event={selectedEvent}
+        onClose={handleCloseModal}
+        onSave={handleSaveEvent}
+      />
+      <Toast />
     </SafeAreaView>
   );
 };
