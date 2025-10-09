@@ -5,6 +5,7 @@ import { getCalendarEvents } from "../services/calendar/calendarReader";
 import { createCalendarEvent } from "../services/calendar/calendarCreator";
 import { updateCalendarEvent } from "../services/calendar/calendarUpdater";
 import { deleteCalendarEvent } from "../services/calendar/calendarDeleter";
+import { syncCalendarEvents } from "../services/calendar/calendarSynchronizer";
 import { getUserById, validateUserTokens } from "../services/userService";
 import { getTodayDateRange } from "../utils/dateUtils";
 import constants from "../constants/messages";
@@ -182,4 +183,36 @@ const deleteEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   }
 };
 
-export { getEvents, getTodayEvents, createEvent, updateEvent, deleteEvent };
+const syncEvents = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { startDate, endDate } = req.query as {
+      startDate: string;
+      endDate: string;
+    };
+
+    const user = await getUserById(req.userId!);
+    validateUserTokens(user);
+
+    const { tokenRefreshed } = await syncCalendarEvents(
+      user,
+      startDate,
+      endDate
+    );
+
+    res.json({
+      message: constants.SUCCESS.CALENDAR.SYNC_COMPLETED,
+      tokenRefreshed,
+    });
+  } catch (error) {
+    handleError(error, res, constants.LOG_PREFIXES.CALENDAR_SYNC);
+  }
+};
+
+export {
+  getEvents,
+  getTodayEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  syncEvents,
+};

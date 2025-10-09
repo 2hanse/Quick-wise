@@ -21,16 +21,11 @@ const useMainSchedule = () => {
         setIsLoading(true);
         setError(null);
 
-        console.log("🔵 [Debug] Fetching today events...");
         const response = await fetchTodayEvents();
-        console.log("🔵 [Debug] Response:", response);
-        console.log("🔵 [Debug] Events count:", response.events.length);
 
         const schedules = convertToTodaySchedules(response.events);
-        console.log("🔵 [Debug] Converted schedules:", schedules);
 
         const next = getNextSchedule(response.events);
-        console.log("🔵 [Debug] Next schedule:", next);
 
         setTodaySchedules(schedules);
         setNextSchedule(next);
