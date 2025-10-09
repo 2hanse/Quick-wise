@@ -1,5 +1,11 @@
 import React, { useRef } from "react";
-import { PanResponder, ScrollView, View } from "react-native";
+import {
+  PanResponder,
+  ScrollView,
+  View,
+  ActivityIndicator,
+  Text,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import mockCalendar from "../../mocks/mockMain";
 import DateHeaderSection from "./DateHeaderSection";
@@ -13,10 +19,13 @@ import {
   GESTURE_ACTIVATION_THRESHOLD,
 } from "../../constants/gesture";
 import { MainScreenProps } from "../../types/main";
+import useMainSchedule from "../../hooks/mainscreen/useMainSchedule";
+import mainPageConstants from "../../constants/main";
 
 const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
-  const hasSchedules =
-    mockCalendar.todaySchedules && mockCalendar.todaySchedules.length > 0;
+  const { todaySchedules, nextSchedule, dateInfo, isLoading, error } =
+    useMainSchedule();
+  const hasSchedules = todaySchedules.length > 0;
 
   const panResponder = useRef(
     PanResponder.create({
@@ -38,19 +47,45 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
     })
   ).current;
 
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" color="#3b82f6" />
+          <Text className="mt-4 text-gray-600">
+            {mainPageConstants.TEXT.LOADING}
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-1 items-center justify-center px-4">
+          <Text className="text-[18px] text-red-500 mb-2">
+            {mainPageConstants.ICONS.ERROR}
+          </Text>
+          <Text className="text-[16px] text-gray-700 text-center">{error}</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1" {...panResponder.panHandlers}>
         <ScrollView className="flex-1 px-3 pt-3">
-          <DateHeaderSection dateInfo={mockCalendar.dateInfo} />
+          <DateHeaderSection dateInfo={dateInfo} />
 
           {hasSchedules ? (
             <>
-              <NextScheduleSection schedule={mockCalendar.nextSchedule} />
+              {nextSchedule && <NextScheduleSection schedule={nextSchedule} />}
               <ScheduleGuideSection
                 swipeContents={mockCalendar.swipeContents}
               />
-              <TodayScheduleSection schedules={mockCalendar.todaySchedules} />
+              <TodayScheduleSection schedules={todaySchedules} />
             </>
           ) : (
             <EmptyScheduleSection />
