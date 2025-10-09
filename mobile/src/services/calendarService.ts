@@ -26,6 +26,14 @@ const fetchCalendarEvents = async (
   return response.data;
 };
 
+const fetchTodayEvents = async (): Promise<CalendarEventsResponse> => {
+  const response = await apiClient.get<CalendarEventsResponse>(
+    API_CONSTANTS.ENDPOINTS.CALENDAR.TODAY
+  );
+
+  return response.data;
+};
+
 const createCalendarEvent = async (
   eventData: CreateEventRequest
 ): Promise<CreateEventResponse> => {
@@ -60,6 +68,7 @@ const deleteCalendarEvent = async (
 
 export {
   fetchCalendarEvents,
+  fetchTodayEvents,
   createCalendarEvent,
   updateCalendarEvent,
   deleteCalendarEvent,

@@ -12,6 +12,7 @@ const API_CONSTANTS = {
     },
     CALENDAR: {
       EVENTS: "/calendar/events",
+      TODAY: "/calendar/today",
     },
   } as const,
   STORAGE_KEYS: {

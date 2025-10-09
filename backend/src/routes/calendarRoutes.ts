@@ -2,6 +2,7 @@ import express from "express";
 import { authenticateToken } from "../middleware/authenticateToken";
 import {
   getEvents,
+  getTodayEvents,
   createEvent,
   updateEvent,
   deleteEvent,
@@ -15,6 +16,8 @@ import {
 const router = express.Router();
 
 router.get("/events", authenticateToken, validateDateRangeQuery, getEvents);
+
+router.get("/today", authenticateToken, getTodayEvents);
 
 router.post("/events", authenticateToken, validateEventData, createEvent);
 

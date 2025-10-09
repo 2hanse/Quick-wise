@@ -6,6 +6,7 @@ import { createCalendarEvent } from "../services/calendar/calendarCreator";
 import { updateCalendarEvent } from "../services/calendar/calendarUpdater";
 import { deleteCalendarEvent } from "../services/calendar/calendarDeleter";
 import { getUserById, validateUserTokens } from "../services/userService";
+import { getTodayDateRange } from "../utils/dateUtils";
 import constants from "../constants/messages";
 
 const handleError = (
@@ -91,6 +92,32 @@ const getEvents = async (req: AuthRequest, res: Response): Promise<void> => {
   }
 };
 
+const getTodayEvents = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { startDate, endDate } = getTodayDateRange();
+
+    const user = await getUserById(req.userId!);
+    validateUserTokens(user);
+
+    const { events, tokenRefreshed } = await getCalendarEvents(
+      user,
+      startDate,
+      endDate
+    );
+
+    res.json({
+      message: constants.SUCCESS.CALENDAR.EVENTS_FETCHED,
+      events,
+      tokenRefreshed,
+    });
+  } catch (error) {
+    handleError(error, res, constants.LOG_PREFIXES.CALENDAR_ERROR);
+  }
+};
+
 const createEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const eventData = req.body as CreateEventRequest;
@@ -155,4 +182,4 @@ const deleteEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   }
 };
 
-export { getEvents, createEvent, updateEvent, deleteEvent };
+export { getEvents, getTodayEvents, createEvent, updateEvent, deleteEvent };
