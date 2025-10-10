@@ -1,6 +1,7 @@
 import { IUser } from "../../models/User";
 import { Event } from "../../models/Event";
 import { getCalendarEvents } from "../calendar/calendarReader";
+import categorizeEvent from "../categorization/eventCategorizer";
 import constants from "../../constants/messages";
 
 const syncCalendarEvents = async (
@@ -28,6 +29,11 @@ const syncCalendarEvents = async (
         description: googleEvent.description,
         isAllDay: googleEvent.isAllDay,
         status: googleEvent.status,
+        category: categorizeEvent(
+          googleEvent.title,
+          googleEvent.description,
+          googleEvent.location
+        ),
         lastSyncedAt: new Date(),
       };
 
