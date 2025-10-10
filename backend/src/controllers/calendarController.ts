@@ -5,7 +5,7 @@ import { getCalendarEvents } from "../services/calendar/calendarReader";
 import { createCalendarEvent } from "../services/calendar/calendarCreator";
 import { updateCalendarEvent } from "../services/calendar/calendarUpdater";
 import { deleteCalendarEvent } from "../services/calendar/calendarDeleter";
-import { syncCalendarEvents } from "../services/calendar/calendarSynchronizer";
+import { syncCalendarEvents } from "../services/sync/calendarSynchronizer";
 import { getUserById, validateUserTokens } from "../services/userService";
 import { getTodayDateRange } from "../utils/dateUtils";
 import constants from "../constants/messages";

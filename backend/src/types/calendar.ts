@@ -1,5 +1,7 @@
 type EventStatus = "confirmed" | "tentative" | "cancelled";
 
+type EventCategory = "meeting" | "presentation";
+
 interface GoogleCalendarEvent {
   id: string;
   summary?: string;
@@ -75,7 +77,7 @@ interface UpdateEventRequest {
   isAllDay: boolean;
 }
 
-export type { EventStatus };
+export type { EventStatus, EventCategory };
 export {
   GoogleCalendarEvent,
   GoogleCalendarListResponse,

@@ -38,7 +38,7 @@ const signInWithGoogle = async (): Promise<GoogleAuthResult> => {
     const googleTokens: GoogleTokens = {
       accessToken: tokens.accessToken,
       idToken: tokens.idToken || "",
-      refreshToken: userData.serverAuthCode || undefined,
+      serverAuthCode: userData.serverAuthCode || undefined,
       expiresIn: undefined,
     };
 
@@ -125,7 +125,7 @@ const signInSilently = async (): Promise<GoogleAuthResult> => {
     const googleTokens: GoogleTokens = {
       accessToken: tokens.accessToken,
       idToken: tokens.idToken || "",
-      refreshToken: undefined,
+      serverAuthCode: undefined,
       expiresIn: undefined,
     };
 

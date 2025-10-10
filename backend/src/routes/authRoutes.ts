@@ -11,13 +11,13 @@ import {
   authenticateToken,
   AuthRequest,
 } from "../middleware/authenticateToken";
+import { exchangeAuthCodeForTokens } from "../services/auth/tokenExchange";
 
 const router = express.Router();
 
 router.post("/google", async (req, res) => {
   try {
-    const { idToken, googleAccessToken, googleRefreshToken, expiresIn } =
-      req.body;
+    const { idToken, googleAccessToken, serverAuthCode, expiresIn } = req.body;
 
     if (!idToken) {
       return res.status(400).json({
@@ -33,6 +33,13 @@ router.post("/google", async (req, res) => {
 
     const googleUser = await verifyGoogleToken(idToken);
 
+    let refreshTokenFromGoogle = null;
+
+    if (serverAuthCode) {
+      const tokenResponse = await exchangeAuthCodeForTokens(serverAuthCode);
+      refreshTokenFromGoogle = tokenResponse.refresh_token;
+    }
+
     const tokenExpiresAt = new Date();
     const expirationSeconds =
       expiresIn || constants.TOKEN.GOOGLE_TOKEN_DEFAULT_EXPIRATION;
@@ -46,12 +53,14 @@ router.post("/google", async (req, res) => {
         email: googleUser.email,
         name: googleUser.name,
         googleAccessToken,
-        googleRefreshToken,
+        googleRefreshToken: refreshTokenFromGoogle,
         lastLoginAt: new Date(),
       });
     } else {
       user.googleAccessToken = googleAccessToken;
-      user.googleRefreshToken = googleRefreshToken;
+      if (refreshTokenFromGoogle) {
+        user.googleRefreshToken = refreshTokenFromGoogle;
+      }
       user.tokenExpiresAt = tokenExpiresAt;
       user.lastLoginAt = new Date();
       await user.save();

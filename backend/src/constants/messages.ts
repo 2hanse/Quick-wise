@@ -85,6 +85,16 @@ const constants = {
     },
     DEFAULT_TITLE: "제목 없음",
   },
+  EVENT_CATEGORY: {
+    MEETING: {
+      VALUE: "meeting",
+      KEYWORDS: ["미팅", "회의", "meeting", "conference", "mtg"],
+    },
+    PRESENTATION: {
+      VALUE: "presentation",
+      KEYWORDS: ["프레젠테이션", "발표", "presentation", "present"],
+    },
+  },
   GOOGLE_OAUTH: {
     TOKEN_URL: "https://oauth2.googleapis.com/token",
     GRANT_TYPE_REFRESH: "refresh_token",
