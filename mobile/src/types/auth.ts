@@ -8,7 +8,7 @@ interface GoogleUser {
 interface GoogleTokens {
   accessToken: string;
   idToken: string;
-  refreshToken?: string;
+  serverAuthCode?: string;
   expiresIn?: number;
 }
 
