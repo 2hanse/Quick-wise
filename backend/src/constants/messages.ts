@@ -149,6 +149,12 @@ const constants = {
       PROCESSING_FAILED: "AI processing failed",
       EVENT_PROCESSING_FAILED: "Failed to process event",
     },
+    CRON: {
+      DAILY_PROCESSOR_STARTED: "Starting daily AI processing",
+      DAILY_PROCESSOR_SCHEDULED: "Daily processor scheduled (00:00 KST)",
+      DAILY_PROCESSING_ERROR: "Daily processing error",
+      EVENT_FAILED: "Failed",
+    },
   },
 } as const;
 
