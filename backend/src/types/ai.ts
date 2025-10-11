@@ -69,6 +69,17 @@ interface VideoSummary {
   thumbnail: string;
 }
 
+interface AICardGenerationResult {
+  tip?: string;
+  scenario?: {
+    situation: string;
+    response: string;
+  };
+  checklist?: {
+    items: string[];
+  };
+}
+
 export {
   GeminiResponse,
   KeywordExtractionResult,
@@ -80,4 +91,5 @@ export {
   SubtitleLine,
   VideoSubtitle,
   VideoSummary,
+  AICardGenerationResult,
 };
