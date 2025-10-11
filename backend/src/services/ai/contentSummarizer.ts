@@ -57,7 +57,6 @@ const summarizeTranscript = async (
       speaker: video.channelTitle,
       summary,
       videoUrl: `https://www.youtube.com/watch?v=${video.videoId}`,
-      thumbnail: video.thumbnail,
     };
   } catch (error) {
     if (error instanceof Error) {

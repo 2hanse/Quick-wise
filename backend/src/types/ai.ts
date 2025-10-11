@@ -1,3 +1,5 @@
+import { AICard } from "../models/Event";
+
 interface GeminiResponse {
   text: string;
 }
@@ -12,7 +14,6 @@ interface VideoInfo {
   title: string;
   channelTitle: string;
   duration: string;
-  thumbnail: string;
   publishedAt: string;
   matchScore: number;
 }
@@ -25,11 +26,6 @@ interface YouTubeSearchItem {
     title: string;
     channelTitle: string;
     publishedAt: string;
-    thumbnails: {
-      high: {
-        url: string;
-      };
-    };
   };
 }
 
@@ -66,7 +62,6 @@ interface VideoSummary {
   speaker: string;
   summary: string;
   videoUrl: string;
-  thumbnail: string;
 }
 
 interface AICardGenerationResult {
@@ -78,6 +73,14 @@ interface AICardGenerationResult {
   checklist?: {
     items: string[];
   };
+}
+
+interface AIProcessingResult {
+  success: boolean;
+  cards?: AICard[];
+  keywords?: string[];
+  usedVideoIds?: string[];
+  error?: string;
 }
 
 export {
@@ -92,4 +95,6 @@ export {
   VideoSubtitle,
   VideoSummary,
   AICardGenerationResult,
+  AIProcessingResult,
+  AICard,
 };

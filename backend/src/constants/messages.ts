@@ -67,6 +67,11 @@ const constants = {
       API_ERROR: "YouTube API error",
       TRANSCRIPT_FETCH_FAILED: "Failed to fetch video transcript",
       NO_TRANSCRIPT: "No transcript available for this video",
+      NO_VIDEOS_FOUND: "No videos found for the search query",
+      NO_TRANSCRIPTS_AVAILABLE: "No transcripts available for any videos",
+    },
+    GENERAL: {
+      UNKNOWN_ERROR: "Unknown error occurred",
     },
   },
   SUCCESS: {

@@ -84,7 +84,6 @@ const searchVideos = async (
           title: item.snippet.title,
           channelTitle: item.snippet.channelTitle,
           duration: details?.contentDetails.duration || "PT0S",
-          thumbnail: item.snippet.thumbnails.high.url,
           publishedAt: item.snippet.publishedAt,
         };
       })
