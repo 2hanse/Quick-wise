@@ -4,6 +4,7 @@ import cors from "cors";
 import { connectDatabase } from "./config/database";
 import authRoutes from "./routes/authRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
+import aiRoutes from "./routes/aiRoutes";
 import errorHandler from "./middleware/errorHandler";
 import { startDailyProcessor } from "./services/cron/dailyAIProcessor";
 
@@ -16,6 +17,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/calendar", calendarRoutes);
+app.use("/api/ai", aiRoutes);
 
 app.use(errorHandler);
 
