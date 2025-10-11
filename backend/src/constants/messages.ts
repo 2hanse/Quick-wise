@@ -50,6 +50,14 @@ const constants = {
       FAILED_TO_DELETE_EVENT: "Failed to delete calendar event",
       SYNC_FAILED: "Failed to sync calendar events",
     },
+    GEMINI: {
+      API_KEY_NOT_DEFINED:
+        "GEMINI_API_KEY is not defined in environment variables",
+      API_ERROR: "Gemini API error",
+      RATE_LIMIT_EXCEEDED: "Gemini API rate limit exceeded",
+      INVALID_RESPONSE: "Invalid response from Gemini API",
+      GENERATION_FAILED: "Content generation failed",
+    },
   },
   SUCCESS: {
     DATABASE: {
@@ -111,6 +119,7 @@ const constants = {
     EVENT_UPDATE: "[Event Update]",
     EVENT_DELETE: "[Event Delete]",
     CALENDAR_SYNC: "[Calendar Sync]",
+    GEMINI_API: "[Gemini API]",
   },
 } as const;
 
