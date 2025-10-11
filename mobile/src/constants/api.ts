@@ -14,6 +14,10 @@ const API_CONSTANTS = {
       EVENTS: "/calendar/events",
       TODAY: "/calendar/today",
     },
+    AI: {
+      TODAY: "/ai/today",
+      EVENT: "/ai/event",
+    },
   } as const,
   STORAGE_KEYS: {
     ACCESS_TOKEN: "accessToken",
