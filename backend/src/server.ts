@@ -5,6 +5,7 @@ import { connectDatabase } from "./config/database";
 import authRoutes from "./routes/authRoutes";
 import calendarRoutes from "./routes/calendarRoutes";
 import errorHandler from "./middleware/errorHandler";
+import { startDailyProcessor } from "./services/cron/dailyAIProcessor";
 
 dotenv.config();
 
@@ -22,6 +23,8 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   await connectDatabase();
+
+  startDailyProcessor();
 
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
