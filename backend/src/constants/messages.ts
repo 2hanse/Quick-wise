@@ -58,6 +58,14 @@ const constants = {
       INVALID_RESPONSE: "Invalid response from Gemini API",
       GENERATION_FAILED: "Content generation failed",
     },
+    YOUTUBE: {
+      API_KEY_NOT_DEFINED:
+        "YOUTUBE_API_KEY is not defined in environment variables",
+      SEARCH_FAILED: "YouTube video search failed",
+      NO_RESULTS: "No suitable videos found",
+      INVALID_VIDEO_ID: "Invalid YouTube video ID",
+      API_ERROR: "YouTube API error",
+    },
   },
   SUCCESS: {
     DATABASE: {
@@ -120,6 +128,7 @@ const constants = {
     EVENT_DELETE: "[Event Delete]",
     CALENDAR_SYNC: "[Calendar Sync]",
     GEMINI_API: "[Gemini API]",
+    YOUTUBE_SEARCH: "[YouTube Search]",
   },
 } as const;
 
