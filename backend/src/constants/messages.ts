@@ -73,6 +73,10 @@ const constants = {
     GENERAL: {
       UNKNOWN_ERROR: "Unknown error occurred",
     },
+    EVENT: {
+      NOT_FOUND: "Event not found",
+      NO_CATEGORY: "Event category is required for AI processing",
+    },
   },
   SUCCESS: {
     DATABASE: {
@@ -136,6 +140,15 @@ const constants = {
     CALENDAR_SYNC: "[Calendar Sync]",
     GEMINI_API: "[Gemini API]",
     YOUTUBE_SEARCH: "[YouTube Search]",
+    AI_PROCESSING: "[AI Processing]",
+  },
+  LOG_MESSAGES: {
+    AI: {
+      CATEGORY_MISSING: "No category, skipping AI processing",
+      PROCESSING_COMPLETE: "AI processing completed",
+      PROCESSING_FAILED: "AI processing failed",
+      EVENT_PROCESSING_FAILED: "Failed to process event",
+    },
   },
 } as const;
 
