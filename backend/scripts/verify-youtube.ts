@@ -3,6 +3,7 @@ dotenv.config();
 
 import { extractKeywords } from "../src/services/ai/keywordExtractor";
 import { searchVideos } from "../src/services/ai/videoSearcher";
+import { fetchTranscripts } from "../src/services/ai/transcriptFetcher";
 
 async function verifyYouTube() {
   console.log("YouTube 검색 시스템 검증 시작\n");
@@ -39,6 +40,32 @@ async function verifyYouTube() {
       console.log(`   채널: ${video.channelTitle}`);
       console.log(`   영상 ID: ${video.videoId}\n`);
     });
+
+    console.log("3. 영상 자막 가져오기 테스트...");
+    const transcripts = await fetchTranscripts(videos);
+
+    console.log(
+      `✅ 자막 추출 성공! ${transcripts.length}개 영상의 자막 확보\n`
+    );
+
+    transcripts.forEach((transcript, index) => {
+      console.log(`${index + 1}. 영상 ID: ${transcript.videoId}`);
+      console.log(`   자막 줄 수: ${transcript.lines.length}줄`);
+      console.log(`   전체 텍스트 길이: ${transcript.fullText.length}자`);
+
+      if (transcript.lines.length === 0) {
+        console.log(`   ⚠️ 경고: 자막이 비어있습니다!`);
+      } else {
+        console.log(
+          `   미리보기: ${transcript.fullText.substring(0, 100)}...\n`
+        );
+      }
+    });
+
+    if (transcripts.some((t) => t.lines.length === 0)) {
+      console.error("\n❌ 일부 영상의 자막이 비어있습니다!");
+      process.exit(1);
+    }
 
     console.log("✅ 모든 검증 통과!\n");
   } catch (error) {

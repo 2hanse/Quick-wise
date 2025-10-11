@@ -9,6 +9,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@danielxceron/youtube-transcript": "^1.2.3",
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.12.2",
     "bcryptjs": "^2.4.3",
@@ -20,8 +21,7 @@
     "helmet": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.8.7",
-    "node-cron": "^4.2.1",
-    "youtube-transcript": "^1.2.1"
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

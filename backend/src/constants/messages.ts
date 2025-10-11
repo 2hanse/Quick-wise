@@ -65,6 +65,8 @@ const constants = {
       NO_RESULTS: "No suitable videos found",
       INVALID_VIDEO_ID: "Invalid YouTube video ID",
       API_ERROR: "YouTube API error",
+      TRANSCRIPT_FETCH_FAILED: "Failed to fetch video transcript",
+      NO_TRANSCRIPT: "No transcript available for this video",
     },
   },
   SUCCESS: {

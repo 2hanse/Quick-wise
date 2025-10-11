@@ -48,6 +48,18 @@ interface YouTubeVideoDetailsResponse {
   items: YouTubeVideoDetail[];
 }
 
+interface SubtitleLine {
+  text: string;
+  start: number;
+  duration: number;
+}
+
+interface VideoSubtitle {
+  videoId: string;
+  lines: SubtitleLine[];
+  fullText: string;
+}
+
 export {
   GeminiResponse,
   KeywordExtractionResult,
@@ -56,4 +68,6 @@ export {
   YouTubeSearchResponse,
   YouTubeVideoDetail,
   YouTubeVideoDetailsResponse,
+  SubtitleLine,
+  VideoSubtitle,
 };
