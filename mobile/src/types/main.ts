@@ -1,4 +1,6 @@
-export type ScheduleStatus = "completed" | "progress" | "upcoming";
+import { AICardSource } from "./ai";
+
+type ScheduleStatus = "completed" | "progress" | "upcoming";
 
 interface CommentItem {
   id: string;
@@ -12,6 +14,12 @@ interface SwipeContent {
   commentItems?: CommentItem[];
   scenario?: Scenario;
   checklist?: Checklist;
+  content?: string;
+  situation?: string;
+  response?: string;
+  items?: string[];
+  source?: AICardSource;
+  order?: number;
 }
 
 interface Lecture {
@@ -77,6 +85,8 @@ interface Checklist {
 interface MainScreenProps {
   onNavigateToCalendar: () => void;
 }
+
+export type { ScheduleStatus };
 
 export {
   CommentItem,
