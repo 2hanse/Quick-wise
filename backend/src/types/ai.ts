@@ -60,6 +60,15 @@ interface VideoSubtitle {
   fullText: string;
 }
 
+interface VideoSummary {
+  videoId: string;
+  videoTitle: string;
+  speaker: string;
+  summary: string;
+  videoUrl: string;
+  thumbnail: string;
+}
+
 export {
   GeminiResponse,
   KeywordExtractionResult,
@@ -70,4 +79,5 @@ export {
   YouTubeVideoDetailsResponse,
   SubtitleLine,
   VideoSubtitle,
+  VideoSummary,
 };

@@ -13,6 +13,11 @@ const AI_CONSTANTS = {
     VIDEO_TYPE: "video",
     TOP_VIDEOS_COUNT: 3,
   },
+  PROCESSING: {
+    TRANSCRIPT_MAX_LENGTH: 10000,
+    SUMMARY_MIN_LENGTH: 500,
+    SUMMARY_MAX_LENGTH: 800,
+  },
 } as const;
 
 export default AI_CONSTANTS;

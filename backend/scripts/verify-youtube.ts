@@ -4,6 +4,7 @@ dotenv.config();
 import { extractKeywords } from "../src/services/ai/keywordExtractor";
 import { searchVideos } from "../src/services/ai/videoSearcher";
 import { fetchTranscripts } from "../src/services/ai/transcriptFetcher";
+import { summarizeMultipleTranscripts } from "../src/services/ai/contentSummarizer";
 
 async function verifyYouTube() {
   console.log("YouTube 검색 시스템 검증 시작\n");
@@ -66,6 +67,22 @@ async function verifyYouTube() {
       console.error("\n❌ 일부 영상의 자막이 비어있습니다!");
       process.exit(1);
     }
+
+    console.log("4. 자막 요약 테스트...");
+    const summaries = await summarizeMultipleTranscripts(
+      videos,
+      transcripts,
+      keywordResult.keywords
+    );
+
+    console.log(`✅ 요약 완료! ${summaries.length}개 영상 요약\n`);
+
+    summaries.forEach((summary, index) => {
+      console.log(`${index + 1}. ${summary.videoTitle}`);
+      console.log(`   연사: ${summary.speaker}`);
+      console.log(`   요약 길이: ${summary.summary.length}자`);
+      console.log(`   미리보기: ${summary.summary.substring(0, 100)}...\n`);
+    });
 
     console.log("✅ 모든 검증 통과!\n");
   } catch (error) {
