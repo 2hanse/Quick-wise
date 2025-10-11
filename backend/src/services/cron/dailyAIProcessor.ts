@@ -1,6 +1,6 @@
 import cron from "node-cron";
 import { Event } from "../../models/Event";
-import { processEventWithAI } from "../ai/aiPipeline";
+import { processEventImmediately } from "../ai/eventProcessor";
 import constants from "../../constants/messages";
 
 const processTodayEvents = async (): Promise<void> => {
@@ -22,45 +22,12 @@ const processTodayEvents = async (): Promise<void> => {
     });
 
     for (const event of events) {
-      await Event.updateOne(
-        { _id: event._id },
-        { $set: { "aiContent.status": "processing" } }
-      );
-
-      const result = await processEventWithAI(
-        event.title,
-        event.description || "",
-        event.category!,
-        event.aiContent?.usedVideoIds || []
-      );
-
-      if (result.success && result.cards) {
-        await Event.updateOne(
-          { _id: event._id },
-          {
-            $set: {
-              "aiContent.status": "completed",
-              "aiContent.cards": result.cards,
-              "aiContent.keywords": result.keywords,
-              "aiContent.usedVideoIds": result.usedVideoIds,
-              "aiContent.processedAt": new Date(),
-            },
-          }
-        );
-      } else {
-        await Event.updateOne(
-          { _id: event._id },
-          {
-            $set: {
-              "aiContent.status": "failed",
-              "aiContent.error": result.error,
-              "aiContent.processedAt": new Date(),
-            },
-          }
-        );
-
+      try {
+        await processEventImmediately(event._id.toString());
+      } catch (error) {
         console.error(
-          `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.CRON.EVENT_FAILED}: ${event.title} - ${result.error}`
+          `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.CRON.EVENT_FAILED}: ${event.title}`,
+          error
         );
       }
     }
