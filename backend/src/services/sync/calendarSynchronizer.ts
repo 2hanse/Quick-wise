@@ -3,6 +3,17 @@ import { Event } from "../../models/Event";
 import { getCalendarEvents } from "../calendar/calendarReader";
 import categorizeEvent from "../categorization/eventCategorizer";
 import constants from "../../constants/messages";
+import { processEventImmediately } from "../ai/eventProcessor";
+
+const isToday = (date: Date): boolean => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const targetDate = new Date(date);
+  targetDate.setHours(0, 0, 0, 0);
+
+  return targetDate.getTime() === today.getTime();
+};
 
 const syncCalendarEvents = async (
   user: IUser,
@@ -17,6 +28,7 @@ const syncCalendarEvents = async (
     );
 
     const googleEventIds = googleEvents.map((event) => event.id);
+    const processedEventIds: string[] = [];
 
     for (const googleEvent of googleEvents) {
       const eventData = {
@@ -37,7 +49,7 @@ const syncCalendarEvents = async (
         lastSyncedAt: new Date(),
       };
 
-      await Event.updateOne(
+      const result = await Event.updateOne(
         {
           userId: user._id,
           googleEventId: googleEvent.id,
@@ -45,6 +57,19 @@ const syncCalendarEvents = async (
         { $set: eventData },
         { upsert: true }
       );
+
+      if (result.upsertedId || result.modifiedCount > 0) {
+        if (isToday(eventData.startTime) && eventData.category) {
+          const event = await Event.findOne({
+            userId: user._id,
+            googleEventId: googleEvent.id,
+          });
+
+          if (event) {
+            processedEventIds.push(event._id.toString());
+          }
+        }
+      }
     }
 
     await Event.updateMany(
@@ -62,6 +87,19 @@ const syncCalendarEvents = async (
         },
       }
     );
+
+    if (processedEventIds.length > 0) {
+      setImmediate(() => {
+        processedEventIds.forEach((eventId) => {
+          processEventImmediately(eventId).catch((error) => {
+            console.error(
+              `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.EVENT_PROCESSING_FAILED}: ${eventId}`,
+              error
+            );
+          });
+        });
+      });
+    }
 
     return { tokenRefreshed };
   } catch (error) {
