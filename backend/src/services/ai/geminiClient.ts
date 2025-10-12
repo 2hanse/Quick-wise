@@ -11,7 +11,14 @@ const getApiKey = (): string => {
   return apiKey;
 };
 
-const genAI = new GoogleGenerativeAI(getApiKey());
+let genAI: GoogleGenerativeAI | null = null;
+
+const getGenAI = (): GoogleGenerativeAI => {
+  if (!genAI) {
+    genAI = new GoogleGenerativeAI(getApiKey());
+  }
+  return genAI;
+};
 
 const isRateLimitError = (error: unknown): boolean => {
   if (!(error instanceof Error)) return false;
@@ -21,7 +28,7 @@ const isRateLimitError = (error: unknown): boolean => {
 
 const callGemini = async (prompt: string): Promise<GeminiResponse> => {
   try {
-    const model = genAI.getGenerativeModel({
+    const model = getGenAI().getGenerativeModel({
       model: AI_CONSTANTS.GEMINI.MODEL,
     });
 
