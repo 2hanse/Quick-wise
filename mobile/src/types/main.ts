@@ -2,16 +2,14 @@ import { AICardSource } from "./ai";
 
 type ScheduleStatus = "completed" | "progress" | "upcoming";
 
-interface CommentItem {
-  id: string;
-  highlight?: string;
-  description?: string;
+interface CommentContentProps {
+  content: string;
+  source: AICardSource;
 }
 
 interface SwipeContent {
   id: string;
   type: string;
-  commentItems?: CommentItem[];
   scenario?: Scenario;
   checklist?: Checklist;
   content?: string;
@@ -89,7 +87,7 @@ interface MainScreenProps {
 export type { ScheduleStatus };
 
 export {
-  CommentItem,
+  CommentContentProps,
   SwipeContent,
   Lecture,
   NextSchedule,

@@ -10,6 +10,10 @@ const mainPageConstants = {
     },
     SWIPE_CONTENT: {
       COMMENTITEM_TITLE: "💡 효과",
+      SOURCE: {
+        TITLE: "출처:",
+        SPEAKER: "연사:",
+      },
     },
     TODAY_SCHEDULE: {
       TITLE: "오늘의 일정",
