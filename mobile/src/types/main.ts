@@ -98,6 +98,10 @@ interface MainScreenProps {
   onNavigateToCalendar: () => void;
 }
 
+interface ScheduleGuideSectionProps {
+  swipeContents: SwipeContent[];
+}
+
 export type { ScheduleStatus };
 
 export {
@@ -116,4 +120,5 @@ export {
   ChecklistItem,
   Checklist,
   MainScreenProps,
+  ScheduleGuideSectionProps,
 };

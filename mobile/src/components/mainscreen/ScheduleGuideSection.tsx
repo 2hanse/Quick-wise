@@ -6,16 +6,13 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from "react-native";
-import type { SwipeContent } from "../../types/main";
+import { ScheduleGuideSectionProps, SwipeContent } from "../../types/main";
 import CommentContent from "./swipeablecontent/CommentContent";
 import ScenarioContent from "./swipeablecontent/ScenarioContent";
 import ChecklistContent from "./swipeablecontent/ChecklistContent";
+import mainPageConstants from "../../constants/main";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-interface ScheduleGuideSectionProps {
-  swipeContents: SwipeContent[];
-}
 
 const ScheduleGuideSection = ({ swipeContents }: ScheduleGuideSectionProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,22 +20,33 @@ const ScheduleGuideSection = ({ swipeContents }: ScheduleGuideSectionProps) => {
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(contentOffsetX / (SCREEN_WIDTH - 24));
+    const index = Math.round(
+      contentOffsetX /
+        (SCREEN_WIDTH - mainPageConstants.TEXT.SWIPE_CONTENT.CARD_PADDING)
+    );
     setCurrentIndex(index);
   };
 
   const renderContent = (content: SwipeContent) => {
+    if (!content.source) return null;
+
     switch (content.type) {
-      case "comment":
-        return <CommentContent commentItems={content.commentItems || []} />;
+      case "tip":
+        return (
+          <CommentContent content={content.content!} source={content.source} />
+        );
       case "scenario":
-        return content.scenario ? (
-          <ScenarioContent scenario={content.scenario} />
-        ) : null;
+        return (
+          <ScenarioContent
+            situation={content.situation!}
+            response={content.response!}
+            source={content.source}
+          />
+        );
       case "checklist":
-        return content.checklist ? (
-          <ChecklistContent checklist={content.checklist} />
-        ) : null;
+        return (
+          <ChecklistContent items={content.items!} source={content.source} />
+        );
       default:
         return null;
     }
@@ -52,12 +60,18 @@ const ScheduleGuideSection = ({ swipeContents }: ScheduleGuideSectionProps) => {
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         onMomentumScrollEnd={handleScroll}
-        scrollEventThrottle={16}
+        scrollEventThrottle={
+          mainPageConstants.TEXT.SWIPE_CONTENT.SCROLL_THROTTLE
+        }
       >
         {swipeContents.map((content) => (
           <View
             key={content.id}
-            style={{ width: SCREEN_WIDTH - 24 }}
+            style={{
+              width:
+                SCREEN_WIDTH -
+                mainPageConstants.TEXT.SWIPE_CONTENT.CARD_PADDING,
+            }}
             className="p-5"
           >
             {renderContent(content)}

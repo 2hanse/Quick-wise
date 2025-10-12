@@ -10,6 +10,8 @@ const mainPageConstants = {
     },
     SWIPE_CONTENT: {
       COMMENTITEM_TITLE: "💡 효과",
+      CARD_PADDING: 24,
+      SCROLL_THROTTLE: 16,
       SOURCE: {
         TITLE: "출처:",
         SPEAKER: "연사:",
