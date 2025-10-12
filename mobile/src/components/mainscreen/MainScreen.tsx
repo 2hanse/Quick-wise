@@ -7,7 +7,6 @@ import {
   Text,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import mockCalendar from "../../mocks/mockMain";
 import DateHeaderSection from "./DateHeaderSection";
 import NextScheduleSection from "./NextScheduleSection";
 import ScheduleGuideSection from "./ScheduleGuideSection";
@@ -23,8 +22,14 @@ import useMainSchedule from "../../hooks/mainscreen/useMainSchedule";
 import mainPageConstants from "../../constants/main";
 
 const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
-  const { todaySchedules, nextSchedule, dateInfo, isLoading, error } =
-    useMainSchedule();
+  const {
+    todaySchedules,
+    nextSchedule,
+    dateInfo,
+    swipeContents,
+    isLoading,
+    error,
+  } = useMainSchedule();
   const hasSchedules = todaySchedules.length > 0;
 
   const panResponder = useRef(
@@ -81,10 +86,15 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
 
           {hasSchedules ? (
             <>
-              {nextSchedule && <NextScheduleSection schedule={nextSchedule} />}
-              <ScheduleGuideSection
-                swipeContents={mockCalendar.swipeContents}
-              />
+              {nextSchedule && (
+                <NextScheduleSection
+                  schedule={nextSchedule}
+                  isAILoading={isLoading}
+                />
+              )}
+              {swipeContents.length > 0 && (
+                <ScheduleGuideSection swipeContents={swipeContents} />
+              )}
               <TodayScheduleSection schedules={todaySchedules} />
             </>
           ) : (
