@@ -48,6 +48,11 @@ interface NextSchedule {
   lecture: Lecture;
 }
 
+interface NextScheduleSectionProps {
+  schedule: NextSchedule;
+  isAILoading?: boolean;
+}
+
 interface TodaySchedule {
   id: string;
   time: string;
@@ -103,6 +108,7 @@ export {
   SwipeContent,
   Lecture,
   NextSchedule,
+  NextScheduleSectionProps,
   TodaySchedule,
   DateInfo,
   CalendarData,

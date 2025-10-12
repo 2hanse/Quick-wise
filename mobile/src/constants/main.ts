@@ -45,6 +45,7 @@ const mainPageConstants = {
     TARGET: "🎯",
     LOCATION: "📍",
     PLAY: "▶",
+    BULLET: "•",
     EFFECTS: "💡",
     SCHEDULE_LIST: "📋",
     EMPTY_SCHEDULE: {
