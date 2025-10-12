@@ -5,15 +5,29 @@ import {
   createDateInfo,
   getNextSchedule,
 } from "../../utils/mainscreen/calendarEventConverter";
-import { TodaySchedule, DateInfo, NextSchedule } from "../../types/main";
+import {
+  TodaySchedule,
+  DateInfo,
+  NextSchedule,
+  SwipeContent,
+} from "../../types/main";
 import mainPageConstants from "../../constants/main";
+import useAIStore from "../../stores/aiStore";
+import { convertAICardsToSwipeContents } from "../../utils/ai/aiContentConverter";
 
 const useMainSchedule = () => {
   const [todaySchedules, setTodaySchedules] = useState<TodaySchedule[]>([]);
   const [nextSchedule, setNextSchedule] = useState<NextSchedule | null>(null);
   const [dateInfo, setDateInfo] = useState<DateInfo>(createDateInfo(0));
+  const [swipeContents, setSwipeContents] = useState<SwipeContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const {
+    todayEvents,
+    fetchTodayAIContent,
+    isLoading: aiLoading,
+  } = useAIStore();
 
   useEffect(() => {
     const loadTodaySchedules = async () => {
@@ -30,6 +44,8 @@ const useMainSchedule = () => {
         setTodaySchedules(schedules);
         setNextSchedule(next);
         setDateInfo(createDateInfo(schedules.length));
+
+        await fetchTodayAIContent();
       } catch (err) {
         console.error(
           `${mainPageConstants.LOG_PREFIXES.MAIN_SCREEN} ${mainPageConstants.LOG_MESSAGES.FAILED_TO_LOAD}:`,
@@ -47,11 +63,29 @@ const useMainSchedule = () => {
     loadTodaySchedules();
   }, []);
 
+  useEffect(() => {
+    if (todayEvents.length > 0 && nextSchedule) {
+      const nextEvent = todayEvents.find(
+        (event) => event.title === nextSchedule.title
+      );
+
+      if (nextEvent?.aiContent?.cards) {
+        const converted = convertAICardsToSwipeContents(
+          nextEvent.aiContent.cards
+        );
+        setSwipeContents(converted);
+      } else {
+        setSwipeContents([]);
+      }
+    }
+  }, [todayEvents, nextSchedule]);
+
   return {
     todaySchedules,
     nextSchedule,
     dateInfo,
-    isLoading,
+    swipeContents,
+    isLoading: isLoading || aiLoading,
     error,
   };
 };
