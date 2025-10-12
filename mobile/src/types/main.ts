@@ -13,6 +13,17 @@ interface ScenarioContentProps {
   source: AICardSource;
 }
 
+interface ChecklistContentItem {
+  id: string;
+  text: string;
+  completed: boolean;
+}
+
+interface ChecklistContentProps {
+  items: string[];
+  source: AICardSource;
+}
+
 interface SwipeContent {
   id: string;
   type: string;
@@ -87,6 +98,8 @@ export type { ScheduleStatus };
 export {
   CommentContentProps,
   ScenarioContentProps,
+  ChecklistContentItem,
+  ChecklistContentProps,
   SwipeContent,
   Lecture,
   NextSchedule,

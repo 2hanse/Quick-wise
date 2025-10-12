@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Pressable } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import type { Checklist, ChecklistItem } from "../../../types/main";
-import mainPageConstants from "../../../constants/main";
+import {
+  ChecklistContentProps,
+  ChecklistContentItem,
+} from "../../../types/main";
 import { STORAGE_KEYS } from "../../../constants/storage";
-interface ChecklistContentProps {
-  checklist: Checklist;
-}
+import mainPageConstants from "../../../constants/main";
 
-const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
-  const [items, setItems] = useState<ChecklistItem[]>(checklist.items);
+const ChecklistContent = ({ items, source }: ChecklistContentProps) => {
+  const [checklistItems, setChecklistItems] = useState<ChecklistContentItem[]>(
+    items.map((text, index) => ({
+      id: `${source.videoId}-${index}`,
+      text,
+      completed: false,
+    }))
+  );
 
-  const storageKey = `${STORAGE_KEYS.CHECKLIST_STATE}_${checklist.id}`;
+  const storageKey = `${STORAGE_KEYS.CHECKLIST_STATE}_${source.videoId}`;
 
   useEffect(() => {
     loadChecklistState();
@@ -19,30 +25,36 @@ const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
 
   useEffect(() => {
     saveChecklistState();
-  }, [items]);
+  }, [checklistItems]);
 
   const loadChecklistState = async () => {
     try {
       const savedState = await AsyncStorage.getItem(storageKey);
       if (savedState) {
         const parsedState = JSON.parse(savedState);
-        setItems(parsedState);
+        setChecklistItems(parsedState);
       }
     } catch (error) {
-      console.error("Failed to load checklist state:", error);
+      console.error(
+        mainPageConstants.LOG_MESSAGES.CHECKLIST_LOAD_FAILED,
+        error
+      );
     }
   };
 
   const saveChecklistState = async () => {
     try {
-      await AsyncStorage.setItem(storageKey, JSON.stringify(items));
+      await AsyncStorage.setItem(storageKey, JSON.stringify(checklistItems));
     } catch (error) {
-      console.error("Failed to save checklist state:", error);
+      console.error(
+        mainPageConstants.LOG_MESSAGES.CHECKLIST_SAVE_FAILED,
+        error
+      );
     }
   };
 
   const toggleItem = (itemId: string) => {
-    setItems((prevItems) =>
+    setChecklistItems((prevItems) =>
       prevItems.map((item) =>
         item.id === itemId ? { ...item, completed: !item.completed } : item
       )
@@ -51,12 +63,8 @@ const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
 
   return (
     <View>
-      <Text className="text-[17px] font-bold text-[#1a1a1a] mb-3.5">
-        {checklist.title}
-      </Text>
-
-      <View className="gap-3">
-        {items.map((item) => (
+      <View className="gap-3 mb-4">
+        {checklistItems.map((item) => (
           <Pressable
             key={item.id}
             onPress={() => toggleItem(item.id)}
@@ -84,19 +92,16 @@ const ChecklistContent = ({ checklist }: ChecklistContentProps) => {
         ))}
       </View>
 
-      {checklist.corePoint && (
-        <View className="mt-4 pt-4 border-t border-[#f3f4f6]">
-          <View className="flex-row items-center gap-2">
-            <Text className="text-[16px]">💡</Text>
-            <Text className="text-[14px] font-semibold text-[#667eea]">
-              {mainPageConstants.TEXT.CHECKLIST_KEYPOINT.TITLE}
-            </Text>
-          </View>
-          <Text className="text-[14px] text-[#4b5563] font-medium mt-2">
-            "{checklist.corePoint}"
-          </Text>
-        </View>
-      )}
+      <View className="mt-4 pt-4 border-t border-[#f3f4f6]">
+        <Text className="text-[12px] text-[#9ca3af] mb-1">
+          {mainPageConstants.TEXT.SWIPE_CONTENT.SOURCE.TITLE}:{" "}
+          {source.videoTitle}
+        </Text>
+        <Text className="text-[11px] text-[#9ca3af]">
+          {mainPageConstants.TEXT.SWIPE_CONTENT.SOURCE.SPEAKER}:{" "}
+          {source.speaker}
+        </Text>
+      </View>
     </View>
   );
 };

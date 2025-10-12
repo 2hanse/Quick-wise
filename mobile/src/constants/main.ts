@@ -99,6 +99,8 @@ const mainPageConstants = {
   },
   LOG_MESSAGES: {
     FAILED_TO_LOAD: "Failed to load today schedules",
+    CHECKLIST_LOAD_FAILED: "Failed to load checklist state:",
+    CHECKLIST_SAVE_FAILED: "Failed to save checklist state:",
   },
 } as const;
 
