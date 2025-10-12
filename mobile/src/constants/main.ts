@@ -14,6 +14,10 @@ const mainPageConstants = {
         TITLE: "출처:",
         SPEAKER: "연사:",
       },
+      SCENARIO: {
+        SITUATION_LABEL: "상황:",
+        RESPONSE_LABEL: "대응:",
+      },
     },
     TODAY_SCHEDULE: {
       TITLE: "오늘의 일정",

@@ -7,6 +7,12 @@ interface CommentContentProps {
   source: AICardSource;
 }
 
+interface ScenarioContentProps {
+  situation: string;
+  response: string;
+  source: AICardSource;
+}
+
 interface SwipeContent {
   id: string;
   type: string;
@@ -53,18 +59,10 @@ interface CalendarData {
   todaySchedules: TodaySchedule[];
 }
 
-interface DialogueLine {
-  id: string;
-  speaker: "A" | "B";
-  text: string;
-  isHighlight?: boolean;
-}
-
 interface Scenario {
   id: string;
   title: string;
   tags: string[];
-  dialogue: DialogueLine[];
 }
 
 interface ChecklistItem {
@@ -88,13 +86,13 @@ export type { ScheduleStatus };
 
 export {
   CommentContentProps,
+  ScenarioContentProps,
   SwipeContent,
   Lecture,
   NextSchedule,
   TodaySchedule,
   DateInfo,
   CalendarData,
-  DialogueLine,
   Scenario,
   ChecklistItem,
   Checklist,
