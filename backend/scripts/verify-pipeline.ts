@@ -23,12 +23,17 @@ async function verifyAIPipeline() {
     console.log("카테고리: presentation\n");
 
     console.log("AI 파이프라인 실행 중...\n");
+    console.log("⏳ 영상 검색 및 처리 중입니다. 잠깐만 기다려주세요...\n");
 
+    const startTime = Date.now();
     const result = await processEventWithAI(
       "클라이언트 프레젠테이션",
       "신제품 런칭 발표 및 Q&A",
       "presentation"
     );
+    const endTime = Date.now();
+
+    console.log(`⏱️ 처리 시간: ${(endTime - startTime) / 1000}초\n`);
 
     if (!result.success) {
       console.error("❌ 파이프라인 실패:", result.error);
@@ -69,6 +74,10 @@ async function verifyAIPipeline() {
     console.log("✅ 모든 검증 통과!\n");
   } catch (error) {
     console.error("❌ 검증 실패:", error);
+    console.error(
+      "에러 상세:",
+      error instanceof Error ? error.message : String(error)
+    );
     process.exit(1);
   }
 }
