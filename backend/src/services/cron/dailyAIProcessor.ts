@@ -15,9 +15,12 @@ const processTodayEvents = async (): Promise<void> => {
       startTime: { $gte: today, $lt: tomorrow },
       category: { $exists: true, $ne: null },
       $or: [
-        { "aiContent.status": { $exists: false } },
+        { aiContent: { $exists: false } },
         { "aiContent.status": "pending" },
-        { "aiContent.status": "failed" },
+        {
+          "aiContent.status": "failed",
+          "aiContent.cards": { $exists: false },
+        },
       ],
     });
 

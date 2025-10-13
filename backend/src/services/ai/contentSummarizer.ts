@@ -43,7 +43,6 @@ const summarizeTranscript = async (
     }
 
     const prompt = createSummaryPrompt(video.title, keywords, transcriptText);
-
     const result = await callGemini(prompt);
     const summary = result.text.trim();
 
@@ -73,15 +72,22 @@ const summarizeMultipleTranscripts = async (
   transcripts: VideoSubtitle[],
   keywords: string[]
 ): Promise<VideoSummary[]> => {
-  const summaryPromises = transcripts.map((transcript) => {
-    const video = videos.find((v) => v.videoId === transcript.videoId);
-    if (!video) return null;
-    return summarizeTranscript(video, transcript, keywords);
-  });
+  const summaryPromises = transcripts
+    .map((transcript) => {
+      const video = videos.find((v) => v.videoId === transcript.videoId);
+      if (!video) return null;
+      return summarizeTranscript(video, transcript, keywords);
+    })
+    .filter((promise) => promise !== null) as Promise<VideoSummary>[];
 
-  const results = await Promise.all(summaryPromises);
+  const results = await Promise.allSettled(summaryPromises);
 
-  return results.filter((summary): summary is VideoSummary => summary !== null);
+  return results
+    .filter(
+      (result): result is PromiseFulfilledResult<VideoSummary> =>
+        result.status === "fulfilled"
+    )
+    .map((result) => result.value);
 };
 
 export { summarizeMultipleTranscripts };

@@ -44,6 +44,7 @@ interface AIContent {
 
 interface EventWithAI {
   _id: string;
+  googleEventId: string;
   title: string;
   startTime: string;
   endTime: string;

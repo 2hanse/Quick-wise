@@ -10,6 +10,10 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
       throw new Error(constants.ERROR_MESSAGES.EVENT.NOT_FOUND);
     }
 
+    if (event.aiContent?.status === "completed") {
+      return;
+    }
+
     if (!event.category) {
       console.log(
         `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.CATEGORY_MISSING}: ${eventId}`
@@ -28,7 +32,7 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
       event.aiContent?.usedVideoIds || []
     );
 
-    if (result.success && result.cards) {
+    if (result.success && result.cards && result.cards.length > 0) {
       await Event.findByIdAndUpdate(eventId, {
         aiContent: {
           status: "completed",
@@ -45,11 +49,11 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
     } else {
       await Event.findByIdAndUpdate(eventId, {
         "aiContent.status": "failed",
-        "aiContent.error": result.error,
+        "aiContent.error": result.error || "No cards generated",
       });
 
       console.error(
-        `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.PROCESSING_FAILED}: ${eventId} - ${result.error}`
+        `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.PROCESSING_FAILED}: ${eventId} - ${result.error || "No cards generated"}`
       );
     }
   } catch (error) {
@@ -79,7 +83,10 @@ const processTodayEvents = async (userId: string): Promise<void> => {
     $or: [
       { aiContent: { $exists: false } },
       { "aiContent.status": "pending" },
-      { "aiContent.status": "failed" },
+      {
+        "aiContent.status": "failed",
+        "aiContent.cards": { $exists: false },
+      },
     ],
   });
 

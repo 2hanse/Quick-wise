@@ -36,9 +36,7 @@ const useMainSchedule = () => {
         setError(null);
 
         const response = await fetchTodayEvents();
-
         const schedules = convertToTodaySchedules(response.events);
-
         const next = getNextSchedule(response.events);
 
         setTodaySchedules(schedules);
@@ -64,9 +62,21 @@ const useMainSchedule = () => {
   }, []);
 
   useEffect(() => {
+    if (swipeContents.length === 0 && nextSchedule) {
+      const timer = setTimeout(async () => {
+        await fetchTodayAIContent();
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [swipeContents, nextSchedule]);
+
+  useEffect(() => {
     if (todayEvents.length > 0 && nextSchedule) {
       const nextEvent = todayEvents.find(
-        (event) => event.title === nextSchedule.title
+        (event) =>
+          event.title.trim().toLowerCase() ===
+          nextSchedule.title.trim().toLowerCase()
       );
 
       if (nextEvent?.aiContent?.cards) {

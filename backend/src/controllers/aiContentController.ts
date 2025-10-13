@@ -76,9 +76,11 @@ const getTodayAIContent = async (
     }).sort({ startTime: 1 });
 
     const eventsWithAI = events.map((event) => ({
-      eventId: event._id,
+      _id: event._id.toString(),
+      googleEventId: event.googleEventId,
       title: event.title,
       startTime: event.startTime,
+      endTime: event.endTime,
       category: event.category,
       aiContent: event.aiContent || {
         status: "pending",
