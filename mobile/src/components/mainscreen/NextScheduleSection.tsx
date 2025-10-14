@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import mainPageConstants from "../../constants/main";
 import { NextScheduleSectionProps } from "../../types/main";
+import { formatTime } from "../../utils/mainscreen/calendarEventConverter";
 
 const NextScheduleSection = ({
   schedule,
@@ -22,7 +23,8 @@ const NextScheduleSection = ({
       </View>
 
       <Text className="text-[18px] font-semibold text-[#1a1a1a] mb-2">
-        {ICONS.BULLET} [ {schedule.startTime} ] {schedule.title}
+        {ICONS.BULLET} [ {formatTime(schedule.startTime, false)} ]{" "}
+        {schedule.title}
       </Text>
 
       <View className="flex-row items-center gap-1.5 mb-3.5">

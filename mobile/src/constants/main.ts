@@ -1,8 +1,8 @@
 const mainPageConstants = {
   TEXT: {
     DATE_HEADER: {
-      SCHEDULE_COUNT: (total: number, study: number) =>
-        `일정 ${total}개, 학습 준비 ${study}개`,
+      SCHEDULE_COUNT: (total: number) => `일정 ${total}개`,
+      REFRESH_BUTTON: "새로고침",
     },
     NEXT_SCHEDULE: {
       TITLE: "다음 일정",
@@ -53,6 +53,7 @@ const mainPageConstants = {
     BULLET: "•",
     EFFECTS: "💡",
     SCHEDULE_LIST: "📋",
+    REFRESH: "🔄",
     EMPTY_SCHEDULE: {
       READING: "📖",
       MUSIC: "🎵",
@@ -123,6 +124,11 @@ const mainPageConstants = {
     OPACITY_MAX: 0.6,
     ANIMATION_START: 0,
     ANIMATION_END: 1,
+  },
+  POLLING: {
+    INTERVAL_MS: 5000,
+    MAX_ATTEMPTS: 6,
+    TIMEOUT_MS: 30000,
   },
 } as const;
 

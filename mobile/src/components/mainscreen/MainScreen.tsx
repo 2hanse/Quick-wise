@@ -29,7 +29,9 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
     dateInfo,
     swipeContents,
     isLoading,
+    isRefreshing,
     error,
+    refresh,
   } = useMainSchedule();
   const hasSchedules = todaySchedules.length > 0;
 
@@ -128,7 +130,11 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1" {...panResponder.panHandlers}>
         <ScrollView className="flex-1 px-3 pt-3">
-          <DateHeaderSection dateInfo={dateInfo} />
+          <DateHeaderSection
+            dateInfo={dateInfo}
+            onRefresh={refresh}
+            isRefreshing={isRefreshing}
+          />
 
           {hasSchedules ? (
             <>

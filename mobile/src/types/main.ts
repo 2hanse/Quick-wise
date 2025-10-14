@@ -66,7 +66,12 @@ interface DateInfo {
   date: string;
   dayOfWeek: string;
   totalSchedules: number;
-  studySchedules: number;
+}
+
+interface DateHeaderSectionProps {
+  dateInfo: DateInfo;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 interface CalendarData {
@@ -116,6 +121,7 @@ export {
   NextScheduleSectionProps,
   TodaySchedule,
   DateInfo,
+  DateHeaderSectionProps,
   CalendarData,
   Scenario,
   ChecklistItem,

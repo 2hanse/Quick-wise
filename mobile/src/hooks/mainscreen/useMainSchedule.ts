@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { fetchTodayEvents } from "../../services/calendarService";
 import {
   convertToTodaySchedules,
@@ -21,7 +21,11 @@ const useMainSchedule = () => {
   const [dateInfo, setDateInfo] = useState<DateInfo>(createDateInfo(0));
   const [swipeContents, setSwipeContents] = useState<SwipeContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const pollingCountRef = useRef(0);
 
   const {
     todayEvents,
@@ -29,47 +33,73 @@ const useMainSchedule = () => {
     isLoading: aiLoading,
   } = useAIStore();
 
-  useEffect(() => {
-    const loadTodaySchedules = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        const response = await fetchTodayEvents();
-        const schedules = convertToTodaySchedules(response.events);
-        const next = getNextSchedule(response.events);
-
-        setTodaySchedules(schedules);
-        setNextSchedule(next);
-        setDateInfo(createDateInfo(schedules.length));
-
-        await fetchTodayAIContent();
-      } catch (err) {
-        console.error(
-          `${mainPageConstants.LOG_PREFIXES.MAIN_SCREEN} ${mainPageConstants.LOG_MESSAGES.FAILED_TO_LOAD}:`,
-          err
-        );
-        setError(mainPageConstants.TEXT.ERROR_LOAD_FAILED);
-        setTodaySchedules([]);
-        setNextSchedule(null);
-        setDateInfo(createDateInfo(0));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadTodaySchedules();
+  const stopPolling = useCallback(() => {
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+      pollingIntervalRef.current = null;
+    }
+    pollingCountRef.current = 0;
   }, []);
 
-  useEffect(() => {
-    if (swipeContents.length === 0 && nextSchedule) {
-      const timer = setTimeout(async () => {
-        await fetchTodayAIContent();
-      }, 5000);
+  const startPolling = useCallback(() => {
+    stopPolling();
 
-      return () => clearTimeout(timer);
+    pollingIntervalRef.current = setInterval(async () => {
+      pollingCountRef.current += 1;
+
+      if (pollingCountRef.current >= mainPageConstants.POLLING.MAX_ATTEMPTS) {
+        stopPolling();
+        return;
+      }
+
+      await fetchTodayAIContent();
+    }, mainPageConstants.POLLING.INTERVAL_MS);
+  }, [fetchTodayAIContent, stopPolling]);
+
+  const loadTodaySchedules = useCallback(async () => {
+    try {
+      setError(null);
+
+      const response = await fetchTodayEvents();
+      const schedules = convertToTodaySchedules(response.events);
+      const next = getNextSchedule(response.events);
+
+      setTodaySchedules(schedules);
+      setNextSchedule(next);
+      setDateInfo(createDateInfo(schedules.length));
+
+      await fetchTodayAIContent();
+    } catch (error) {
+      console.error(
+        `${mainPageConstants.LOG_PREFIXES.MAIN_SCREEN} ${mainPageConstants.LOG_MESSAGES.FAILED_TO_LOAD}:`,
+        error
+      );
+      setError(mainPageConstants.TEXT.ERROR_LOAD_FAILED);
+      setTodaySchedules([]);
+      setNextSchedule(null);
+      setDateInfo(createDateInfo(0));
     }
-  }, [swipeContents, nextSchedule]);
+  }, [fetchTodayAIContent]);
+
+  const refresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await loadTodaySchedules();
+    setIsRefreshing(false);
+  }, [loadTodaySchedules]);
+
+  useEffect(() => {
+    const initialize = async () => {
+      setIsLoading(true);
+      await loadTodaySchedules();
+      setIsLoading(false);
+    };
+
+    initialize();
+
+    return () => {
+      stopPolling();
+    };
+  }, [loadTodaySchedules, stopPolling]);
 
   useEffect(() => {
     if (todayEvents.length > 0 && nextSchedule) {
@@ -88,6 +118,14 @@ const useMainSchedule = () => {
           };
         });
 
+        if (
+          nextEvent.aiContent?.status === mainPageConstants.AI_STATUS.PROCESSING
+        ) {
+          startPolling();
+        } else {
+          stopPolling();
+        }
+
         if (nextEvent.aiContent?.cards) {
           const converted = convertAICardsToSwipeContents(
             nextEvent.aiContent.cards
@@ -98,7 +136,7 @@ const useMainSchedule = () => {
         }
       }
     }
-  }, [todayEvents, nextSchedule?.title]);
+  }, [todayEvents, nextSchedule?.title, startPolling, stopPolling]);
 
   return {
     todaySchedules,
@@ -106,7 +144,9 @@ const useMainSchedule = () => {
     dateInfo,
     swipeContents,
     isLoading: isLoading || aiLoading,
+    isRefreshing,
     error,
+    refresh,
   };
 };
 
