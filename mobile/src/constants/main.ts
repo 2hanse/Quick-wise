@@ -10,6 +10,10 @@ const mainPageConstants = {
       AI_PROCESSING: "AI 분석 중...",
       AI_FAILED: "AI 분석 실패",
       AI_UNSUPPORTED: "이 일정은 AI 분석을 지원하지 않습니다",
+      RETRY_BUTTON: "다시 시도",
+      RETRY_LIMIT_EXCEEDED: "더 이상 재시도할 수 없습니다",
+      RETRY_QUOTA_EXCEEDED: "AI 토큰 한도 초과",
+      RETRY_UNSUPPORTED: "지원하지 않는 카테고리입니다",
     },
     SWIPE_CONTENT: {
       COMMENTITEM_TITLE: "💡 효과",
@@ -83,6 +87,11 @@ const mainPageConstants = {
     FAILED: "failed" as const,
     PENDING: "pending" as const,
   },
+  AI_ERROR_TYPES: {
+    QUOTA_EXCEEDED: "quota_exceeded" as const,
+    TEMPORARY_ERROR: "temporary_error" as const,
+    UNSUPPORTED_CATEGORY: "unsupported_category" as const,
+  },
   TIME_FORMAT: {
     ALL_DAY: "종일",
     AM: "오전",
@@ -129,6 +138,9 @@ const mainPageConstants = {
     INTERVAL_MS: 5000,
     MAX_ATTEMPTS: 6,
     TIMEOUT_MS: 30000,
+  },
+  RETRY: {
+    MAX_ATTEMPTS: 3,
   },
 } as const;
 

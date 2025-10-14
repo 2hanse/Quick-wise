@@ -17,6 +17,7 @@ const API_CONSTANTS = {
     AI: {
       TODAY: "/ai/today",
       EVENT: "/ai/event",
+      RETRY: "/ai/event",
     },
   } as const,
   STORAGE_KEYS: {

@@ -76,6 +76,17 @@ interface AIState {
   clearSelectedEvent: () => void;
 }
 
+interface RetryEventRequest {
+  excludeVideoIds?: string[];
+}
+
+interface RetryEventResponse {
+  success: boolean;
+  message: string;
+  status: "processing" | "failed";
+  canRetry?: boolean;
+}
+
 export type { AICardType, AIErrorType, AIProcessingStatus, AICard };
 
 export {
@@ -88,4 +99,6 @@ export {
   TodayAIContentResponse,
   EventAIContentResponse,
   AIState,
+  RetryEventRequest,
+  RetryEventResponse,
 };
