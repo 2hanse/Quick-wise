@@ -32,14 +32,14 @@ const searchVideos = async (
 ): Promise<VideoInfo[]> => {
   try {
     const apiKey = getApiKey();
-    const fullQuery = `${AI_CONSTANTS.YOUTUBE.CHANNEL_NAME} ${searchQuery}`;
 
     const searchResponse = await axios.get<YouTubeSearchResponse>(
       `${AI_CONSTANTS.YOUTUBE.API_BASE_URL}/search`,
       {
         params: {
           part: "snippet",
-          q: fullQuery,
+          q: searchQuery,
+          channelId: AI_CONSTANTS.YOUTUBE.CHANNEL_ID,
           type: AI_CONSTANTS.YOUTUBE.VIDEO_TYPE,
           maxResults: AI_CONSTANTS.YOUTUBE.MAX_RESULTS,
           order: AI_CONSTANTS.YOUTUBE.RELEVANCE_ORDER,
@@ -72,12 +72,6 @@ const searchVideos = async (
         const details = detailsResponse.data.items.find(
           (detail) => detail.id === item.id.videoId
         );
-
-        const channelLower = item.snippet.channelTitle.toLowerCase();
-
-        if (!channelLower.includes(AI_CONSTANTS.YOUTUBE.CHANNEL_NAME)) {
-          return null;
-        }
 
         return {
           videoId: item.id.videoId,

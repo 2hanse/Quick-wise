@@ -143,6 +143,9 @@ const constants = {
     AI_PROCESSING: "[AI Processing]",
   },
   LOG_MESSAGES: {
+    CALENDAR: {
+      ENRICH_EVENTS_FAILED: "Failed to enrich events",
+    },
     AI: {
       CATEGORY_MISSING: "No category, skipping AI processing",
       PROCESSING_COMPLETE: "AI processing completed",

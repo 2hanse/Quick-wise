@@ -8,12 +8,11 @@ const extractKeywords = async (
   category: string
 ): Promise<KeywordExtractionResult> => {
   const categoryContext: Record<string, string> = {
-    meeting: "회의를 효과적으로 진행하는 방법",
-    presentation: "발표를 성공적으로 하는 방법",
+    meeting: "회의, 소통, 협업, 리더십",
+    presentation: "발표, 프레젠테이션, 스피치, 설득",
   };
 
-  const context =
-    categoryContext[category] || "일정에 도움이 되는 실용적인 방법";
+  const contextKeywords = categoryContext[category] || "자기계발, 성장, 실용";
 
   const prompt = `당신은 YouTube 검색어 생성 전문가입니다.
 
@@ -24,22 +23,27 @@ const extractKeywords = async (
 
 위 일정에 참석하는 사람에게 도움이 될 만한 세바시 강연을 찾기 위한 YouTube 검색어를 생성하세요.
 
-컨텍스트: ${context}
+중요: 세바시는 특정 채널이므로 너무 구체적인 검색어는 결과가 없을 수 있습니다.
 
-요구사항:
-1. 너무 일반적인 단어는 피하기 ("회의" 대신 "효과적인 회의 방법")
-2. 실용적이고 구체적인 표현 사용
-3. 2-4개 단어로 구성 (핵심만 간결하게)
-4. 한국어로 작성
-5. 일정 내용과 직접 관련된 주제
+검색어 생성 규칙:
+1. **1-2개의 핵심 단어만 사용** (예: "발표", "프레젠테이션", "스피치")
+2. 일반적이고 보편적인 주제어 사용 (❌ "신제품 런칭 발표 스킬" ✅ "발표")
+3. 카테고리 관련 키워드 참고: ${contextKeywords}
+4. 검색어는 짧고 간단할수록 좋음
 
 JSON 형식으로 출력하세요. 코드블록 없이 순수 JSON만 반환:
 {
-  "searchQuery": "YouTube 검색에 사용할 구체적인 검색어",
+  "searchQuery": "1-2개 단어로 된 간단한 검색어",
   "keywords": ["키워드1", "키워드2", "키워드3"]
 }
 
-keywords는 나중에 자막에서 핵심 내용을 찾는데 사용됩니다.`;
+예시:
+- 일정: "클라이언트 프레젠테이션" → searchQuery: "발표"
+- 일정: "팀 회의" → searchQuery: "회의"
+- 일정: "면접 준비" → searchQuery: "면접"
+- 일정: "영어 스터디" → searchQuery: "학습"
+
+keywords는 나중에 자막에서 핵심 내용을 찾는데 사용되므로, 일정과 관련된 구체적인 키워드를 포함하세요.`;
 
   try {
     const result = await callGemini(prompt);
@@ -60,8 +64,11 @@ keywords는 나중에 자막에서 핵심 내용을 찾는데 사용됩니다.`;
       throw new Error(constants.ERROR_MESSAGES.GEMINI.INVALID_RESPONSE);
     }
 
+    const searchWords = parsed.searchQuery.split(" ");
+    const simplifiedQuery = searchWords.slice(0, 2).join(" ");
+
     return {
-      searchQuery: parsed.searchQuery,
+      searchQuery: simplifiedQuery,
       keywords: parsed.keywords,
     };
   } catch (error) {

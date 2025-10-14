@@ -1,12 +1,13 @@
 const AI_CONSTANTS = {
   GEMINI: {
-    MODEL: "gemini-2.0-flash-exp",
+    MODEL: "gemini-2.5-flash-lite",
     MAX_TOKENS: 2048,
     TEMPERATURE: 0.7,
   },
   YOUTUBE: {
     API_BASE_URL: "https://www.googleapis.com/youtube/v3",
     CHANNEL_NAME: "세바시",
+    CHANNEL_ID: "UCgheNMc3gGHLsT-RISdCzDQ",
     MAX_RESULTS: 10,
     MIN_DURATION_SECONDS: 300,
     RELEVANCE_ORDER: "relevance",
@@ -19,7 +20,7 @@ const AI_CONSTANTS = {
     SUMMARY_MAX_LENGTH: 800,
   },
   CARD_LIMITS: {
-    TIP_MAX_LENGTH: 20,
+    TIP_MAX_LENGTH: 30,
     SITUATION_MAX_LENGTH: 50,
     RESPONSE_MAX_LENGTH: 100,
     CHECKLIST_MIN_ITEMS: 3,

@@ -1,3 +1,5 @@
+import { AICard } from "./ai";
+
 type EventStatus = "confirmed" | "tentative" | "cancelled";
 
 type EventCategory = "meeting" | "presentation";
@@ -34,6 +36,15 @@ interface CalendarEvent {
   description?: string;
   isAllDay: boolean;
   status: EventStatus;
+  category?: EventCategory;
+  aiContent?: {
+    status: "pending" | "processing" | "completed" | "failed";
+    cards: AICard[];
+    keywords: string[];
+    usedVideoIds: string[];
+    processedAt?: Date;
+    error?: string;
+  };
 }
 
 interface GoogleTokenRefreshResponse {
