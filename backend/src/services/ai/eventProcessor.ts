@@ -121,37 +121,4 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
   }
 };
 
-const processTodayEvents = async (userId: string): Promise<void> => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-
-  const events = await Event.find({
-    userId,
-    startTime: { $gte: today, $lt: tomorrow },
-    category: { $exists: true, $ne: null },
-    $or: [
-      { aiContent: { $exists: false } },
-      { "aiContent.status": "pending" },
-      {
-        "aiContent.status": "failed",
-        "aiContent.cards": { $exists: false },
-      },
-    ],
-  });
-
-  for (const event of events) {
-    try {
-      await processEventImmediately(event._id.toString());
-    } catch (error) {
-      console.error(
-        `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.EVENT_PROCESSING_FAILED}: ${event._id}`,
-        error
-      );
-    }
-  }
-};
-
-export { processEventImmediately, processTodayEvents, normalizeCategory };
+export { processEventImmediately, normalizeCategory };

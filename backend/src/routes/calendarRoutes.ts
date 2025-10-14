@@ -18,7 +18,7 @@ const router = express.Router();
 
 router.get("/events", authenticateToken, validateDateRangeQuery, getEvents);
 
-router.get("/today", authenticateToken, getTodayEvents);
+router.get("/events/today", authenticateToken, getTodayEvents);
 
 router.post("/events", authenticateToken, validateEventData, createEvent);
 

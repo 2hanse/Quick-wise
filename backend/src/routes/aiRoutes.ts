@@ -12,6 +12,6 @@ router.get("/today", authenticateToken, getTodayAIContent);
 
 router.get("/event/:eventId", authenticateToken, getEventAIContent);
 
-router.get("/event/:eventId/retry", authenticateToken, retryEventAIContent);
+router.post("/event/:eventId/retry", authenticateToken, retryEventAIContent);
 
 export default router;
