@@ -26,6 +26,16 @@ const AI_CONSTANTS = {
     CHECKLIST_MIN_ITEMS: 3,
     CHECKLIST_MAX_ITEMS: 5,
   },
+  SUPPORTED_CATEGORIES: ["meeting", "presentation"] as const,
+  ERROR_KEYWORDS: {
+    QUOTA: ["quota", "limit"],
+    UNSUPPORTED_CATEGORY: ["category", "unsupported"],
+  },
+  ERROR_TYPES: {
+    QUOTA_EXCEEDED: "quota_exceeded",
+    TEMPORARY_ERROR: "temporary_error",
+    UNSUPPORTED_CATEGORY: "unsupported_category",
+  },
 } as const;
 
 export default AI_CONSTANTS;

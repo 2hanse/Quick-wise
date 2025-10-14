@@ -24,6 +24,7 @@ interface AIContent {
   usedVideoIds: string[];
   processedAt?: Date;
   error?: string;
+  errorType?: "quota_exceeded" | "temporary_error" | "unsupported_category";
 }
 
 interface IEvent extends Document {
@@ -82,6 +83,10 @@ const AIContentSchema = new Schema(
     usedVideoIds: [{ type: String }],
     processedAt: { type: Date },
     error: { type: String },
+    errorType: {
+      type: String,
+      enum: ["quota_exceeded", "temporary_error", "unsupported_category"],
+    },
   },
   { _id: false }
 );

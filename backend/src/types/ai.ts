@@ -1,4 +1,12 @@
 import { AICard } from "../models/Event";
+import AI_CONSTANTS from "../constants/ai";
+
+type AIErrorType =
+  | "quota_exceeded"
+  | "temporary_error"
+  | "unsupported_category";
+
+type SupportedCategory = (typeof AI_CONSTANTS.SUPPORTED_CATEGORIES)[number];
 
 interface GeminiResponse {
   text: string;
@@ -83,6 +91,18 @@ interface AIProcessingResult {
   error?: string;
 }
 
+interface RetryEventRequest {
+  excludeVideoIds?: string[];
+}
+
+interface RetryEventResponse {
+  success: boolean;
+  message: string;
+  status: "processing" | "failed";
+}
+
+export type { AIErrorType, SupportedCategory };
+
 export {
   GeminiResponse,
   KeywordExtractionResult,
@@ -97,4 +117,6 @@ export {
   AICardGenerationResult,
   AIProcessingResult,
   AICard,
+  RetryEventRequest,
+  RetryEventResponse,
 };

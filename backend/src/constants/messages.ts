@@ -76,6 +76,11 @@ const constants = {
     EVENT: {
       NOT_FOUND: "Event not found",
       NO_CATEGORY: "Event category is required for AI processing",
+      UNSUPPORTED_CATEGORY: "Category not supported for AI processing",
+    },
+    AI: {
+      INVALID_INPUT: "Invalid schedule data provided.",
+      QUOTA_EXCEEDED: "AI API quota exceeded",
     },
   },
   SUCCESS: {
@@ -151,6 +156,7 @@ const constants = {
       PROCESSING_COMPLETE: "AI processing completed",
       PROCESSING_FAILED: "AI processing failed",
       EVENT_PROCESSING_FAILED: "Failed to process event",
+      RETRY_STARTED: "AI retry processing started",
     },
     CRON: {
       DAILY_PROCESSOR_STARTED: "Starting daily AI processing",

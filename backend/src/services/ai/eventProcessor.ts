@@ -1,6 +1,47 @@
 import { Event } from "../../models/Event";
 import { processEventWithAI } from "./aiPipeline";
 import constants from "../../constants/messages";
+import AI_CONSTANTS from "../../constants/ai";
+import { SupportedCategory } from "../../types/ai";
+
+const normalizeCategory = (category: string): string | null => {
+  const normalized = category.toLowerCase().trim();
+
+  if (
+    AI_CONSTANTS.SUPPORTED_CATEGORIES.includes(normalized as SupportedCategory)
+  ) {
+    return normalized;
+  }
+
+  const categoryMap = constants.EVENT_CATEGORY;
+  const categoryEntry = Object.values(categoryMap).find((entry) =>
+    entry.KEYWORDS.some((keyword) => normalized.includes(keyword.toLowerCase()))
+  );
+
+  return categoryEntry?.VALUE || null;
+};
+
+const determineErrorType = (errorMessage: string): string => {
+  const lowerMessage = (errorMessage || "").toLowerCase();
+
+  if (
+    AI_CONSTANTS.ERROR_KEYWORDS.QUOTA.some((keyword) =>
+      lowerMessage.includes(keyword)
+    )
+  ) {
+    return AI_CONSTANTS.ERROR_TYPES.QUOTA_EXCEEDED;
+  }
+
+  if (
+    AI_CONSTANTS.ERROR_KEYWORDS.UNSUPPORTED_CATEGORY.some((keyword) =>
+      lowerMessage.includes(keyword)
+    )
+  ) {
+    return AI_CONSTANTS.ERROR_TYPES.UNSUPPORTED_CATEGORY;
+  }
+
+  return AI_CONSTANTS.ERROR_TYPES.TEMPORARY_ERROR;
+};
 
 const processEventImmediately = async (eventId: string): Promise<void> => {
   try {
@@ -15,9 +56,12 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
     }
 
     if (!event.category) {
-      console.log(
-        `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.CATEGORY_MISSING}: ${eventId}`
-      );
+      return;
+    }
+
+    const normalizedCategory = normalizeCategory(event.category);
+
+    if (!normalizedCategory) {
       return;
     }
 
@@ -28,7 +72,7 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
     const result = await processEventWithAI(
       event.title,
       event.description || "",
-      event.category,
+      normalizedCategory,
       event.aiContent?.usedVideoIds || []
     );
 
@@ -47,9 +91,12 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
         `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.PROCESSING_COMPLETE}: ${eventId}`
       );
     } else {
+      const errorType = determineErrorType(result.error || "");
+
       await Event.findByIdAndUpdate(eventId, {
         "aiContent.status": "failed",
         "aiContent.error": result.error || "No cards generated",
+        "aiContent.errorType": errorType,
       });
 
       console.error(
@@ -57,12 +104,17 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
       );
     }
   } catch (error) {
+    const errorType = determineErrorType(
+      error instanceof Error ? error.message : ""
+    );
+
     await Event.findByIdAndUpdate(eventId, {
       "aiContent.status": "failed",
       "aiContent.error":
         error instanceof Error
           ? error.message
           : constants.ERROR_MESSAGES.GENERAL.UNKNOWN_ERROR,
+      "aiContent.errorType": errorType,
     });
 
     throw error;
@@ -102,4 +154,4 @@ const processTodayEvents = async (userId: string): Promise<void> => {
   }
 };
 
-export { processEventImmediately, processTodayEvents };
+export { processEventImmediately, processTodayEvents, normalizeCategory };
