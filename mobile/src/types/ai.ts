@@ -1,5 +1,10 @@
 type AICardType = "tip" | "scenario" | "checklist";
 
+type AIErrorType =
+  | "quota_exceeded"
+  | "temporary_error"
+  | "unsupported_category";
+
 type AIProcessingStatus = "pending" | "processing" | "completed" | "failed";
 
 type AICard = AITipCard | AIScenarioCard | AIChecklistCard;
@@ -40,6 +45,7 @@ interface AIContent {
   usedVideoIds?: string[];
   processedAt?: Date;
   error?: string;
+  errorType?: AIErrorType;
 }
 
 interface EventWithAI {
@@ -70,7 +76,7 @@ interface AIState {
   clearSelectedEvent: () => void;
 }
 
-export type { AICardType, AIProcessingStatus, AICard };
+export type { AICardType, AIErrorType, AIProcessingStatus, AICard };
 
 export {
   AICardSource,

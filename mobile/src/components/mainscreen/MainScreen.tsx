@@ -10,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import DateHeaderSection from "./DateHeaderSection";
 import NextScheduleSection from "./NextScheduleSection";
 import ScheduleGuideSection from "./ScheduleGuideSection";
+import SwipeContentSkeleton from "./SwipeContentSkeleton";
 import TodayScheduleSection from "./TodayScheduleSection";
 import EmptyScheduleSection from "./EmptyScheduleSection";
 import {
@@ -52,6 +53,51 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
     })
   ).current;
 
+  const renderAIContent = () => {
+    if (!nextSchedule?.aiContent) {
+      return null;
+    }
+
+    const { status } = nextSchedule.aiContent;
+    const { AI_STATUS, TEXT, ICONS } = mainPageConstants;
+
+    if (status === AI_STATUS.PROCESSING) {
+      return (
+        <View>
+          <View className="flex-row items-center gap-2 mx-3 mb-2">
+            <Text className="text-[14px] text-gray-600 font-medium">
+              {TEXT.NEXT_SCHEDULE.AI_PROCESSING}
+            </Text>
+          </View>
+          <SwipeContentSkeleton />
+        </View>
+      );
+    }
+
+    if (status === AI_STATUS.COMPLETED && swipeContents.length > 0) {
+      return <ScheduleGuideSection swipeContents={swipeContents} />;
+    }
+
+    if (status === AI_STATUS.FAILED) {
+      return (
+        <View className="mx-3 mb-2.5">
+          <View className="bg-red-50 rounded-xl p-4 border border-red-200">
+            <Text className="text-[14px] text-red-600 font-medium">
+              {ICONS.ERROR} {TEXT.NEXT_SCHEDULE.AI_FAILED}
+            </Text>
+            {nextSchedule.aiContent.error && (
+              <Text className="text-[12px] text-red-500 mt-1">
+                {nextSchedule.aiContent.error}
+              </Text>
+            )}
+          </View>
+        </View>
+      );
+    }
+
+    return null;
+  };
+
   if (isLoading) {
     return (
       <SafeAreaView className="flex-1 bg-white">
@@ -92,9 +138,7 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
                   isAILoading={isLoading}
                 />
               )}
-              {swipeContents.length > 0 && (
-                <ScheduleGuideSection swipeContents={swipeContents} />
-              )}
+              {renderAIContent()}
               <TodayScheduleSection schedules={todaySchedules} />
             </>
           ) : (

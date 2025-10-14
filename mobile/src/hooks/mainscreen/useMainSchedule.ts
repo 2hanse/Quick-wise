@@ -79,16 +79,26 @@ const useMainSchedule = () => {
           nextSchedule.title.trim().toLowerCase()
       );
 
-      if (nextEvent?.aiContent?.cards) {
-        const converted = convertAICardsToSwipeContents(
-          nextEvent.aiContent.cards
-        );
-        setSwipeContents(converted);
-      } else {
-        setSwipeContents([]);
+      if (nextEvent) {
+        setNextSchedule((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            aiContent: nextEvent.aiContent,
+          };
+        });
+
+        if (nextEvent.aiContent?.cards) {
+          const converted = convertAICardsToSwipeContents(
+            nextEvent.aiContent.cards
+          );
+          setSwipeContents(converted);
+        } else {
+          setSwipeContents([]);
+        }
       }
     }
-  }, [todayEvents, nextSchedule]);
+  }, [todayEvents, nextSchedule?.title]);
 
   return {
     todaySchedules,

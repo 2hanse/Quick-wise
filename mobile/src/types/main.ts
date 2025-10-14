@@ -1,4 +1,4 @@
-import { AICardSource } from "./ai";
+import { AICardSource, AIContent } from "./ai";
 
 type ScheduleStatus = "completed" | "progress" | "upcoming";
 
@@ -46,6 +46,7 @@ interface NextSchedule {
   title: string;
   location: string;
   lecture: Lecture;
+  aiContent?: AIContent;
 }
 
 interface NextScheduleSectionProps {

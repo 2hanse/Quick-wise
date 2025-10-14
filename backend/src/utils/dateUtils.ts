@@ -1,23 +1,36 @@
-const formatDateString = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-};
+import TIME_CONSTANTS from "../constants/time";
 
 const getTodayDateRange = (): { startDate: string; endDate: string } => {
-  const today = new Date();
+  const now = new Date();
+  const kstNow = new Date(now.getTime() + TIME_CONSTANTS.KST.OFFSET_MS);
 
-  const startDate = new Date(today);
-  startDate.setHours(0, 0, 0, 0);
+  const kstStartOfDay = new Date(kstNow);
+  kstStartOfDay.setUTCHours(
+    TIME_CONSTANTS.DAY.START.HOURS,
+    TIME_CONSTANTS.DAY.START.MINUTES,
+    TIME_CONSTANTS.DAY.START.SECONDS,
+    TIME_CONSTANTS.DAY.START.MILLISECONDS
+  );
 
-  const endDate = new Date(today);
-  endDate.setDate(endDate.getDate() + 1);
-  endDate.setHours(23, 59, 59, 999);
+  const utcStartOfDay = new Date(
+    kstStartOfDay.getTime() - TIME_CONSTANTS.KST.OFFSET_MS
+  );
+
+  const kstEndOfDay = new Date(kstNow);
+  kstEndOfDay.setUTCHours(
+    TIME_CONSTANTS.DAY.END.HOURS,
+    TIME_CONSTANTS.DAY.END.MINUTES,
+    TIME_CONSTANTS.DAY.END.SECONDS,
+    TIME_CONSTANTS.DAY.END.MILLISECONDS
+  );
+
+  const utcEndOfDay = new Date(
+    kstEndOfDay.getTime() - TIME_CONSTANTS.KST.OFFSET_MS
+  );
 
   return {
-    startDate: formatDateString(startDate),
-    endDate: formatDateString(endDate),
+    startDate: utcStartOfDay.toISOString(),
+    endDate: utcEndOfDay.toISOString(),
   };
 };
 

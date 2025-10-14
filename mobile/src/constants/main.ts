@@ -7,6 +7,9 @@ const mainPageConstants = {
     NEXT_SCHEDULE: {
       TITLE: "다음 일정",
       PLAY_BUTTON: "Play",
+      AI_PROCESSING: "AI 분석 중...",
+      AI_FAILED: "AI 분석 실패",
+      AI_UNSUPPORTED: "이 일정은 AI 분석을 지원하지 않습니다",
     },
     SWIPE_CONTENT: {
       COMMENTITEM_TITLE: "💡 효과",
@@ -73,6 +76,12 @@ const mainPageConstants = {
     PROGRESS: "progress" as const,
     UPCOMING: "upcoming" as const,
   },
+  AI_STATUS: {
+    PROCESSING: "processing" as const,
+    COMPLETED: "completed" as const,
+    FAILED: "failed" as const,
+    PENDING: "pending" as const,
+  },
   TIME_FORMAT: {
     ALL_DAY: "종일",
     AM: "오전",
@@ -104,6 +113,16 @@ const mainPageConstants = {
     FAILED_TO_LOAD: "Failed to load today schedules",
     CHECKLIST_LOAD_FAILED: "Failed to load checklist state:",
     CHECKLIST_SAVE_FAILED: "Failed to save checklist state:",
+  },
+  AI_CONTENT: {
+    FIXED_HEIGHT: 180,
+  },
+  SKELETON: {
+    ANIMATION_DURATION: 1200,
+    OPACITY_MIN: 0.3,
+    OPACITY_MAX: 0.6,
+    ANIMATION_START: 0,
+    ANIMATION_END: 1,
   },
 } as const;
 

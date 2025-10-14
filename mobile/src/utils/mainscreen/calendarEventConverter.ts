@@ -17,10 +17,12 @@ const getScheduleStatus = (startTime: string): ScheduleStatus => {
     (eventStart.getTime() - now.getTime()) /
     mainPageConstants.TIME_CONVERSION.MILLISECONDS_TO_MINUTES;
 
-  return diffMinutes <=
-    mainPageConstants.SCHEDULE_STATUS.PROGRESS_THRESHOLD_MINUTES
-    ? mainPageConstants.STATUS_VALUES.PROGRESS
-    : mainPageConstants.STATUS_VALUES.UPCOMING;
+  if (
+    diffMinutes <= mainPageConstants.SCHEDULE_STATUS.PROGRESS_THRESHOLD_MINUTES
+  ) {
+    return mainPageConstants.STATUS_VALUES.PROGRESS;
+  }
+  return mainPageConstants.STATUS_VALUES.UPCOMING;
 };
 
 const getStatusBadge = (status: ScheduleStatus): string => {
@@ -43,6 +45,7 @@ const formatTime = (dateTimeString: string, isAllDay: boolean): string => {
   const date = new Date(dateTimeString);
   const hours = date.getHours();
   const minutes = date.getMinutes();
+
   const period =
     hours >= mainPageConstants.TIME_FORMAT.NOON_HOUR
       ? mainPageConstants.TIME_FORMAT.PM
@@ -110,6 +113,7 @@ const getNextSchedule = (events: CalendarEvent[]): NextSchedule | null => {
     title: next.title,
     location: next.location || "위치 정보 없음",
     lecture: { title: "일정 관련 강의 준비 중" },
+    aiContent: next.aiContent,
   };
 };
 
