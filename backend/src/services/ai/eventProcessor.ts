@@ -1,47 +1,10 @@
 import { Event } from "../../models/Event";
 import { processEventWithAI } from "./aiPipeline";
+import {
+  normalizeCategory,
+  determineErrorType,
+} from "../../utils/ai/categoryHelper";
 import constants from "../../constants/messages";
-import AI_CONSTANTS from "../../constants/ai";
-import { SupportedCategory } from "../../types/ai";
-
-const normalizeCategory = (category: string): string | null => {
-  const normalized = category.toLowerCase().trim();
-
-  if (
-    AI_CONSTANTS.SUPPORTED_CATEGORIES.includes(normalized as SupportedCategory)
-  ) {
-    return normalized;
-  }
-
-  const categoryMap = constants.EVENT_CATEGORY;
-  const categoryEntry = Object.values(categoryMap).find((entry) =>
-    entry.KEYWORDS.some((keyword) => normalized.includes(keyword.toLowerCase()))
-  );
-
-  return categoryEntry?.VALUE || null;
-};
-
-const determineErrorType = (errorMessage: string): string => {
-  const lowerMessage = (errorMessage || "").toLowerCase();
-
-  if (
-    AI_CONSTANTS.ERROR_KEYWORDS.QUOTA.some((keyword) =>
-      lowerMessage.includes(keyword)
-    )
-  ) {
-    return AI_CONSTANTS.ERROR_TYPES.QUOTA_EXCEEDED;
-  }
-
-  if (
-    AI_CONSTANTS.ERROR_KEYWORDS.UNSUPPORTED_CATEGORY.some((keyword) =>
-      lowerMessage.includes(keyword)
-    )
-  ) {
-    return AI_CONSTANTS.ERROR_TYPES.UNSUPPORTED_CATEGORY;
-  }
-
-  return AI_CONSTANTS.ERROR_TYPES.TEMPORARY_ERROR;
-};
 
 const processEventImmediately = async (eventId: string): Promise<void> => {
   try {
@@ -121,4 +84,4 @@ const processEventImmediately = async (eventId: string): Promise<void> => {
   }
 };
 
-export { processEventImmediately, normalizeCategory };
+export { processEventImmediately };

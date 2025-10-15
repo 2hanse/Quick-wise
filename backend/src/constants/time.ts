@@ -2,6 +2,10 @@ const TIME_CONSTANTS = {
   KST: {
     OFFSET_MS: 9 * 60 * 60 * 1000,
   },
+  UNIT: {
+    SECONDS_PER_HOUR: 3600,
+    SECONDS_PER_MINUTE: 60,
+  },
   DAY: {
     START: {
       HOURS: 0,

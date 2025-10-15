@@ -1,4 +1,5 @@
 import { callGemini } from "./geminiClient";
+import { wrapError } from "../../utils/ai/errorHandler";
 import constants from "../../constants/messages";
 import AI_CONSTANTS from "../../constants/ai";
 import { VideoSubtitle, VideoInfo, VideoSummary } from "../../types/ai";
@@ -58,12 +59,7 @@ const summarizeTranscript = async (
       videoUrl: `https://www.youtube.com/watch?v=${video.videoId}`,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(
-        `${constants.ERROR_MESSAGES.GEMINI.GENERATION_FAILED}: ${error.message}`
-      );
-    }
-    throw error;
+    throw wrapError(error, constants.LOG_PREFIXES.AI_SUMMARY);
   }
 };
 

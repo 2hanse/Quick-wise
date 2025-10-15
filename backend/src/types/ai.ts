@@ -101,6 +101,11 @@ interface RetryEventResponse {
   status: "processing" | "failed";
 }
 
+interface GeminiKeywordResponse {
+  searchQuery: string;
+  keywords: string[];
+}
+
 export type { AIErrorType, SupportedCategory };
 
 export {
@@ -119,4 +124,5 @@ export {
   AICard,
   RetryEventRequest,
   RetryEventResponse,
+  GeminiKeywordResponse,
 };

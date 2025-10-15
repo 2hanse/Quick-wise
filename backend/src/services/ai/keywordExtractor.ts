@@ -1,6 +1,8 @@
 import { callGemini } from "./geminiClient";
+import parseGeminiJSON from "../../utils/ai/jsonParser";
+import { wrapError } from "../../utils/ai/errorHandler";
 import constants from "../../constants/messages";
-import { KeywordExtractionResult } from "../../types/ai";
+import { KeywordExtractionResult, GeminiKeywordResponse } from "../../types/ai";
 
 const extractKeywords = async (
   eventTitle: string,
@@ -47,20 +49,9 @@ keywords는 나중에 자막에서 핵심 내용을 찾는데 사용되므로, �
 
   try {
     const result = await callGemini(prompt);
+    const parsed = parseGeminiJSON<GeminiKeywordResponse>(result.text);
 
-    let jsonText = result.text.trim();
-
-    if (jsonText.startsWith("```json")) {
-      jsonText = jsonText.replace(/```json\n?/g, "").replace(/```\n?/g, "");
-    }
-
-    if (jsonText.startsWith("```")) {
-      jsonText = jsonText.replace(/```\n?/g, "");
-    }
-
-    const parsed = JSON.parse(jsonText);
-
-    if (!parsed.searchQuery || !parsed.keywords) {
+    if (!parsed || !parsed.searchQuery || !parsed.keywords) {
       throw new Error(constants.ERROR_MESSAGES.GEMINI.INVALID_RESPONSE);
     }
 
@@ -72,12 +63,7 @@ keywords는 나중에 자막에서 핵심 내용을 찾는데 사용되므로, �
       keywords: parsed.keywords,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(
-        `${constants.ERROR_MESSAGES.GEMINI.GENERATION_FAILED}: ${error.message}`
-      );
-    }
-    throw error;
+    throw wrapError(error, constants.LOG_PREFIXES.AI_KEYWORD);
   }
 };
 

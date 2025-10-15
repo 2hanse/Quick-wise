@@ -56,7 +56,7 @@ const constants = {
       API_ERROR: "Gemini API error",
       RATE_LIMIT_EXCEEDED: "Gemini API rate limit exceeded",
       INVALID_RESPONSE: "Invalid response from Gemini API",
-      GENERATION_FAILED: "Content generation failed",
+      PARSE_FAILED: "Failed to parse Gemini JSON",
     },
     YOUTUBE: {
       API_KEY_NOT_DEFINED:
@@ -65,7 +65,6 @@ const constants = {
       NO_RESULTS: "No suitable videos found",
       INVALID_VIDEO_ID: "Invalid YouTube video ID",
       API_ERROR: "YouTube API error",
-      TRANSCRIPT_FETCH_FAILED: "Failed to fetch video transcript",
       NO_TRANSCRIPT: "No transcript available for this video",
       NO_VIDEOS_FOUND: "No videos found for the search query",
       NO_TRANSCRIPTS_AVAILABLE: "No transcripts available for any videos",
@@ -146,6 +145,10 @@ const constants = {
     GEMINI_API: "[Gemini API]",
     YOUTUBE_SEARCH: "[YouTube Search]",
     AI_PROCESSING: "[AI Processing]",
+    AI_KEYWORD: "[AI] Keyword Extraction",
+    AI_TRANSCRIPT: "[AI] Transcript Fetch",
+    AI_SUMMARY: "[AI] Summary Generation",
+    AI_CONTENT: "[AI] Content Generation",
   },
   LOG_MESSAGES: {
     CALENDAR: {
@@ -164,6 +167,10 @@ const constants = {
       DAILY_PROCESSING_ERROR: "Daily processing error",
       EVENT_FAILED: "Failed",
     },
+  },
+  ERROR_KEYWORDS: {
+    RATE_LIMIT: "limit",
+    QUOTA: "quota",
   },
 } as const;
 

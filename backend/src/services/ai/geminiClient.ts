@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { isRateLimitError } from "../../utils/ai/errorHandler";
 import constants from "../../constants/messages";
 import AI_CONSTANTS from "../../constants/ai";
 import { GeminiResponse } from "../../types/ai";
@@ -18,12 +19,6 @@ const getGenAI = (): GoogleGenerativeAI => {
     genAI = new GoogleGenerativeAI(getApiKey());
   }
   return genAI;
-};
-
-const isRateLimitError = (error: unknown): boolean => {
-  if (!(error instanceof Error)) return false;
-  const message = error.message.toLowerCase();
-  return message.includes("quota") || message.includes("limit");
 };
 
 const callGemini = async (prompt: string): Promise<GeminiResponse> => {

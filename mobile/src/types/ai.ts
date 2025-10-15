@@ -87,6 +87,10 @@ interface RetryEventResponse {
   canRetry?: boolean;
 }
 
+interface SourceInfoProps {
+  source: AICardSource;
+}
+
 export type { AICardType, AIErrorType, AIProcessingStatus, AICard };
 
 export {
@@ -101,4 +105,5 @@ export {
   AIState,
   RetryEventRequest,
   RetryEventResponse,
+  SourceInfoProps,
 };

@@ -5,6 +5,7 @@ import {
   ChecklistContentProps,
   ChecklistContentItem,
 } from "../../../types/main";
+import SourceInfo from "../../common/SourceInfo";
 import { STORAGE_KEYS } from "../../../constants/storage";
 import mainPageConstants from "../../../constants/main";
 
@@ -91,17 +92,7 @@ const ChecklistContent = ({ items, source }: ChecklistContentProps) => {
           </Pressable>
         ))}
       </View>
-
-      <View className="mt-4 pt-4 border-t border-[#f3f4f6]">
-        <Text className="text-[12px] text-[#9ca3af] mb-1">
-          {mainPageConstants.TEXT.SWIPE_CONTENT.SOURCE.TITLE}:{" "}
-          {source.videoTitle}
-        </Text>
-        <Text className="text-[11px] text-[#9ca3af]">
-          {mainPageConstants.TEXT.SWIPE_CONTENT.SOURCE.SPEAKER}:{" "}
-          {source.speaker}
-        </Text>
-      </View>
+      <SourceInfo source={source} />
     </View>
   );
 };

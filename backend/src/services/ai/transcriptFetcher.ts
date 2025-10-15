@@ -1,4 +1,5 @@
 import { YoutubeTranscript } from "@danielxceron/youtube-transcript";
+import { wrapError } from "../../utils/ai/errorHandler";
 import constants from "../../constants/messages";
 import { VideoSubtitle, VideoInfo } from "../../types/ai";
 
@@ -60,12 +61,7 @@ const fetchTranscripts = async (
 
     return validTranscripts;
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(
-        `${constants.ERROR_MESSAGES.YOUTUBE.TRANSCRIPT_FETCH_FAILED}: ${error.message}`
-      );
-    }
-    throw error;
+    throw wrapError(error, constants.LOG_PREFIXES.AI_TRANSCRIPT);
   }
 };
 

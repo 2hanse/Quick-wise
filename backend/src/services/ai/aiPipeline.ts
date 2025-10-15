@@ -3,6 +3,7 @@ import { searchVideos } from "./videoSearcher";
 import { fetchTranscripts } from "./transcriptFetcher";
 import { summarizeMultipleTranscripts } from "./contentSummarizer";
 import { generateContent } from "./contentGenerator";
+import { wrapError } from "../../utils/ai/errorHandler";
 import constants from "../../constants/messages";
 import { AIProcessingResult, AICard } from "../../types/ai";
 
@@ -25,14 +26,18 @@ const processEventWithAI = async (
     );
 
     if (videos.length === 0) {
-      throw new Error(constants.ERROR_MESSAGES.YOUTUBE.NO_VIDEOS_FOUND);
+      throw wrapError(
+        new Error(constants.ERROR_MESSAGES.YOUTUBE.NO_VIDEOS_FOUND),
+        constants.LOG_PREFIXES.YOUTUBE_SEARCH
+      );
     }
 
     const transcripts = await fetchTranscripts(videos);
 
     if (transcripts.length === 0) {
-      throw new Error(
-        constants.ERROR_MESSAGES.YOUTUBE.NO_TRANSCRIPTS_AVAILABLE
+      throw wrapError(
+        new Error(constants.ERROR_MESSAGES.YOUTUBE.NO_TRANSCRIPTS_AVAILABLE),
+        constants.LOG_PREFIXES.AI_TRANSCRIPT
       );
     }
 

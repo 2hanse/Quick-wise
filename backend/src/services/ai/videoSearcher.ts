@@ -1,4 +1,6 @@
 import axios from "axios";
+import parseDuration from "../../utils/youtube/durationParser";
+import { wrapError } from "../../utils/ai/errorHandler";
 import constants from "../../constants/messages";
 import AI_CONSTANTS from "../../constants/ai";
 import {
@@ -13,17 +15,6 @@ const getApiKey = (): string => {
     throw new Error(constants.ERROR_MESSAGES.YOUTUBE.API_KEY_NOT_DEFINED);
   }
   return apiKey;
-};
-
-const parseDuration = (duration: string): number => {
-  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
-  if (!match) return 0;
-
-  const hours = parseInt(match[1] || "0");
-  const minutes = parseInt(match[2] || "0");
-  const seconds = parseInt(match[3] || "0");
-
-  return hours * 3600 + minutes * 60 + seconds;
 };
 
 const searchVideos = async (
@@ -99,18 +90,24 @@ const searchVideos = async (
     return filteredVideos;
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      throw new Error(
-        `${constants.ERROR_MESSAGES.YOUTUBE.API_ERROR}: ${
-          error.response?.data?.error?.message || error.message
-        }`
+      throw wrapError(
+        new Error(
+          `${constants.ERROR_MESSAGES.YOUTUBE.API_ERROR}: ${
+            error.response?.data?.error?.message || error.message
+          }`
+        ),
+        constants.LOG_PREFIXES.YOUTUBE_SEARCH
       );
     }
 
     if (error instanceof Error) {
-      throw error;
+      throw wrapError(error, constants.LOG_PREFIXES.YOUTUBE_SEARCH);
     }
 
-    throw new Error(constants.ERROR_MESSAGES.YOUTUBE.SEARCH_FAILED);
+    throw wrapError(
+      new Error(constants.ERROR_MESSAGES.YOUTUBE.SEARCH_FAILED),
+      constants.LOG_PREFIXES.YOUTUBE_SEARCH
+    );
   }
 };
 

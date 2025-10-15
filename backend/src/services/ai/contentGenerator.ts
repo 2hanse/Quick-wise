@@ -1,6 +1,8 @@
 import { callGemini } from "./geminiClient";
-import constants from "../../constants/messages";
+import parseGeminiJSON from "../../utils/ai/jsonParser";
+import { wrapError } from "../../utils/ai/errorHandler";
 import AI_CONSTANTS from "../../constants/ai";
+import constants from "../../constants/messages";
 import { AICardGenerationResult } from "../../types/ai";
 
 const createContentPrompt = (
@@ -62,17 +64,11 @@ const generateContent = async (
     );
 
     const result = await callGemini(prompt);
-    let jsonText = result.text.trim();
+    const parsed = parseGeminiJSON<AICardGenerationResult | null>(result.text);
 
-    if (jsonText.startsWith("```json")) {
-      jsonText = jsonText.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+    if (!parsed) {
+      throw new Error(constants.ERROR_MESSAGES.GEMINI.INVALID_RESPONSE);
     }
-
-    if (jsonText.startsWith("```")) {
-      jsonText = jsonText.replace(/```\n?/g, "");
-    }
-
-    const parsed = JSON.parse(jsonText);
 
     if (
       parsed.tip &&
@@ -123,12 +119,7 @@ const generateContent = async (
       checklist: parsed.checklist,
     };
   } catch (error) {
-    if (error instanceof Error) {
-      throw new Error(
-        `${constants.ERROR_MESSAGES.GEMINI.GENERATION_FAILED}: ${error.message}`
-      );
-    }
-    throw error;
+    throw wrapError(error, constants.LOG_PREFIXES.AI_CONTENT);
   }
 };
 
