@@ -23,7 +23,6 @@ interface VideoInfo {
   channelTitle: string;
   duration: string;
   publishedAt: string;
-  matchScore: number;
 }
 
 interface YouTubeSearchItem {

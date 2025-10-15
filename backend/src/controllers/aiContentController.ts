@@ -5,25 +5,32 @@ import { getTodayDateRange } from "../utils/dateUtils";
 import constants from "../constants/messages";
 import { processEventImmediately } from "../services/ai/eventProcessor";
 import { RetryEventRequest } from "../types/ai";
+import { wrapError } from "../utils/ai/errorHandler";
 
 const handleError = (
   error: unknown,
   res: Response,
   logPrefix: string
 ): void => {
-  const errorMessage =
-    error instanceof Error
-      ? error.message
-      : constants.ERROR_MESSAGES.GENERAL.UNKNOWN_ERROR;
+  const wrappedError =
+    error instanceof Error ? error : wrapError(error, logPrefix);
 
-  console.error(logPrefix, errorMessage, error);
+  console.error(logPrefix, wrappedError.message, error);
 
-  if (errorMessage === constants.ERROR_MESSAGES.EVENT.NOT_FOUND) {
-    res.status(404).json({ error: errorMessage });
-    return;
-  }
+  const statusCode = (() => {
+    if (wrappedError.message === constants.ERROR_MESSAGES.EVENT.NOT_FOUND)
+      return 404;
+    if (wrappedError.message === constants.ERROR_MESSAGES.AI.QUOTA_EXCEEDED)
+      return 429;
+    if (
+      wrappedError.message ===
+      constants.ERROR_MESSAGES.EVENT.UNSUPPORTED_CATEGORY
+    )
+      return 400;
+    return 500;
+  })();
 
-  res.status(500).json({ error: errorMessage });
+  res.status(statusCode).json({ error: wrappedError.message });
 };
 
 const getEventAIContent = async (
@@ -39,26 +46,21 @@ const getEventAIContent = async (
     });
 
     if (!event) {
-      res.status(404).json({ error: constants.ERROR_MESSAGES.EVENT.NOT_FOUND });
-      return;
+      throw wrapError(
+        new Error(constants.ERROR_MESSAGES.EVENT.NOT_FOUND),
+        constants.LOG_PREFIXES.AI_PROCESSING
+      );
     }
 
-    if (!event.aiContent) {
-      res.json({
-        status: "pending",
-        cards: [],
-        keywords: [],
-      });
-      return;
-    }
+    const response = {
+      status: event.aiContent?.status || "pending",
+      cards: event.aiContent?.cards || [],
+      keywords: event.aiContent?.keywords || [],
+      processedAt: event.aiContent?.processedAt,
+      error: event.aiContent?.error,
+    };
 
-    res.json({
-      status: event.aiContent.status,
-      cards: event.aiContent.cards || [],
-      keywords: event.aiContent.keywords || [],
-      processedAt: event.aiContent.processedAt,
-      error: event.aiContent.error,
-    });
+    res.json(response);
   } catch (error) {
     handleError(error, res, constants.LOG_PREFIXES.AI_PROCESSING);
   }
@@ -111,28 +113,26 @@ const retryEventAIContent = async (
     });
 
     if (!event) {
-      res.status(404).json({ error: constants.ERROR_MESSAGES.EVENT.NOT_FOUND });
-      return;
+      throw wrapError(
+        new Error(constants.ERROR_MESSAGES.EVENT.NOT_FOUND),
+        constants.LOG_PREFIXES.AI_PROCESSING
+      );
     }
 
     const errorType = event.aiContent?.errorType;
 
     if (errorType === "quota_exceeded") {
-      res.status(429).json({
-        success: false,
-        message: constants.ERROR_MESSAGES.AI.QUOTA_EXCEEDED,
-        canRetry: false,
-      });
-      return;
+      throw wrapError(
+        new Error(constants.ERROR_MESSAGES.AI.QUOTA_EXCEEDED),
+        constants.LOG_PREFIXES.AI_PROCESSING
+      );
     }
 
     if (errorType === "unsupported_category") {
-      res.status(400).json({
-        success: false,
-        message: constants.ERROR_MESSAGES.EVENT.UNSUPPORTED_CATEGORY,
-        canRetry: false,
-      });
-      return;
+      throw wrapError(
+        new Error(constants.ERROR_MESSAGES.EVENT.UNSUPPORTED_CATEGORY),
+        constants.LOG_PREFIXES.AI_PROCESSING
+      );
     }
 
     if (excludeVideoIds && excludeVideoIds.length > 0) {
@@ -148,7 +148,12 @@ const retryEventAIContent = async (
       `${constants.LOG_PREFIXES.AI_PROCESSING} ${constants.LOG_MESSAGES.AI.RETRY_STARTED}: ${eventId}`
     );
 
-    await processEventImmediately(eventId);
+    processEventImmediately(eventId).catch((err) => {
+      console.error(
+        `${constants.LOG_PREFIXES.AI_PROCESSING} Retry failed for ${eventId}:`,
+        err
+      );
+    });
 
     res.json({
       success: true,
