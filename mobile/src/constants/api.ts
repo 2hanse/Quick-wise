@@ -12,7 +12,12 @@ const API_CONSTANTS = {
     },
     CALENDAR: {
       EVENTS: "/calendar/events",
-      TODAY: "/calendar/today",
+      TODAY: "/calendar/events/today",
+    },
+    AI: {
+      TODAY: "/ai/today",
+      EVENT: "/ai/event",
+      RETRY: "/ai/event",
     },
   } as const,
   STORAGE_KEYS: {

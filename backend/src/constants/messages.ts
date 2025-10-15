@@ -50,6 +50,37 @@ const constants = {
       FAILED_TO_DELETE_EVENT: "Failed to delete calendar event",
       SYNC_FAILED: "Failed to sync calendar events",
     },
+    GEMINI: {
+      API_KEY_NOT_DEFINED:
+        "GEMINI_API_KEY is not defined in environment variables",
+      API_ERROR: "Gemini API error",
+      RATE_LIMIT_EXCEEDED: "Gemini API rate limit exceeded",
+      INVALID_RESPONSE: "Invalid response from Gemini API",
+      PARSE_FAILED: "Failed to parse Gemini JSON",
+    },
+    YOUTUBE: {
+      API_KEY_NOT_DEFINED:
+        "YOUTUBE_API_KEY is not defined in environment variables",
+      SEARCH_FAILED: "YouTube video search failed",
+      NO_RESULTS: "No suitable videos found",
+      INVALID_VIDEO_ID: "Invalid YouTube video ID",
+      API_ERROR: "YouTube API error",
+      NO_TRANSCRIPT: "No transcript available for this video",
+      NO_VIDEOS_FOUND: "No videos found for the search query",
+      NO_TRANSCRIPTS_AVAILABLE: "No transcripts available for any videos",
+    },
+    GENERAL: {
+      UNKNOWN_ERROR: "Unknown error occurred",
+    },
+    EVENT: {
+      NOT_FOUND: "Event not found",
+      NO_CATEGORY: "Event category is required for AI processing",
+      UNSUPPORTED_CATEGORY: "Category not supported for AI processing",
+    },
+    AI: {
+      INVALID_INPUT: "Invalid schedule data provided.",
+      QUOTA_EXCEEDED: "AI API quota exceeded",
+    },
   },
   SUCCESS: {
     DATABASE: {
@@ -111,6 +142,35 @@ const constants = {
     EVENT_UPDATE: "[Event Update]",
     EVENT_DELETE: "[Event Delete]",
     CALENDAR_SYNC: "[Calendar Sync]",
+    GEMINI_API: "[Gemini API]",
+    YOUTUBE_SEARCH: "[YouTube Search]",
+    AI_PROCESSING: "[AI Processing]",
+    AI_KEYWORD: "[AI] Keyword Extraction",
+    AI_TRANSCRIPT: "[AI] Transcript Fetch",
+    AI_SUMMARY: "[AI] Summary Generation",
+    AI_CONTENT: "[AI] Content Generation",
+  },
+  LOG_MESSAGES: {
+    CALENDAR: {
+      ENRICH_EVENTS_FAILED: "Failed to enrich events",
+    },
+    AI: {
+      CATEGORY_MISSING: "No category, skipping AI processing",
+      PROCESSING_COMPLETE: "AI processing completed",
+      PROCESSING_FAILED: "AI processing failed",
+      EVENT_PROCESSING_FAILED: "Failed to process event",
+      RETRY_STARTED: "AI retry processing started",
+    },
+    CRON: {
+      DAILY_PROCESSOR_STARTED: "Starting daily AI processing",
+      DAILY_PROCESSOR_SCHEDULED: "Daily processor scheduled (00:00 KST)",
+      DAILY_PROCESSING_ERROR: "Daily processing error",
+      EVENT_FAILED: "Failed",
+    },
+  },
+  ERROR_KEYWORDS: {
+    RATE_LIMIT: "limit",
+    QUOTA: "quota",
   },
 } as const;
 

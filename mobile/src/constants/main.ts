@@ -1,15 +1,32 @@
 const mainPageConstants = {
   TEXT: {
     DATE_HEADER: {
-      SCHEDULE_COUNT: (total: number, study: number) =>
-        `일정 ${total}개, 학습 준비 ${study}개`,
+      SCHEDULE_COUNT: (total: number) => `일정 ${total}개`,
+      REFRESH_BUTTON: "새로고침",
     },
     NEXT_SCHEDULE: {
       TITLE: "다음 일정",
       PLAY_BUTTON: "Play",
+      AI_PROCESSING: "AI 분석 중...",
+      AI_FAILED: "AI 분석 실패",
+      AI_UNSUPPORTED: "이 일정은 AI 분석을 지원하지 않습니다",
+      RETRY_BUTTON: "다시 시도",
+      RETRY_LIMIT_EXCEEDED: "더 이상 재시도할 수 없습니다",
+      RETRY_QUOTA_EXCEEDED: "AI 토큰 한도 초과",
+      RETRY_UNSUPPORTED: "지원하지 않는 카테고리입니다",
     },
     SWIPE_CONTENT: {
       COMMENTITEM_TITLE: "💡 효과",
+      CARD_PADDING: 24,
+      SCROLL_THROTTLE: 16,
+      SOURCE: {
+        TITLE: "출처:",
+        SPEAKER: "연사:",
+      },
+      SCENARIO: {
+        SITUATION_LABEL: "상황:",
+        RESPONSE_LABEL: "대응:",
+      },
     },
     TODAY_SCHEDULE: {
       TITLE: "오늘의 일정",
@@ -37,8 +54,10 @@ const mainPageConstants = {
     TARGET: "🎯",
     LOCATION: "📍",
     PLAY: "▶",
+    BULLET: "•",
     EFFECTS: "💡",
     SCHEDULE_LIST: "📋",
+    REFRESH: "🔄",
     EMPTY_SCHEDULE: {
       READING: "📖",
       MUSIC: "🎵",
@@ -61,6 +80,17 @@ const mainPageConstants = {
     COMPLETED: "completed" as const,
     PROGRESS: "progress" as const,
     UPCOMING: "upcoming" as const,
+  },
+  AI_STATUS: {
+    PROCESSING: "processing" as const,
+    COMPLETED: "completed" as const,
+    FAILED: "failed" as const,
+    PENDING: "pending" as const,
+  },
+  AI_ERROR_TYPES: {
+    QUOTA_EXCEEDED: "quota_exceeded" as const,
+    TEMPORARY_ERROR: "temporary_error" as const,
+    UNSUPPORTED_CATEGORY: "unsupported_category" as const,
   },
   TIME_FORMAT: {
     ALL_DAY: "종일",
@@ -91,6 +121,26 @@ const mainPageConstants = {
   },
   LOG_MESSAGES: {
     FAILED_TO_LOAD: "Failed to load today schedules",
+    CHECKLIST_LOAD_FAILED: "Failed to load checklist state:",
+    CHECKLIST_SAVE_FAILED: "Failed to save checklist state:",
+  },
+  AI_CONTENT: {
+    FIXED_HEIGHT: 180,
+  },
+  SKELETON: {
+    ANIMATION_DURATION: 1200,
+    OPACITY_MIN: 0.3,
+    OPACITY_MAX: 0.6,
+    ANIMATION_START: 0,
+    ANIMATION_END: 1,
+  },
+  POLLING: {
+    INTERVAL_MS: 5000,
+    MAX_ATTEMPTS: 6,
+    TIMEOUT_MS: 30000,
+  },
+  RETRY: {
+    MAX_ATTEMPTS: 3,
   },
 } as const;
 

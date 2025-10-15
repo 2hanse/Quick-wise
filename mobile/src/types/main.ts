@@ -1,17 +1,40 @@
-export type ScheduleStatus = "completed" | "progress" | "upcoming";
+import { AICardSource, AIContent } from "./ai";
 
-interface CommentItem {
+type ScheduleStatus = "completed" | "progress" | "upcoming";
+
+interface CommentContentProps {
+  content: string;
+  source: AICardSource;
+}
+
+interface ScenarioContentProps {
+  situation: string;
+  response: string;
+  source: AICardSource;
+}
+
+interface ChecklistContentItem {
   id: string;
-  highlight?: string;
-  description?: string;
+  text: string;
+  completed: boolean;
+}
+
+interface ChecklistContentProps {
+  items: string[];
+  source: AICardSource;
 }
 
 interface SwipeContent {
   id: string;
   type: string;
-  commentItems?: CommentItem[];
   scenario?: Scenario;
   checklist?: Checklist;
+  content?: string;
+  situation?: string;
+  response?: string;
+  items?: string[];
+  source?: AICardSource;
+  order?: number;
 }
 
 interface Lecture {
@@ -23,6 +46,12 @@ interface NextSchedule {
   title: string;
   location: string;
   lecture: Lecture;
+  aiContent?: AIContent;
+}
+
+interface NextScheduleSectionProps {
+  schedule: NextSchedule;
+  isAILoading?: boolean;
 }
 
 interface TodaySchedule {
@@ -37,7 +66,12 @@ interface DateInfo {
   date: string;
   dayOfWeek: string;
   totalSchedules: number;
-  studySchedules: number;
+}
+
+interface DateHeaderSectionProps {
+  dateInfo: DateInfo;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 interface CalendarData {
@@ -47,18 +81,10 @@ interface CalendarData {
   todaySchedules: TodaySchedule[];
 }
 
-interface DialogueLine {
-  id: string;
-  speaker: "A" | "B";
-  text: string;
-  isHighlight?: boolean;
-}
-
 interface Scenario {
   id: string;
   title: string;
   tags: string[];
-  dialogue: DialogueLine[];
 }
 
 interface ChecklistItem {
@@ -78,17 +104,28 @@ interface MainScreenProps {
   onNavigateToCalendar: () => void;
 }
 
+interface ScheduleGuideSectionProps {
+  swipeContents: SwipeContent[];
+}
+
+export type { ScheduleStatus };
+
 export {
-  CommentItem,
+  CommentContentProps,
+  ScenarioContentProps,
+  ChecklistContentItem,
+  ChecklistContentProps,
   SwipeContent,
   Lecture,
   NextSchedule,
+  NextScheduleSectionProps,
   TodaySchedule,
   DateInfo,
+  DateHeaderSectionProps,
   CalendarData,
-  DialogueLine,
   Scenario,
   ChecklistItem,
   Checklist,
   MainScreenProps,
+  ScheduleGuideSectionProps,
 };

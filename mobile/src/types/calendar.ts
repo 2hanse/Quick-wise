@@ -1,3 +1,5 @@
+import { AICard } from "./ai";
+
 enum EventCategory {
   MEETING = "meeting",
   PRESENTATION = "presentation",
@@ -13,6 +15,14 @@ interface CalendarEvent {
   description?: string;
   isAllDay: boolean;
   status: "confirmed" | "tentative" | "cancelled";
+  aiContent?: {
+    status: "pending" | "processing" | "completed" | "failed";
+    cards: AICard[];
+    keywords: string[];
+    usedVideoIds: string[];
+    processedAt?: Date;
+    error?: string;
+  };
 }
 
 interface EventListItemProps {

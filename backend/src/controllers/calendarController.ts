@@ -77,6 +77,8 @@ const getEvents = async (req: AuthRequest, res: Response): Promise<void> => {
     const user = await getUserById(req.userId!);
     validateUserTokens(user);
 
+    await syncCalendarEvents(user, startDate, endDate);
+
     const { events, tokenRefreshed } = await getCalendarEvents(
       user,
       startDate,
@@ -103,6 +105,8 @@ const getTodayEvents = async (
     const user = await getUserById(req.userId!);
     validateUserTokens(user);
 
+    await syncCalendarEvents(user, startDate, endDate);
+
     const { events, tokenRefreshed } = await getCalendarEvents(
       user,
       startDate,
@@ -122,7 +126,6 @@ const getTodayEvents = async (
 const createEvent = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const eventData = req.body as CreateEventRequest;
-
     const user = await getUserById(req.userId!);
     validateUserTokens(user);
 
@@ -130,6 +133,12 @@ const createEvent = async (req: AuthRequest, res: Response): Promise<void> => {
       user,
       eventData
     );
+
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    await syncCalendarEvents(user, today.toISOString(), tomorrow.toISOString());
 
     res.status(201).json({
       message: constants.SUCCESS.CALENDAR.EVENT_CREATED,

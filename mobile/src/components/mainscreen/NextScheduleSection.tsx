@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import mainPageConstants from "../../constants/main";
-import type { NextSchedule } from "../../types/main";
+import { NextScheduleSectionProps } from "../../types/main";
+import { formatTime } from "../../utils/mainscreen/calendarEventConverter";
 
-interface NextScheduleSectionProps {
-  schedule: NextSchedule;
-}
-
-const NextScheduleSection = ({ schedule }: NextScheduleSectionProps) => {
+const NextScheduleSection = ({
+  schedule,
+  isAILoading = false,
+}: NextScheduleSectionProps) => {
   const { TEXT, ICONS } = mainPageConstants;
 
   return (
@@ -19,10 +19,12 @@ const NextScheduleSection = ({ schedule }: NextScheduleSectionProps) => {
         <Text className="text-[17px] font-bold text-[#1a1a1a]">
           {TEXT.NEXT_SCHEDULE.TITLE}
         </Text>
+        {isAILoading && <ActivityIndicator size="small" color="#667eea" />}
       </View>
 
       <Text className="text-[18px] font-semibold text-[#1a1a1a] mb-2">
-        • [ {schedule.startTime} ] {schedule.title}
+        {ICONS.BULLET} [ {formatTime(schedule.startTime, false)} ]{" "}
+        {schedule.title}
       </Text>
 
       <View className="flex-row items-center gap-1.5 mb-3.5">
