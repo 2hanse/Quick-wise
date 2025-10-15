@@ -1,16 +1,24 @@
 import { useEffect, useMemo } from "react";
 import useCalendarStore from "../../stores/calendarStore";
+import useNotificationStore from "../../stores/notificationStore";
 import { getMonthRange } from "../../utils/dateUtils";
 import CALENDAR_CONSTANTS from "../../constants/calendar";
 
 const useCalendarData = (currentMonth: Date) => {
   const { CATEGORY_COLORS } = CALENDAR_CONSTANTS;
   const { events, isLoading, error, fetchEvents } = useCalendarStore();
+  const { scheduleNotificationsForEvents } = useNotificationStore();
 
   useEffect(() => {
     const { startDate, endDate } = getMonthRange(currentMonth);
     fetchEvents(startDate, endDate);
   }, [currentMonth, fetchEvents]);
+
+  useEffect(() => {
+    if (events.length > 0) {
+      scheduleNotificationsForEvents(events);
+    }
+  }, [events, scheduleNotificationsForEvents]);
 
   const markedDates = useMemo(() => {
     const marked: Record<string, { dots: Array<{ color: string }> }> = {};
