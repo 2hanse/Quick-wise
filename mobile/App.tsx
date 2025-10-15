@@ -15,6 +15,7 @@ import { TabName } from "./src/constants/navigation";
 import { configureGoogleSignIn } from "./src/services/authService";
 import { APP_MESSAGES } from "./src/constants/app";
 import useAuthStore from "./src/stores/authStore";
+import useNotificationSetup from "./src/hooks/notification/useNotificationSetup";
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -25,6 +26,8 @@ function App() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const isAuthLoading = useAuthStore((state) => state.isLoading);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+
+  useNotificationSetup();
 
   useEffect(() => {
     configureGoogleSignIn();
