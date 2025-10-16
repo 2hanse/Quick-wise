@@ -16,6 +16,16 @@ const formatDateString = (date: Date): string => {
   return `${year}-${month}-${day}`;
 };
 
+const formatDateToRFC3339 = (date: Date, isEndOfDay = false): string => {
+  const d = new Date(date);
+  if (isEndOfDay) {
+    d.setHours(23, 59, 59, 999);
+  } else {
+    d.setHours(0, 0, 0, 0);
+  }
+  return d.toISOString();
+};
+
 const isToday = (date: Date): boolean => {
   const today = new Date();
   return (
@@ -80,8 +90,8 @@ const getMonthRange = (date: Date) => {
   const endDate = new Date(year, month + 1, 0);
 
   return {
-    startDate: formatDateString(startDate),
-    endDate: formatDateString(endDate),
+    startDate: formatDateToRFC3339(startDate, false),
+    endDate: formatDateToRFC3339(endDate, true),
   };
 };
 
@@ -93,6 +103,7 @@ const getTodayString = (): string => {
 export {
   getMonthDates,
   formatDateString,
+  formatDateToRFC3339,
   isToday,
   isSameDate,
   getMonthRange,

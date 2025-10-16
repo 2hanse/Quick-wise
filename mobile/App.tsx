@@ -15,7 +15,10 @@ import { TabName } from "./src/constants/navigation";
 import { configureGoogleSignIn } from "./src/services/authService";
 import { APP_MESSAGES } from "./src/constants/app";
 import useAuthStore from "./src/stores/authStore";
+import useNotificationStore from "./src/stores/notificationStore";
 import useNotificationSetup from "./src/hooks/notification/useNotificationSetup";
+import { fetchCalendarEvents } from "./src/services/calendarService";
+import { getMonthRange } from "./src/utils/dateUtils";
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -26,6 +29,7 @@ function App() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const isAuthLoading = useAuthStore((state) => state.isLoading);
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
+  const { scheduleNotificationsForEvents } = useNotificationStore();
 
   useNotificationSetup();
 
@@ -33,6 +37,25 @@ function App() {
     configureGoogleSignIn();
     checkAppStatus();
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn && !isAuthLoading && !isAppLoading) {
+      syncMonthSchedules();
+    }
+  }, [isLoggedIn, isAuthLoading, isAppLoading]);
+
+  const syncMonthSchedules = async () => {
+    try {
+      const { startDate, endDate } = getMonthRange(new Date());
+      const response = await fetchCalendarEvents(startDate, endDate);
+
+      if (response.events.length > 0) {
+        await scheduleNotificationsForEvents(response.events);
+      }
+    } catch (error) {
+      console.error(APP_MESSAGES.ERROR.SYNC_SCHEDULES_FAILED, error);
+    }
+  };
 
   const checkAppStatus = async () => {
     try {

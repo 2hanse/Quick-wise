@@ -7,6 +7,7 @@ import {
   cancelNotification,
   cancelAllNotifications,
   saveScheduledNotifications,
+  getScheduledNotifications,
 } from "../services/notificationService";
 import {
   NotificationState,
@@ -18,26 +19,33 @@ const useNotificationStore = create<NotificationState>((set, get) => ({
   scheduledNotifications: {},
 
   scheduleNotificationsForEvents: async (events: NotificationEvent[]) => {
-    const notificationsEnabled = await AsyncStorage.getItem(
-      STORAGE_KEYS.NOTIFICATIONS_ENABLED
+    const enabled = JSON.parse(
+      (await AsyncStorage.getItem(STORAGE_KEYS.NOTIFICATIONS_ENABLED)) ??
+        "false"
     );
 
-    if (notificationsEnabled !== "true") {
+    if (!enabled) {
       return;
     }
 
     const now = Date.now();
-    const scheduled: Record<string, ScheduledNotification> = {};
+    const currentScheduled = get().scheduledNotifications;
+    const scheduled: Record<string, ScheduledNotification> = {
+      ...currentScheduled,
+    };
 
     for (const event of events) {
-      const eventStart = new Date(event.startTime).getTime();
+      if (event.isAllDay) continue;
 
-      if (eventStart <= now) {
-        continue;
-      }
+      const eventStart = new Date(event.startTime).getTime();
+      if (isNaN(eventStart) || eventStart <= now) continue;
+
+      if (scheduled[event.id]) continue;
 
       const notifyTime =
-        eventStart - NOTIFICATION_CONSTANTS.ADVANCE_MINUTES * 60 * 1000;
+        eventStart -
+        NOTIFICATION_CONSTANTS.ADVANCE_MINUTES *
+          NOTIFICATION_CONSTANTS.MILLISECONDS.MINUTE;
 
       if (notifyTime <= now) {
         continue;
@@ -58,11 +66,7 @@ const useNotificationStore = create<NotificationState>((set, get) => ({
           scheduledTime: notifyTime,
         };
       } catch (error) {
-        console.error(
-          NOTIFICATION_CONSTANTS.ERROR.SCHEDULE_EVENT_FAILED,
-          event.id,
-          error
-        );
+        console.error(NOTIFICATION_CONSTANTS.ERROR.SCHEDULE_FAILED, error);
       }
     }
 
@@ -70,27 +74,38 @@ const useNotificationStore = create<NotificationState>((set, get) => ({
     await saveScheduledNotifications(Object.values(scheduled));
   },
 
-  cancelNotificationForEvent: async (eventId: string) => {
+  cancelNotification: async (eventId: string) => {
     try {
       await cancelNotification(eventId);
-      const current = get().scheduledNotifications;
-      const updated = { ...current };
-      delete updated[eventId];
-
-      set({ scheduledNotifications: updated });
-      await saveScheduledNotifications(Object.values(updated));
+      set((state) => {
+        const updated = { ...state.scheduledNotifications };
+        delete updated[eventId];
+        return { scheduledNotifications: updated };
+      });
     } catch (error) {
-      console.error(NOTIFICATION_CONSTANTS.ERROR.CANCEL_FAILED, eventId, error);
+      console.error(NOTIFICATION_CONSTANTS.ERROR.CANCEL_FAILED, error);
     }
   },
 
-  clearAllNotifications: async () => {
+  cancelAllNotifications: async () => {
     try {
       await cancelAllNotifications();
       set({ scheduledNotifications: {} });
     } catch (error) {
-      console.error(NOTIFICATION_CONSTANTS.ERROR.CLEAR_ALL_FAILED, error);
+      console.error(NOTIFICATION_CONSTANTS.ERROR.CANCEL_FAILED, error);
     }
+  },
+
+  loadScheduledNotifications: async () => {
+    const notifications = await getScheduledNotifications();
+    const mapped = notifications.reduce(
+      (acc, notification) => {
+        acc[notification.eventId] = notification;
+        return acc;
+      },
+      {} as Record<string, ScheduledNotification>
+    );
+    set({ scheduledNotifications: mapped });
   },
 }));
 

@@ -14,6 +14,7 @@ interface NotificationEvent {
   id: string;
   title: string;
   startTime: string;
+  isAllDay?: boolean;
 }
 
 interface NotificationState {
@@ -21,8 +22,9 @@ interface NotificationState {
   scheduleNotificationsForEvents: (
     events: NotificationEvent[]
   ) => Promise<void>;
-  cancelNotificationForEvent: (eventId: string) => Promise<void>;
-  clearAllNotifications: () => Promise<void>;
+  cancelNotification: (eventId: string) => Promise<void>;
+  cancelAllNotifications: () => Promise<void>;
+  loadScheduledNotifications: () => Promise<void>;
 }
 
 export {
