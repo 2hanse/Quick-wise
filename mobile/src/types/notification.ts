@@ -27,9 +27,14 @@ interface NotificationState {
   loadScheduledNotifications: () => Promise<void>;
 }
 
+interface UseNotificationListenerProps {
+  onNotificationClick: () => void;
+}
+
 export {
   NotificationPermissionStatus,
   ScheduledNotification,
   NotificationEvent,
   NotificationState,
+  UseNotificationListenerProps,
 };

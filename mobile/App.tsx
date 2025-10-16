@@ -17,8 +17,10 @@ import { APP_MESSAGES } from "./src/constants/app";
 import useAuthStore from "./src/stores/authStore";
 import useNotificationStore from "./src/stores/notificationStore";
 import useNotificationSetup from "./src/hooks/notification/useNotificationSetup";
+import useNotificationListener from "./src/hooks/notification/useNotificationListener";
 import { fetchCalendarEvents } from "./src/services/calendarService";
 import { getMonthRange } from "./src/utils/dateUtils";
+import handleNotificationNavigation from "./src/utils/notification/navigationHandler";
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -31,7 +33,12 @@ function App() {
   const checkAuthStatus = useAuthStore((state) => state.checkAuthStatus);
   const { scheduleNotificationsForEvents } = useNotificationStore();
 
+  const handleNotificationClick = useCallback(() => {
+    handleNotificationNavigation(setCurrentTab);
+  }, []);
+
   useNotificationSetup();
+  useNotificationListener({ onNotificationClick: handleNotificationClick });
 
   useEffect(() => {
     configureGoogleSignIn();
