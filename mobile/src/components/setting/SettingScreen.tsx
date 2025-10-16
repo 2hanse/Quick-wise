@@ -6,11 +6,13 @@ import SETTING_CONSTANTS from "../../constants/setting";
 import NOTIFICATION_CONSTANTS from "../../constants/notification";
 import { STORAGE_KEYS } from "../../constants/storage";
 import useAuthStore from "../../stores/authStore";
+import useNotificationStore from "../../stores/notificationStore";
 import { requestNotificationPermission } from "../../services/notificationService";
 
 const SettingScreen = () => {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const { cancelAllNotifications } = useNotificationStore();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
   useEffect(() => {
@@ -30,6 +32,8 @@ const SettingScreen = () => {
       if (!permission.granted) {
         setNotificationsEnabled(false);
         return;
+      } else {
+        await cancelAllNotifications();
       }
     }
 
