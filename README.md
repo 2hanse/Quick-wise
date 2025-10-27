@@ -16,11 +16,11 @@ QuickWise는 구글 캘린더 연동을 통해 다가오는 일정에 필요한 
 
 ## 목차
 
-- [기술 스택](#기술-스택)
-- [개발 동기](#개발-동기)
-- [핵심 기능](#핵심-기능)
-- [주요 구현 내용 및 기술적 챌린지](#주요-구현-내용-및-기술적-챌린지)
-- [회고](#회고)
+- [💻 기술 스택](#기술-스택)
+- [💡 개발 동기](#개발-동기)
+- [⚡ 핵심 기능](#핵심-기능)
+- [🛠️ 주요 구현 내용 및 기술적 챌린지](#주요-구현-내용-및-기술적-챌린지)
+- [📝 회고](#회고)
 
 <br/>
 
@@ -66,7 +66,7 @@ QuickWise는 구글 캘린더 연동을 통해 다가오는 일정에 필요한 
 
 ## 1. 구글 캘린더 연동 및 일정 관리
 
-(캘린더 연동 GIF)
+<img src="./mobile/assets/content_loading.gif" alt="콘텐츠 로딩" width="200" />
 
 <br/>
 
@@ -79,7 +79,7 @@ QuickWise는 구글 캘린더 연동을 통해 다가오는 일정에 필요한 
 
 ## 2. 일정 기반 콘텐츠 추천
 
-(홈 화면 스크린샷)
+<img src="./mobile/assets/home_screen.png" alt="홈 화면" width="200" />
 
 <br/>
 
@@ -93,8 +93,7 @@ QuickWise는 구글 캘린더 연동을 통해 다가오는 일정에 필요한 
 
 ## 3. 일정 알림
 
-(알림 스크린샷)
-
+<img src="./mobile/assets/notification.png" alt="알림" width="200" />
 <br/>
 
 사용자는 일정 시작 10분 전에 푸시 알림을 받을 수 있습니다.
@@ -217,7 +216,7 @@ Google Cloud Console에 등록한 SHA-1 지문이 실제 앱의 키와 일치하
 
 <br/>
 
-## 🛠️ 해결 과정
+## ✅ 해결 과정
 
 OAuth 인증 문제를 해결하기 위해 여러 시도를 거치며 원인을 좁혀나갔습니다.
 
@@ -326,6 +325,469 @@ SHA-1 재등록과 `skipRedirectCheck: true` 설정을 통해 Android에서 Goog
 **2. 딥링크 처리 실패 시 폴백 메커니즘**
 
 현재는 `skipRedirectCheck: true`로 설정하여 안정적으로 동작하지만, 만약 Intent Filter가 제대로 작동하지 않는 디바이스가 있다면 OAuth 플로우가 완전히 실패합니다. 딥링크 처리에 타임아웃을 설정하고, 일정 시간 내에 앱으로 복귀하지 못하면 사용자에게 수동 복귀 방법을 안내하는 폴백 메커니즘이 필요합니다.
+
+<br/>
+
+## 2. 🤖 AI 콘텐츠 추천 파이프라인 구현
+
+### 🔧 구현 방식
+
+QuickWise는 사용자의 일정 정보를 분석하여, 해당 일정에 실질적으로 도움이 되는 세바시 강연 콘텐츠를 자동으로 추천합니다. 단순히 관련 영상을 보여주는 것이 아니라, 영상의 자막을 분석하여 **팁(Tip)**, **상세 시나리오(Scenario)**, **체크리스트(Checklist)** 형태의 카드로 재구성해 제공합니다.
+
+<br/>
+
+**AI 엔진 선택: Gemini API**
+
+파이프라인 구축을 위해 Google의 Gemini API를 선택했습니다.
+
+<img src="./mobile/assets/verify_gemini.png" alt="gemini 검증" width="400" />
+
+<br/>
+
+**선택 이유:**
+
+- **무료 제공**: 월 150만 토큰까지 무료 (개인 프로젝트에 적합)
+- **뛰어난 한글 처리**: 키워드 추출, 자막 요약에 최적화된 성능
+- **빠른 응답 속도**: 실시간 콘텐츠 생성 가능
+
+<br/>
+
+**전체 파이프라인 흐름**
+
+```
+구글 캘린더 일정 데이터
+  ↓
+1. 카테고리 분류 (키워드 매칭)
+  ↓
+2. 키워드 추출 (Gemini API)
+  ↓
+3. YouTube 영상 검색 (세바시 채널 한정)
+  ↓
+4. 영상 선별 및 자막 추출
+  ↓
+5. AI 카드 생성 (Gemini API)
+  ↓
+스와이프 가능한 콘텐츠 카드
+```
+
+<br/>
+
+**💡 핵심 기술 스택**
+
+- **Gemini API** (`@google/generative-ai`): 키워드 추출, 자막 요약, 카드 생성
+- **YouTube Data API v3** (`googleapis`): 영상 검색 및 메타데이터 조회
+- **youtube-transcript**: 자막 추출
+- **node-cron**: 매일 자정 당일 일정 자동 처리
+
+<br/>
+
+### 핵심 설계 고민
+
+AI 파이프라인을 구현하면서 가장 고민했던 것은 "어떻게 하면 사용자가 입력한 다양한 형태의 일정을 정확히 이해하고, 적절한 콘텐츠를 제공할 수 있을까?"였습니다.
+
+<br/>
+
+#### 일정 카테고리 분류 전략
+
+**문제 상황**
+
+사용자는 일정을 정말 다양하게 작성합니다:
+
+- "팀 회의"
+- "클라이언트 프레젠테이션"
+- "Q4 전략 미팅"
+- "신제품 런칭 발표 및 Q&A"
+
+이처럼 다양한 표현을 단순한 키워드 매칭으로 분류하기에는 한계가 있었습니다. 하지만 모든 일정을 LLM으로 실시간 분류하면 비용과 응답 시간이 부담스러웠습니다.
+
+<br/>
+
+**MVP 접근: 키워드 기반 분류**
+
+MVP 단계에서는 빠른 검증을 위해 키워드 매칭 방식을 선택했습니다. 일정 제목에 특정 키워드가 포함되면 해당 카테고리로 분류하는 방식입니다.
+
+```typescript
+// 키워드 기반 카테고리 분류 (예시)
+const categoryKeywords = {
+  meeting: ["회의", "미팅", "협의"],
+  presentation: ["발표", "프레젠테이션", "PT", "설명회"],
+};
+```
+
+이 방식은 명확한 키워드가 포함된 일정에는 효과적이었지만, "킥오프", "브리핑" 같은 동의어나 맥락이 필요한 경우에는 한계가 있었습니다.
+
+<br/>
+
+**향후 개선 방향**
+
+MVP 완성 후에는 더 정확한 분류를 위해 단계적 개선을 계획했습니다:
+
+| 단계             | 방식                  | 특징                |
+| ---------------- | --------------------- | ------------------- |
+| **1단계 (현재)** | 키워드 매칭           | 빠른 개발, MVP 검증 |
+| **2단계**        | Embedding 기반 유사도 | 동의어·문맥 인식    |
+| **3단계**        | LLM 실시간 분류       | 완벽한 문맥 이해    |
+
+<br/>
+
+이렇게 단계적으로 접근함으로써 초기에는 빠른 개발과 검증에 집중하고, 점진적으로 정확도를 높여가는 전략을 세웠습니다.
+
+상세한 개선 방안은 "향후 개선 계획" 섹션에서 추가 기술하겠습니다.
+
+<br/>
+
+#### 2. 영상 선별 로직
+
+세바시 채널에는 수백 개의 강연 영상이 있지만, 모든 영상이 사용자의 일정에 적합한 것은 아닙니다. 영상 선별 기준을 설계할 때 고려한 요소는 다음과 같습니다:
+
+<br/>
+
+**세바시 채널 필터링**
+
+YouTube 검색 결과에는 세바시 강연이 아닌 다른 채널의 영상이 섞여 나올 수 있습니다. 초기에는 검색어에 "세바시"를 포함시켰으나, 이렇게 하면 검색어가 너무 구체적이 되어 결과가 0개가 나오는 경우가 많았습니다.
+
+```typescript
+// ❌ 초기 방식: 검색어에 "세바시" 포함
+const fullQuery = `세바시 ${searchQuery}`;
+```
+
+개선된 방식은 YouTube API의 `channelId` 파라미터를 직접 사용하는 것이었습니다:
+
+```typescript
+// ✅ 개선된 방식: channelId로 필터링
+const searchResponse = await axios.get(
+  `${AI_CONSTANTS.YOUTUBE.API_BASE_URL}/search`,
+  {
+    params: {
+      q: searchQuery,
+      channelId: "UCgheNMc3gGHLsT-RISdCzDQ", // 세바시 채널 ID
+      type: "video",
+      maxResults: 10,
+      key: apiKey,
+    },
+  }
+);
+```
+
+이후 검색 결과를 받은 뒤, 채널명에 "세바시"가 포함되어 있는지 한 번 더 검증하여 이중 필터링을 적용했습니다:
+
+```typescript
+const channelLower = item.snippet.channelTitle.toLowerCase();
+if (!channelLower.includes("세바시")) {
+  return null;
+}
+```
+
+<br/>
+
+**최소 영상 길이 제한**
+
+너무 짧은 영상은 충분한 정보를 담고 있지 않을 가능성이 높습니다. YouTube API의 `contentDetails.duration` 필드를 파싱하여 300초(5분) 이상인 영상만 선별했습니다:
+
+```typescript
+const parseDuration = (duration: string): number => {
+  const match = duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return 0;
+
+  const hours = parseInt(match[1] || "0");
+  const minutes = parseInt(match[2] || "0");
+  const seconds = parseInt(match[3] || "0");
+
+  return hours * 3600 + minutes * 60 + seconds;
+};
+
+const filteredVideos = videos.filter(
+  (video) => parseDuration(video.duration) >= 300
+);
+```
+
+<br/>
+
+**중복 영상 제거**
+
+사용자가 같은 카테고리의 일정을 여러 개 가지고 있을 때, 매번 같은 영상이 추천되는 것을 방지하기 위해 이미 사용한 영상 ID를 추적하고 제외했습니다:
+
+```typescript
+const filteredVideos = videos.filter(
+  (video) => !excludeVideoIds.includes(video.videoId)
+);
+```
+
+<br/>
+
+<img src="./mobile/assets/pipeline_search.png" alt="파이프 라인 검색" width="200" />
+
+<br/>
+
+위 로그는 "효율적인 마케팅 전략 회의"라는 키워드로 YouTube 검색을 수행한 결과입니다. AI가 검색어를 생성하고, 세바시 채널에서 1개 영상을 발견한 뒤, 자막까지 성공적으로 추출한 전체 과정이 표시되어 있습니다.
+
+<br/>
+
+#### 3. 검색어 최적화 전략
+
+초기에는 Gemini API에게 일정 정보를 주고 "구체적이고 상세한 검색어"를 생성하도록 요청했습니다. 하지만 이 방식은 예상치 못한 문제를 일으켰습니다.
+
+<br/>
+
+**초기 방식: 너무 구체적인 검색어 → 검색 실패**
+
+"신제품 런칭 발표 및 Q&A"라는 일정에 대해 Gemini가 매우 구체적인 검색어를 생성했습니다. 문제는 세바시 채널에 이렇게 구체적인 제목의 영상이 없다는 것이었죠. 결과적으로 검색 결과가 0개가 나왔고, 파이프라인 전체가 실패했습니다.
+
+<br/>
+
+**개선 방식: 단순하고 보편적인 검색어**
+
+검색어를 단순화하기 위해 Gemini 프롬프트를 수정했습니다:
+
+```typescript
+const prompt = `당신은 YouTube 검색어 생성 전문가입니다.
+
+일정 정보:
+- 제목: ${eventTitle}
+- 카테고리: ${category}
+- 설명: ${eventDescription || "없음"}
+
+요구사항:
+1. 너무 일반적인 단어는 피하기 ("회의" 대신 "효과적인 회의 방법")
+2. 실용적이고 구체적인 표현 사용
+3. 2-4개 단어로 구성 (핵심만 간결하게)  // ✅ 단어 수 제한 추가
+4. 한국어로 작성
+5. 일정 내용과 직접 관련된 주제
+
+JSON 형식으로 출력하세요.`;
+```
+
+<br/>
+
+또한, 생성된 검색어가 너무 길면 앞의 2개 단어만 사용하는 자동 단순화 로직도 추가했습니다:
+
+```typescript
+// 자동 단순화 로직 (계획)
+const searchWords = parsed.searchQuery.split(" ");
+const simplifiedQuery = searchWords.slice(0, 2).join(" ");
+```
+
+<br/>
+
+이렇게 개선한 결과, "신제품 런칭 발표 및 Q&A" → "발표"로 단순화되어 10개 이상의 관련 영상을 찾을 수 있게 되었습니다.
+
+<br/>
+
+<img src="./mobile/assets/pipeline_searchtitle.png" alt="실패원인_너무 까다로운 검색어" width="200" />
+
+<br/>
+
+검색어를 "발표"로 단순화한 결과, 10개의 관련 영상을 찾을 수 있었습니다. 파이프라인이 영상을 선별한 뒤(세바시 174회), 자막을 추출하고, 최종적으로 TIP, SCENARIO, CHECKLIST 3개의 AI 카드를 성공적으로 생성했습니다.
+
+<br/>
+
+### 기술적 챌린지
+
+AI 파이프라인을 구현하면서 두 가지 큰 문제에 직면했습니다.
+
+<br/>
+
+#### 🚨 문제 1: 무한 재시도로 인한 Gemini 토큰 소진
+
+**문제 상황**
+
+개발 초기, YouTube 검색이나 Gemini API 호출이 실패했을 때 재시도 로직을 구현했습니다. 문제는 **재시도 횟수 제한을 설정하지 않았다**는 것입니다.
+
+특정 일정에 대해 적합한 영상을 찾지 못하면 검색이 계속 실패했고, 실패할 때마다 Gemini API를 호출해 새로운 검색어를 생성했습니다. 이 과정이 무한 반복되면서 Gemini API의 무료 할당량을 모두 소진했습니다.
+
+```typescript
+// ❌ 문제가 된 코드 (재시도 제한 없음)
+while (videos.length === 0) {
+  const newKeywords = await extractKeywords(...);
+  videos = await searchVideos(newKeywords.searchQuery);
+  // 무한 반복...
+}
+```
+
+<br/>
+
+더 큰 문제는 할당량이 초기화되기까지 시간이 걸린다는 점이었습니다. Google Cloud Console에서는 "다음 날 오전 9시에 초기화"라고 안내했지만, 실제로는 그 시간이 지나도 초기화되지 않았습니다. 개발을 계속 진행해야 했기 때문에 결국 **새로운 API 키를 발급**받아 프로젝트 설정을 변경했습니다.
+
+<br/>
+
+**해결 방법**
+
+재시도 횟수를 **최대 3회로 제한**하고, 3회 시도 후에도 실패하면 사용자에게 "AI 콘텐츠 생성 실패" 상태를 반환하도록 수정했습니다.
+
+```typescript
+// ✅ 해결된 코드 (재시도 3회 제한)
+const MAX_RETRIES = 3;
+let attempt = 0;
+
+while (attempt < MAX_RETRIES) {
+  try {
+    const videos = await searchVideos(searchQuery);
+    if (videos.length > 0) {
+      return videos;
+    }
+  } catch (error) {
+    attempt++;
+    if (attempt >= MAX_RETRIES) {
+      throw new Error("영상 검색에 실패했습니다");
+    }
+  }
+}
+```
+
+<br/>
+
+또한, Gemini API 호출 시 프롬프트 길이를 최적화하여 토큰 소비를 줄였습니다. 자막 텍스트가 너무 길면 잘라서 사용하도록 제한했습니다:
+
+```typescript
+let transcriptText = transcript.fullText;
+if (transcriptText.length > 10000) {
+  // 최대 1만 자로 제한
+  transcriptText = transcriptText.substring(0, 10000);
+}
+```
+
+<br/>
+
+#### 🚨 문제 2: 파이프라인 단계별 실패 처리
+
+**문제 상황**
+
+AI 파이프라인은 5단계로 구성되어 있습니다. 초기에는 **한 단계라도 실패하면 전체 파이프라인이 중단**되는 구조였습니다.
+
+<img src="./mobile/assets/fail_pipeline.png" alt="파이프 라인 실패" width="200" />
+
+<br/>
+
+위 로그에서 볼 수 있듯이, YouTube 검색에서 "No suitable videos found" 에러가 발생하면 파이프라인 전체가 실패로 표시되고, 사용자에게는 아무런 콘텐츠도 제공되지 않았습니다.
+
+<br/>
+
+**해결 방법**
+
+각 단계별로 세밀한 에러 핸들링을 추가하고, **실패 원인을 추적**할 수 있도록 개선했습니다.
+
+**1. 단계별 try-catch 분리**
+
+```typescript
+// ✅ 단계별 에러 핸들링
+try {
+  // 1단계: 키워드 추출
+  const keywords = await extractKeywords(...);
+} catch (error) {
+  console.error("키워드 추출 실패:", error);
+  return { status: "failed", error: "키워드 추출 실패" };
+}
+
+try {
+  // 2단계: 영상 검색
+  const videos = await searchVideos(...);
+} catch (error) {
+  console.error("영상 검색 실패:", error);
+  return { status: "failed", error: "적합한 영상을 찾지 못했습니다" };
+}
+```
+
+<br/>
+
+**2. 실패 원인 DB 저장**
+
+```typescript
+// Event 모델에 aiContent 필드 추가
+interface AIContent {
+  status: "pending" | "processing" | "completed" | "failed";
+  cards: AICard[];
+  error?: string; // ✅ 실패 원인 저장
+}
+```
+
+이렇게 하면 어느 단계에서 실패했는지 로그에서 확인할 수 있고, 같은 문제가 반복되는 경우 해당 단계만 개선할 수 있습니다.
+
+<br/>
+
+**3. Fallback 메커니즘**
+
+특정 검색어로 영상을 찾지 못하면, 더 일반적인 키워드로 재검색하는 Fallback을 추가했습니다:
+
+```typescript
+// ✅ Fallback 검색
+let videos = await searchVideos(searchQuery);
+
+if (videos.length === 0 && category) {
+  // 카테고리 기본 검색어로 재시도
+  const fallbackQuery = category === "meeting" ? "회의" : "발표";
+  videos = await searchVideos(fallbackQuery);
+}
+```
+
+<br/>
+
+### ✅ 결과 및 향후 개선
+
+**개선 효과**
+
+AI 파이프라인 최적화를 통해 다음과 같은 개선 효과를 얻었습니다:
+
+| 항목                        | Before               | After               |
+| --------------------------- | -------------------- | ------------------- |
+| **YouTube 검색 성공률**     | ~60%                 | ~95%                |
+| **Gemini API 토큰 소비**    | 무제한 (할당량 소진) | 제한적 (3회 재시도) |
+| **파이프라인 실패 시 복구** | 전체 중단            | 단계별 Fallback     |
+| **검색어 품질**             | 너무 구체적          | 적절히 단순화       |
+
+<br/>
+
+<img src="./mobile/assets/verify_youtube.png" alt="유튜브 검증" width="200" />
+
+<br/>
+
+최종 검증 결과, "회의 커뮤니케이션"이라는 키워드로 3개의 세바시 영상을 성공적으로 검색할 수 있었습니다.
+
+<br/>
+
+**향후 개선 계획**
+
+**1. 카테고리 분류 고도화**
+
+현재 키워드 기반 분류를 **Embedding 기반 유사도 계산** 방식으로 전환하여, "킥오프", "브리핑" 같은 동의어도 자동으로 인식할 수 있도록 개선할 예정입니다.
+
+```javascript
+// Embedding 기반 분류 (향후 계획)
+const categories = ["회의", "발표", "운동", "약속"];
+const categoryEmbeddings = await embed(categories);
+const eventEmbedding = await embed("팀 주간 회의");
+
+const similarities = cosineSimilarity(eventEmbedding, categoryEmbeddings);
+category = categories[max(similarities)];
+```
+
+이 방식은 OpenAI Embedding API나 HuggingFace Sentence Transformers를 활용하며, "프로젝트 킥오프" → "회의", "클라이언트 PT" → "발표"로 자동 인식할 수 있습니다.
+
+최종 목표는 **LLM 실시간 분류**입니다. 앱 내에서 생성되는 일정은 실시간 LLM 분류를, 구글 캘린더에서 가져온 일정은 Embedding 기반 사후 분류를 적용하는 하이브리드 구조를 구축할 계획입니다.
+
+```javascript
+// LLM 실시간 분류 (최종 목표)
+다음 일정을 카테고리 중 하나로 분류하세요: [회의, 발표, 운동, 약속, 개인]
+- 일정: "팀 발표 준비"
+답변: 발표
+```
+
+<br/>
+
+**2. 영상 추천 알고리즘 개선**
+
+현재는 검색 결과 상위 영상 중 필터링된 것을 사용하지만, 향후에는 **조회수, 좋아요 수, 댓글 반응**을 종합한 매칭 스코어를 계산하여 가장 적합한 영상을 선별하는 알고리즘을 추가할 계획입니다.
+
+<br/>
+
+**3. 다양한 채널 지원**
+
+현재는 세바시 채널에 한정되어 있지만, 사용자 피드백을 바탕으로 **TED, EO, 체인지그라운드** 등 다른 양질의 강연 채널도 지원할 예정입니다.
+
+<br/>
+
+**4. 실시간 피드백 반영**
+
+사용자가 추천받은 콘텐츠에 대해 "도움이 됐어요" / "별로예요" 피드백을 주면, 이를 학습하여 **개인화된 추천**을 제공하는 시스템을 구축할 계획입니다.
 
 <br/>
 
