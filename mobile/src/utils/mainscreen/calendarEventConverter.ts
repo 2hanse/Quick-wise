@@ -1,4 +1,5 @@
 import { CalendarEvent } from "../../types/calendar";
+import NOTIFICATION_CONSTANTS from "../../constants/notification";
 import {
   TodaySchedule,
   ScheduleStatus,
@@ -7,19 +8,21 @@ import {
 } from "../../types/main";
 import mainPageConstants from "../../constants/main";
 
-const getScheduleStatus = (startTime: string): ScheduleStatus => {
+const getScheduleStatus = (
+  startTime: string,
+  endTime?: string
+): ScheduleStatus => {
   const now = new Date();
   const eventStart = new Date(startTime);
-  if (eventStart < now) {
+  const eventEnd = endTime
+    ? new Date(endTime)
+    : new Date(eventStart.getTime() + NOTIFICATION_CONSTANTS.MILLISECONDS.HOUR);
+
+  if (now > eventEnd) {
     return mainPageConstants.STATUS_VALUES.COMPLETED;
   }
-  const diffMinutes =
-    (eventStart.getTime() - now.getTime()) /
-    mainPageConstants.TIME_CONVERSION.MILLISECONDS_TO_MINUTES;
 
-  if (
-    diffMinutes <= mainPageConstants.SCHEDULE_STATUS.PROGRESS_THRESHOLD_MINUTES
-  ) {
+  if (now >= eventStart && now <= eventEnd) {
     return mainPageConstants.STATUS_VALUES.PROGRESS;
   }
   return mainPageConstants.STATUS_VALUES.UPCOMING;
@@ -67,7 +70,7 @@ const formatTime = (dateTimeString: string, isAllDay: boolean): string => {
 };
 
 const convertToTodaySchedule = (event: CalendarEvent): TodaySchedule => {
-  const status = getScheduleStatus(event.startTime);
+  const status = getScheduleStatus(event.startTime, event.endTime);
   return {
     id: event.id,
     time: formatTime(event.startTime, event.isAllDay),
@@ -94,7 +97,6 @@ const createDateInfo = (scheduleCount: number): DateInfo => {
     date: `${month}${mainPageConstants.DATE_FORMAT.MONTH_SUFFIX} ${date}${mainPageConstants.DATE_FORMAT.DAY_SUFFIX}`,
     dayOfWeek: `${day}${mainPageConstants.DATE_FORMAT.DAY_OF_WEEK_SUFFIX}`,
     totalSchedules: scheduleCount,
-    studySchedules: 0,
   };
 };
 
