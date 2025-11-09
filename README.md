@@ -28,11 +28,11 @@ QuickWise는 구글 캘린더 연동을 통해 다가오는 일정에 필요한 
 
 ## Client
 
-<img src="https://img.shields.io/badge/React%20Native-20232A?style=for-the-badge&logo=React&logoColor=61DAFB"> <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=Expo&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Zustand-3C3633?style=for-the-badge"> <img src="https://img.shields.io/badge/AsyncStorage-FFA500?style=for-the-badge"> <img src="https://img.shields.io/badge/NativeWind-06B6D4?style=for-the-badge">
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/React%20Native-20232A?style=for-the-badge&logo=React&logoColor=61DAFB"> <img src="https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=Expo&logoColor=white"> <img src="https://img.shields.io/badge/Zustand-3C3633?style=for-the-badge"> <img src="https://img.shields.io/badge/AsyncStorage-FFA500?style=for-the-badge"> <img src="https://img.shields.io/badge/NativeWind-06B6D4?style=for-the-badge">
 
 ## Server
 
-<img src="https://img.shields.io/badge/Node.js-5FA04E?style=for-the-badge&logo=Node.js&logoColor=white"> <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">
+<img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"> <img src="https://img.shields.io/badge/Node.js-5FA04E?style=for-the-badge&logo=Node.js&logoColor=white"> <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=Express&logoColor=white"> <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=MongoDB&logoColor=white">
 
 ## Authentication
 
@@ -65,8 +65,6 @@ QuickWise는 구글 캘린더 연동을 통해 다가오는 일정에 필요한 
 # ⚡ 핵심 기능
 
 ## 1. 구글 캘린더 연동 및 일정 관리
-
-<img src="./mobile/assets/content_loading.gif" alt="콘텐츠 로딩" width="200" />
 
 <br/>
 
@@ -112,6 +110,8 @@ QuickWise는 구글 캘린더 연동을 통해 다가오는 일정에 필요한 
 Google Calendar API를 사용하기 위해서는 사용자의 Google 계정 권한이 필요합니다.
 
 이를 위해 OAuth 2.0 인증을 구현했고, `expo-auth-session`과 `expo-web-browser` 라이브러리를 활용해 인증 플로우를 처리했습니다.
+
+웹과 달리 모바일에서는 **앱 URI 스킴과 딥링크를 통해 브라우저에서 앱으로 복귀**해야 하기 때문에, 일반적인 웹 OAuth 플로우보다 설정해야 할 요소가 많았습니다.
 
 <br/>
 
@@ -178,6 +178,10 @@ Access Denied 문제를 해결하기 위해 설정을 수정하는 과정에서,
 
 <br/>
 
+즉, **1번은 인증 자체가 차단되는 문제**,  
+**2번은 인증은 통과하지만 앱으로 돌아오는 과정에서 세션이 끊기는 문제**였습니다.
+<br/>
+
 ### 🔍 문제 원인 분석
 
 두 문제의 원인을 분석한 결과, 여러 설정 오류가 복합적으로 작용하고 있었습니다.
@@ -207,6 +211,9 @@ Google Cloud Console에 등록한 SHA-1 지문이 실제 앱의 키와 일치하
 
 `skipRedirectCheck: false`일 때는 WebBrowser가 리다이렉트 URL을 엄격하게 검증합니다. 하지만 Android에서는 딥링크가 Intent Filter를 통해 처리되면서 약간의 지연이 발생하는데, WebBrowser는 이 지연을 기다리지 않고 "예상 URL과 불일치"로 판단해 세션을 DISMISS 처리했습니다.
 
+여기에 더해, 초기에는 `quickwise://oauthredirect` 형태의 스킴과  
+`com.anonymous.quickwise://` 스킴이 혼재되어 있어 리다이렉트 타깃도 일관되지 않았습니다.
+
 <br/>
 
 **3️⃣ 부가적인 문제들**
@@ -230,11 +237,12 @@ Access Denied 오류를 해결하기 위해, Google Cloud Console에 등록된 S
 keytool -list -v -keystore android/app/debug.keystore
 ```
 
-이를 통해 Access Denied 오류는 해결되었으나, 권한 동의 후 갑자기 앱으로 복귀되는 새로운 문제가 발생했습니다.
+이를 통해 **Access Denied 오류(문제 1)**는 해결되었으나,
+권한 동의 후 갑자기 앱으로 복귀되는 문제 2가 남았습니다.
 
 <br/>
 
-### 2. URL 스킴 통일
+### 2. URL 스킴 통일 (문제 1,2 공통 기반 정리)
 
 리다이렉트 과정에서의 불일치를 제거하기 위해, `AuthSession.makeRedirectUri()`로 일관된 스킴(`com.anonymous.quickwise://`)을 생성하도록 수정하고, Google Cloud Console의 리다이렉트 URI도 동일하게 맞췄습니다.
 
@@ -252,13 +260,15 @@ const redirectUri = AuthSession.makeRedirectUri({
 
 개발 초기에 웹 애플리케이션 클라이언트와 Android 클라이언트를 모두 생성해두었는데, 코드에서 어떤 클라이언트 ID를 사용하는지 명확하지 않아 혼동이 있었습니다.
 
-Google Cloud Console에서 사용하지 않는 웹 클라이언트를 삭제하고, Android 클라이언트의 패키지 이름(`com.anonymous.quickwise`)과 SHA-1 지문이 정확히 등록되어 있는지 재확인했습니다. 또한 리다이렉트 URI도 Android 클라이언트에만 `com.anonymous.quickwise://`가 등록되도록 정리했습니다.
+Google Cloud Console에서 사용하지 않는 웹 클라이언트를 삭제하고, Android 클라이언트의 패키지 이름(`com.anonymous.quickwise`)과 SHA-1 지문이 정확히 등록되어 있는지 재확인했습니다.
+리다이렉트 URI도 Android 클라이언트에만 `com.anonymous.quickwise://`가 등록되도록 정리했습니다.
 
-설정은 단순화되었으나 DISMISS 문제는 계속되었고, 이 시점에서 문제가 Google 설정이 아닌 Expo의 OAuth 처리 방식에 있다고 판단했습니다.
+이로써 클라이언트/스킴/키 설정을 한 번 더 정리해, 환경에 의한 노이즈를 줄였습니다.
+이 단계는 문제 1, 2 모두에 공통으로 영향을 주는 설정 정리 과정이었습니다.
 
 <br/>
 
-### 4. skipRedirectCheck 설정 변경
+### 4. skipRedirectCheck 설정 변경 (문제 2 해결)
 
 Android 딥링크 타이밍 문제를 해결하기 위해, `WebBrowser.maybeCompleteAuthSession()`의 `skipRedirectCheck`를 `true`로 변경하여 엄격한 리다이렉트 검증을 우회하고 Android Intent Filter에 의존하도록 수정했습니다. 이는 Expo 공식 문서에서 Android OAuth 문제 해결을 위해 권장하는 방법입니다.
 
@@ -296,8 +306,6 @@ const verifyToken = async (accessToken) => {
 <br/>
 
 ### 결과 및 개선점
-
-![OAuth 인증 성공 화면](google_oauth_정상적_인증_성공.png)
 
 SHA-1 재등록과 `skipRedirectCheck: true` 설정을 통해 Android에서 Google OAuth 인증이 정상적으로 동작하게 되었습니다. 사용자는 Google 계정을 선택하고 권한을 동의하면 앱으로 복귀해 즉시 캘린더 데이터를 사용할 수 있습니다.
 
@@ -583,7 +591,13 @@ const simplifiedQuery = searchWords.slice(0, 2).join(" ");
 
 ### 기술적 챌린지
 
-AI 파이프라인을 구현하면서 두 가지 큰 문제에 직면했습니다.
+AI 파이프라인을 구현하면서
+
+`(1) 무한 재시도로 인한 Gemini 토큰 소진`,
+
+`(2) 파이프라인 단계별 실패 시 전체 중단` 이라는
+
+두 가지 큰 문제에 직면했습니다.
 
 <br/>
 
@@ -795,101 +809,98 @@ category = categories[max(similarities)];
 
 ## 💡 프로젝트를 통해 얻은 것
 
-이 프로젝트는 단순히 기능을 구현하는 것을 넘어, 개발자로서의 사고방식과 문제 해결 능력을 근본적으로 바꾼 경험이었습니다.
+이 프로젝트는 단순한 기능 구현을 넘어, 개발자로서의 사고방식과 문제 해결 접근법을 한 단계 성장시킨 경험이었습니다.
+특히 코드 구조 설계, 디버깅 프로세스, 우선순위 설정, 모바일 생태계 이해 측면에서 실질적인 기술적 통찰을 얻었습니다.
 
 <br/>
 
 ### 코드 설계에 대한 이해
 
-프로젝트 초반에는 기능 구현에 집중했지만, 규모가 커지면서 코드 구조의 중요성을 깨달았습니다. 에러가 발생할 때마다 각 파일에서 개별적으로 처리하다 보니 중복 코드가 늘어났고, 유지보수가 어려워졌습니다.
-
-이를 개선하기 위해 에러 처리 컴포넌트를 만들어 일괄 관리하고, 상수와 types를 분리했습니다. 또한 `utils`, `hooks`, `components` 등 디렉토리 구조를 명확히 나누고, 각 파일이 단일 책임을 가지도록 리팩토링했습니다. UI 로직과 비즈니스 로직을 분리하고, 재사용 가능한 커스텀 훅을 만들며 관심사 분리 원칙을 적용하는 과정에서 코드를 "작성"하는 것과 "설계"하는 것의 차이를 체감했습니다.
-
-무엇이 비효율적이고 나쁜 코드인지를 판단할 수 있는 시각이 생겼고, 처음부터 구조를 고민하는 것이 나중에 리팩토링하는 것보다 훨씬 효율적이라는 것을 배웠습니다.
+기능 단위 구현에서 벗어나, 유지보수 가능한 구조를 고민하는 계기가 되었습니다.
+초기에는 각 컴포넌트마다 에러를 개별 처리하면서 중복이 많았고, 디렉토리 구조도 불명확했습니다. 이를 개선하기 위해 공통 에러 처리 유틸을 도입하고, 상수와 타입을 분리했으며, `utils`, `hooks`, `components` 단위로 책임을 명확히 했습니다.
+UI 로직과 비즈니스 로직을 분리하고 커스텀 훅을 설계하면서 **관심사 분리(SOC), 단일 책임 원칙(SRP), 재사용성** 을 실제 코드에 적용했습니다.
 
 <br/>
 
 ### 문제 해결 접근법의 변화
 
-처음에는 빠르게 문제를 해결하는 것에 집중했습니다. 검색으로 찾은 해결책을 적용하고 작동하면 넘어가는 식이었죠. 하지만 OAuth 딥링크 문제를 만나면서 이런 접근법의 한계를 느꼈습니다.
+OAuth 딥링크 문제를 해결하며 단순히 “작동하는 코드”보다 **근본 원인 분석과 검증 과정의 중요성**을 배웠습니다.
+Expo Go 환경에서 발생한 Redirect 오류를 단순 우회하지 않고, `skipRedirectCheck` 옵션의 동작 방식, Android Intent Filter 구조, Expo Development Build 환경 차이 등을 직접 검증했습니다.
+이 과정에서 StackOverflow나 블로그의 해법에 의존하기보다 **공식 문서 기반으로 원인을 추적하고 실험하는 디버깅 프로세스**를 확립했습니다.
 
-단순히 "되는 방법"을 찾는 것이 아니라, "왜 안 되는지"를 이해하는 것이 중요하다는 것을 깨달았습니다. 여러 해결 방안을 찾아보고 각각의 장단점을 비교하기 시작했습니다. SHA-1 재등록, URL 스킴 통일, Google Console 정리 등 여러 시도를 거치며 문제의 근본 원인을 추적했고, 최종적으로 `skipRedirectCheck` 설정 변경이라는 해결책에 도달했습니다.
-
-이 과정에서 공식 문서를 꼼꼼히 읽고, GitHub 이슈를 탐구하며, "왜 이 방법이 적합한지"를 설명할 수 있게 되었습니다. 단순히 문제를 해결하는 것을 넘어, 해결 과정을 문서화하고 같은 문제를 다시 만났을 때 빠르게 대응할 수 있는 능력을 기를 수 있었습니다.
+이후부터는 문제 발생 시 “왜 안 되는가”를 먼저 파악하고, **가설 설정 → 실험 → 검증 → 문서화**의 절차로 문제를 해결하는 습관이 자리 잡았습니다.
 
 <br/>
 
 ### MVP 우선 개발의 중요성
 
-이전 팀 프로젝트를 진행하며 MVP의 중요성을 배운 적이 있습니다. 당시 부가적인 기능에 시간을 과도하게 투자하다가 핵심 기능 완성이 지연되는 경험을 했고, 우선순위를 명확히 하는 것이 얼마나 중요한지 깨달았습니다.
+모든 기능을 완벽히 구현하기보다, **핵심 가치 검증을 위한 최소 기능(MVP)**에 집중했습니다.
+Google Calendar 연동, AI 콘텐츠 추천, 타이머, 알림 기능만을 목표로 설정하고, 기능별 우선순위를 명확히 구분했습니다.
+이를 통해 일정 관리, 콘텐츠 추천, 알림 트리거 등 **기능 간 의존 관계를 조기 식별하고 모듈화**할 수 있었습니다.
 
-이번 개인 프로젝트에서는 그 교훈을 적용했습니다. 초기에는 여러 기능을 구상하며 "이것도 넣고 싶고 저것도 넣고 싶다"는 욕심이 있었지만, 의식적으로 MVP에 집중했습니다. Google Calendar 연동, AI 콘텐츠 추천, 뽀모도로 타이머, 알림 기능이라는 4가지 핵심 기능만 먼저 완성하기로 목표를 설정했고, 덕분에 개발 우선순위가 명확해졌습니다.
-
-특정 기능을 완벽하게 만들려는 욕심을 버리고 "일단 작동하는 버전"을 빠르게 만드는 데 집중한 결과, 1인 개발임에도 MVP를 무사히 완성할 수 있었습니다. 팀 프로젝트에서 배운 경험을 개인 프로젝트에 실제로 적용해보며, MVP 우선 개발이 단순한 이론이 아니라 프로젝트 성공의 핵심 전략이라는 것을 다시 한번 확인했습니다.
-
+기능 완성도를 높이기보다는 핵심 흐름이 작동하는 구조를 빠르게 구현하면서, **“작동하는 MVP를 먼저 완성하는 전략”**의 실질적 효과를 경험했습니다.
 <br/>
 
 ### 모바일 개발 생태계에 대한 이해
 
-React Native를 선택한 이유는 React 경험을 활용할 수 있다는 점이었고, Expo는 설정 없이 빠르게 시작할 수 있어 선택했습니다. 하지만 프로젝트를 진행하며 두 생태계에 대한 이해가 완전히 달라졌습니다.
-
-팀 프로젝트에서 OAuth 구현을 코드 리뷰하며 인증 흐름은 이해하고 있었지만, 직접 모바일 환경에서 구현해보니 웹과는 완전히 다른 고려사항이 있었습니다. 웹에서는 당연한 리다이렉트가 Expo Go에서는 작동하지 않았고, 커스텀 URL 스킴을 처리하려면 Development Build로 전환해야 한다는 것을 알게 되었습니다.
-
-React Native는 네이티브 모듈에 직접 접근할 수 있는 프레임워크이고, Expo는 이를 추상화해 빠른 개발을 지원하지만 커스텀 네이티브 기능에는 제약이 있다는 것을 체감했습니다. Expo Go와 Development Build의 차이, 딥링크 처리 방식, Intent Filter 설정 등 실제로 부딪히며 배운 것들이 모바일 개발에 대한 이해를 한 단계 높여주었습니다.
+Expo와 React Native를 병행하며 **웹·모바일 인증 흐름 차이**를 체감했습니다.
+웹에서는 OAuth 리다이렉트가 브라우저 단위로 처리되지만, 모바일에서는 앱 URI 스킴과 Intent Filter가 필요하다는 점을 직접 구현하며 이해했습니다.
+이 과정에서 Expo Go의 한계, Development Build 전환 과정, AndroidManifest 설정 등 **플랫폼별 인증 플로우 차이**를 학습했습니다.
 
 <br/>
 
-## ✨ 좋았던 점
+## 🧠 기술적 성장 포인트
 
-### 끝까지 해결하는 끈기
+### 구조적 리팩토링 역량 강화
 
-OAuth 딥링크 문제는 정말 어려웠습니다. Access Denied 오류를 해결했더니 이번에는 갑자기 앱으로 복귀되는 문제가 발생했고, 며칠 동안 같은 문제와 씨름했습니다. 하나씩 원인을 좁혀가며 결국 해결했을 때의 성취감은 이루 말할 수 없었습니다. 이 경험이 "어려운 문제도 끝까지 파고들면 해결할 수 있다"는 자신감을 줬습니다.
-
-<br/>
-
-### 구조적인 코드 설계
-
-프로젝트를 진행하며 점차 에러 처리 컴포넌트를 만들어 일괄 관리하고, 상수와 types를 분리하며 코드를 정리해나갔습니다. UI 컴포넌트와 비즈니스 로직을 분리하고, 재사용 가능한 커스텀 훅을 만들며 단일 책임 원칙과 관심사 분리를 적용하는 과정이 즐거웠습니다. 이런 구조가 프로젝트 규모가 커질수록 얼마나 중요한지 체감했고, 리팩토링의 가치를 실감했습니다.
+에러 처리 로직, 상수, 타입 분리를 통해 코드의 일관성과 유지보수성을 확보했습니다.
+단일 책임 원칙과 관심사 분리를 실제 코드 단위에서 적용해, 기능 확장 시 수정 범위를 명확히 제어할 수 있었습니다.
 
 <br/>
 
-### 적합한 기술 스택 선정
+### 기술 적합성 판단 능력 향상
 
-각 기능에 맞는 기술을 비교하고 선택하는 과정에서 많이 배웠습니다. OAuth 구현 방식, YouTube 데이터 추출 파이프라인, Android 네이티브 알림 등 각 기술의 장단점을 이해하고 프로젝트 요구사항에 맞는 것을 선택하는 능력이 늘었습니다.
-
-<br/>
-
-### 혼자서 완성한 첫 MVP
-
-1인 개발로 진행한 프로젝트라 부족한 부분도 많지만, 처음으로 기획부터 개발까지 혼자 완성한 프로젝트입니다. Google Calendar 연동, AI 콘텐츠 추천, 뽀모도로 타이머, 알림 기능 등 계획했던 핵심 기능이 모두 실제로 작동합니다. 완벽하지는 않지만 "끝까지 해낸" 경험 자체가 가장 큰 자산이 되었고, 다음 프로젝트에 대한 자신감을 얻었습니다.
+OAuth 인증, YouTube 데이터 추출, Android 알림 등 기능별 기술 스택을 비교·검증하며,
+프로젝트 요구사항에 맞는 기술을 선택하는 기준을 확립했습니다.
 
 <br/>
 
-## 😔 아쉬웠던 점
+### 문서 기반 문제 해결 습관 정착
 
-### 예상보다 긴 개발 기간
-
-프로젝트 시작 전 기술 스택을 선정하고 POC(Proof of Concept)를 진행하며 OAuth 딥링크 처리에 문제가 있다는 것을 알았습니다. 당시에는 Development Build로 전환하면 해결될 것으로 예상했지만, 실제 개발을 진행해보니 생각했던 것보다 훨씬 복잡했습니다.
-
-특히 OAuth 딥링크 문제 해결에 3~4일이 소요되었는데, 이전처럼 블로그 글을 참고해 빠르게 해결하려던 방식으로는 근본 원인을 찾을 수 없었습니다. 방향을 바꿔 StackOverflow와 Expo 공식 문서를 기반으로 자료를 찾아보며 하나씩 검증한 결과, `skipRedirectCheck` 설정이 핵심 문제임을 발견하고 해결할 수 있었습니다.
-
-이 과정에서 다른 기능 구현 시간이 부족해져, MVP 이후 계획했던 부가 기능들(사용자 피드백 기반 추천, iOS 지원, 추가 일정 카테고리)을 구현하지 못한 점이 아쉽습니다. POC 단계에서 더 깊이 있는 검증을 했다면 개발 중 시행착오를 줄일 수 있었을 것이라는 교훈을 얻었습니다.
+공식 문서와 StackOverflow 문서, GitHub 이슈를 근거로 문제의 원리를 이해하고, 해결 과정을 문서화하여
+동일한 문제가 재발했을 때 빠르게 대응할 수 있는 시스템을 구축했습니다.
 
 <br/>
 
-### "자투리 시간" 컨셉의 모호함
+### 전체 개발 사이클 경험
 
-"자투리 시간 활용"이라는 핵심 컨셉이 MVP 단계에서는 충분히 드러나지 못했습니다. 현재는 일반 캘린더 앱에 AI 추천 기능을 얹은 수준으로 보일 수 있어, 뽀모도로 타이머를 추가했지만 여전히 차별화가 명확하지 않다는 생각이 듭니다.
-
-"자투리 시간"이라는 단어만으로는 사용자에게 명확한 가치를 전달하기 어렵다는 것을 깨달았습니다. 일정 사이 짧은 공백을 감지해 그 시간에 맞는 콘텐츠를 추천하거나, 5분/10분 단위로 완료할 수 있는 액션 아이템을 제시하는 등 더 구체적인 기능이 필요하다는 것을 알게 되었습니다.
+기획부터 배포까지 1인 개발로 진행하며, 클라이언트–서버–DB–AI 파이프라인 전반을 직접 관리했습니다.
+서비스 흐름 전체를 조망하며 구조적 의사결정을 내리는 역량을 키웠습니다.
 
 <br/>
 
-### 세바시 콘텐츠의 확장성 한계
+## 🧩 개선 필요 사항
 
-세바시 강연은 발표 기술, 효과적인 대화법, 설득 전략 등 실무에 바로 적용할 수 있는 고품질 콘텐츠가 많아 선택했습니다. 특히 회의나 발표 같은 비즈니스 상황에 직접적으로 도움이 되는 내용이 풍부했고, 주제의 폭도 넓어 중복 없이 다양한 추천이 가능했습니다.
+### OAuth 딥링크 검증 과정 미흡으로 인한 일정 지연
 
-하지만 현재 발표와 회의 2개 카테고리에만 제한된 상황에서, 모든 일정 유형(면접, 프레젠테이션, 네트워킹 등)으로 확장하려면 세바시만으로는 부족하고 YouTube 전체 검색 기반으로 변경해야 합니다. 처음부터 확장성을 고려해 YouTube 검색 기반으로 설계했다면 더 유연한 시스템이 되었을 것 같아 아쉬움이 남습니다.
+Development Build 전환으로 해결될 것이라 예상했지만 실제 구현 난이도가 높았습니다.
+초기 POC 단계에서 검증 범위를 넓혀 문제를 조기에 식별할 필요가 있음을 배웠습니다.
+
+<br/>
+
+### “자투리 시간” 콘셉트의 실질적 구현 부족
+
+MVP 단계에서는 일반 캘린더 앱에 AI 기능이 추가된 수준으로 인식될 여지가 있었습니다.
+일정 간 공백 감지 및 짧은 시간 내 수행 가능한 콘텐츠 제안 등 UX 구체화가 필요함을 확인했습니다.
+
+<br/>
+
+### 콘텐츠 소스 확장성 한계
+
+초기에는 ‘세바시(세상을 바꾸는 시간 15분)’ 강연 영상을 주요 데이터로 사용했습니다.
+짧은 강연 형식과 실무 중심 주제가 많아 회의나 발표 일정에 적합했지만,
+카테고리가 한정되어 있어 면접·네트워킹 등 다른 일정 유형으로 확장하기엔 한계가 있었습니다.
+이 경험을 통해 YouTube Data API 기반의 확장형 구조로 전환해야 함을 확인했습니다.
 
 <br/>
 
@@ -909,7 +920,13 @@ OAuth 딥링크 문제는 정말 어려웠습니다. Access Denied 오류를 해
 
 ### 코드 품질 개선 습관화
 
-이번 프로젝트에서 배운 에러 처리 컴포넌트화, 상수와 types 분리, 명확한 디렉토리 구조, 단일 책임 원칙과 관심사 분리 등의 패턴을 다음 프로젝트에도 처음부터 적용하겠습니다. 처음부터 구조를 고민하는 것이 나중에 리팩토링하는 것보다 훨씬 효율적이라는 것을 배웠기 때문입니다.
+에러 처리와 데이터 관리 로직을 각 컴포넌트 내부에 두던 구조에서 벗어나,  
+**전역 에러 핸들러와 유틸 함수로 분리**해 중복 로직을 제거했습니다.  
+또한 `constants`, `types`, `services` 디렉토리를 세분화해 **비즈니스 로직과 UI 로직의 의존성을 줄였고**,  
+**커스텀 훅을 통해 공통 상태 관리와 API 요청 로직을 재사용**할 수 있도록 개선했습니다.
+
+이런 구조적 개선을 통해 코드 수정 시 영향 범위를 명확히 파악할 수 있었고,  
+다음 프로젝트에서는 이러한 설계 방식을 초기 단계부터 적용할 계획입니다.
 
 <br/>
 
