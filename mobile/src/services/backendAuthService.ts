@@ -10,7 +10,7 @@ import {
 const loginWithBackend = async (
   idToken: string,
   googleAccessToken: string,
-  googleRefreshToken?: string,
+  serverAuthCode?: string,
   expiresIn?: number
 ): Promise<BackendLoginResponse> => {
   try {
@@ -19,7 +19,7 @@ const loginWithBackend = async (
       {
         idToken,
         googleAccessToken,
-        googleRefreshToken,
+        serverAuthCode,
         expiresIn,
       }
     );

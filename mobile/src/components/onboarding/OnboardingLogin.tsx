@@ -37,7 +37,7 @@ const OnboardingLogin = ({ onLoginComplete }: OnboardingLoginProps) => {
       const backendResult = await backendAuthService.loginWithBackend(
         googleResult.tokens.idToken,
         googleResult.tokens.accessToken,
-        googleResult.tokens.refreshToken,
+        googleResult.tokens.serverAuthCode,
         googleResult.tokens.expiresIn
       );
 
