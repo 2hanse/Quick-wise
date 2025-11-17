@@ -45,6 +45,9 @@ const mainPageConstants = {
         REST: "휴식",
       },
     },
+    TIMER: {
+      REMAINING: "남은 시간",
+    },
     LOADING: "일정을 불러오는 중...",
     ERROR_LOAD_FAILED: "일정을 불러오는데 실패했습니다",
   },
@@ -103,6 +106,8 @@ const mainPageConstants = {
   },
   TIME_CONVERSION: {
     MILLISECONDS_TO_MINUTES: 1000 * 60,
+    MINUTES_PER_HOUR: 60,
+    SECONDS_PER_MINUTE: 60,
   },
   DATE_FORMAT: {
     MONTH_SUFFIX: "월",
@@ -141,6 +146,29 @@ const mainPageConstants = {
   },
   RETRY: {
     MAX_ATTEMPTS: 3,
+  },
+  TIMER: {
+    COLORS: {
+      GREEN: "#10b981",
+      ORANGE: "#f59e0b",
+      RED: "#ef4444",
+      BACKGROUND: "#e5e7eb",
+    },
+    SIZE: {
+      CONTAINER: 220,
+      RADIUS: 90,
+      STROKE_WIDTH: 10,
+    },
+    THRESHOLDS: {
+      GREEN_MINUTES: 120,
+      ORANGE_MINUTES: 60,
+    },
+    MAX_MINUTES: 180,
+    UPDATE_INTERVAL_MS: 1000,
+    PERCENTAGE: {
+      MIN: 0,
+      MAX: 100,
+    },
   },
 } as const;
 

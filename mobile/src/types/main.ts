@@ -108,6 +108,10 @@ interface ScheduleGuideSectionProps {
   swipeContents: SwipeContent[];
 }
 
+interface PomodoroTimerProps {
+  schedule: NextSchedule;
+}
+
 export type { ScheduleStatus };
 
 export {
@@ -128,4 +132,5 @@ export {
   Checklist,
   MainScreenProps,
   ScheduleGuideSectionProps,
+  PomodoroTimerProps,
 };
