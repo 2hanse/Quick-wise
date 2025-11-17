@@ -49,11 +49,6 @@ interface NextSchedule {
   aiContent?: AIContent;
 }
 
-interface NextScheduleSectionProps {
-  schedule: NextSchedule;
-  isAILoading?: boolean;
-}
-
 interface TodaySchedule {
   id: string;
   time: string;
@@ -122,7 +117,6 @@ export {
   SwipeContent,
   Lecture,
   NextSchedule,
-  NextScheduleSectionProps,
   TodaySchedule,
   DateInfo,
   DateHeaderSectionProps,

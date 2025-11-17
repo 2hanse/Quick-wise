@@ -9,7 +9,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateHeaderSection from "./DateHeaderSection";
-import NextScheduleSection from "./NextScheduleSection";
 import ScheduleGuideSection from "./ScheduleGuideSection";
 import SwipeContentSkeleton from "./SwipeContentSkeleton";
 import TodayScheduleSection from "./TodayScheduleSection";
@@ -23,6 +22,7 @@ import { MainScreenProps } from "../../types/main";
 import useMainSchedule from "../../hooks/mainscreen/useMainSchedule";
 import mainPageConstants from "../../constants/main";
 import { retryEventAI } from "../../services/aiService";
+import PomodoroTimer from "./PomodoroTimer";
 
 const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
   const {
@@ -201,12 +201,15 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
 
           {hasSchedules ? (
             <>
-              {nextSchedule && (
-                <NextScheduleSection
-                  schedule={nextSchedule}
-                  isAILoading={isLoading}
-                />
-              )}
+              {nextSchedule &&
+                (() => {
+                  try {
+                    return <PomodoroTimer schedule={nextSchedule} />;
+                  } catch (error) {
+                    console.error("PomodoroTimer 에러:", error);
+                    return <Text>타이머 로딩 실패</Text>;
+                  }
+                })()}
 
               {renderAIContent()}
 
