@@ -32,7 +32,7 @@ mobile/ios/
 mobile/.buckconfig
 mobile/.flowconfig
 mobile/.watchmanconfig
-android/
+/android/
 ios/
 
 # Expo CLI
