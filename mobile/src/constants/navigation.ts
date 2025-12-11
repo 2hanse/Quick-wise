@@ -10,11 +10,6 @@ const NAVIGATION_CONSTANTS = {
       ICON: "📅",
       LABEL: "Calendar",
     },
-    ANALYSIS: {
-      NAME: "Analysis" as const,
-      ICON: "📊",
-      LABEL: "Analysis",
-    },
     SETTING: {
       NAME: "Setting" as const,
       ICON: "⚙️",
