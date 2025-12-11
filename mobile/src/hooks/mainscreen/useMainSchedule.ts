@@ -21,7 +21,6 @@ const useMainSchedule = () => {
   const [dateInfo, setDateInfo] = useState<DateInfo>(createDateInfo(0));
   const [swipeContents, setSwipeContents] = useState<SwipeContent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -82,9 +81,7 @@ const useMainSchedule = () => {
   }, [fetchTodayAIContent]);
 
   const refresh = useCallback(async () => {
-    setIsRefreshing(true);
     await loadTodaySchedules();
-    setIsRefreshing(false);
   }, [loadTodaySchedules]);
 
   useEffect(() => {
@@ -144,7 +141,6 @@ const useMainSchedule = () => {
     dateInfo,
     swipeContents,
     isLoading: isLoading || aiLoading,
-    isRefreshing,
     error,
     refresh,
   };

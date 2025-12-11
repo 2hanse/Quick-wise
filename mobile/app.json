@@ -27,9 +27,7 @@
     },
     "owner": "leehanse",
     "autolinking": {
-      "modules": [
-        "./modules/notification-scheduler"
-      ]
+      "modules": ["./modules/notification-scheduler"]
     }
   }
 }

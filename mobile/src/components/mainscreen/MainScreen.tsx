@@ -7,6 +7,8 @@ import {
   Text,
   TouchableOpacity,
 } from "react-native";
+import { RefreshControl } from "react-native";
+import useRefreshControl from "../../hooks/useRefreshControl";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateHeaderSection from "./DateHeaderSection";
 import ScheduleGuideSection from "./ScheduleGuideSection";
@@ -31,10 +33,11 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
     dateInfo,
     swipeContents,
     isLoading,
-    isRefreshing,
     error,
     refresh,
   } = useMainSchedule();
+  const refreshControlProps = useRefreshControl({ onRefresh: refresh });
+
   const hasSchedules = todaySchedules.length > 0;
 
   const [retryCount, setRetryCount] = useState(0);
@@ -192,12 +195,11 @@ const MainScreen = ({ onNavigateToCalendar }: MainScreenProps) => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View className="flex-1" {...panResponder.panHandlers}>
-        <ScrollView className="flex-1 px-3 pt-3">
-          <DateHeaderSection
-            dateInfo={dateInfo}
-            onRefresh={refresh}
-            isRefreshing={isRefreshing}
-          />
+        <ScrollView
+          className="flex-1 px-3 pt-3"
+          refreshControl={<RefreshControl {...refreshControlProps} />}
+        >
+          <DateHeaderSection dateInfo={dateInfo} />
 
           {hasSchedules ? (
             <>

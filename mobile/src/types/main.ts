@@ -65,8 +65,6 @@ interface DateInfo {
 
 interface DateHeaderSectionProps {
   dateInfo: DateInfo;
-  onRefresh?: () => void;
-  isRefreshing?: boolean;
 }
 
 interface CalendarData {
@@ -107,6 +105,11 @@ interface PomodoroTimerProps {
   schedule: NextSchedule;
 }
 
+interface UseRefreshControlProps {
+  onRefresh: () => void | Promise<void>;
+  isRefreshing: boolean;
+}
+
 export type { ScheduleStatus };
 
 export {
@@ -127,4 +130,5 @@ export {
   MainScreenProps,
   ScheduleGuideSectionProps,
   PomodoroTimerProps,
+  UseRefreshControlProps,
 };
