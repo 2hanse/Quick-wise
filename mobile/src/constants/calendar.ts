@@ -45,6 +45,9 @@ const CALENDAR_CONSTANTS = {
     EVENT_DELETED: "일정이 삭제되었습니다",
     CONFIRM_DELETE: "이 일정을 삭제하시겠습니까?",
   },
+  CACHE: {
+    DURATION: 60 * 60 * 1000,
+  },
   LOG_PREFIXES: {
     FETCH_ERROR: "[Calendar Fetch Error]",
     CREATE_ERROR: "[Calendar Create Error]",

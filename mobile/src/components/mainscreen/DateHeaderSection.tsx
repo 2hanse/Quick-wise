@@ -6,7 +6,6 @@ import { DateHeaderSectionProps } from "../../types/main";
 const DateHeaderSection = ({ dateInfo }: DateHeaderSectionProps) => {
   const { TEXT, ICONS } = mainPageConstants;
 
-
   return (
     <View className="bg-white rounded-2xl p-5 mb-2.5 border border-purple-100">
       <View className="flex-row items-center justify-between mb-2.5">

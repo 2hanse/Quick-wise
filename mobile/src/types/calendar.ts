@@ -113,7 +113,11 @@ interface CalendarState {
   events: CalendarEvent[];
   isLoading: boolean;
   error: string | null;
-  fetchEvents: (startDate: string, endDate: string) => Promise<void>;
+  fetchEvents: (
+    startDate: string,
+    endDate: string,
+    forceRefresh?: boolean
+  ) => Promise<void>;
   createEvent: (eventData: CreateEventRequest) => Promise<void>;
   updateEvent: (
     eventId: string,
@@ -121,6 +125,25 @@ interface CalendarState {
   ) => Promise<void>;
   deleteEvent: (eventId: string) => Promise<void>;
   clearEvents: () => void;
+}
+
+interface CacheEntry {
+  events: CalendarEvent[];
+  timestamp: number;
+}
+
+interface CalendarStateWithCache extends CalendarState {
+  cache: Record<string, CacheEntry>;
+  getCachedEvents: (
+    startDate: string,
+    endDate: string
+  ) => CalendarEvent[] | null;
+  setCachedEvents: (
+    startDate: string,
+    endDate: string,
+    events: CalendarEvent[]
+  ) => void;
+  clearCache: () => void;
 }
 
 export {
@@ -140,4 +163,6 @@ export {
   UpdateEventResponse,
   DeleteEventResponse,
   CalendarState,
+  CacheEntry,
+  CalendarStateWithCache,
 };

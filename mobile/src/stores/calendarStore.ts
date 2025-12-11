@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import {
-  CalendarState,
+  CalendarStateWithCache,
   CreateEventRequest,
   UpdateEventRequest,
+  CalendarEvent,
 } from "../types/calendar";
 import {
   fetchCalendarEvents,
@@ -12,16 +13,73 @@ import {
 } from "../services/calendarService";
 import CALENDAR_CONSTANTS from "../constants/calendar";
 
-const useCalendarStore = create<CalendarState>((set, get) => ({
+const getCacheKey = (startDate: string, endDate: string): string => {
+  return `${startDate}_${endDate}`;
+};
+
+const useCalendarStore = create<CalendarStateWithCache>((set, get) => ({
   events: [],
   isLoading: false,
   error: null,
+  cache: {},
 
-  fetchEvents: async (startDate: string, endDate: string) => {
+  getCachedEvents: (startDate: string, endDate: string) => {
+    const key = getCacheKey(startDate, endDate);
+    const cached = get().cache[key];
+
+    if (!cached) {
+      return null;
+    }
+
+    const now = Date.now();
+    const isExpired =
+      now - cached.timestamp > CALENDAR_CONSTANTS.CACHE.DURATION;
+
+    if (isExpired) {
+      return null;
+    }
+
+    return cached.events;
+  },
+
+  setCachedEvents: (
+    startDate: string,
+    endDate: string,
+    events: CalendarEvent[]
+  ) => {
+    const key = getCacheKey(startDate, endDate);
+    set((state) => ({
+      cache: {
+        ...state.cache,
+        [key]: {
+          events,
+          timestamp: Date.now(),
+        },
+      },
+    }));
+  },
+
+  clearCache: () => {
+    set({ cache: {} });
+  },
+
+  fetchEvents: async (
+    startDate: string,
+    endDate: string,
+    forceRefresh: boolean = false
+  ) => {
+    const cachedEvents = get().getCachedEvents(startDate, endDate);
+
+    if (!forceRefresh && cachedEvents) {
+      set({ events: cachedEvents, isLoading: false });
+      return;
+    }
+
     set({ isLoading: true, error: null });
     try {
       const response = await fetchCalendarEvents(startDate, endDate);
       set({ events: response.events, isLoading: false });
+      get().setCachedEvents(startDate, endDate, response.events);
     } catch (error) {
       console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.FETCH_ERROR, error);
       set({
@@ -40,6 +98,7 @@ const useCalendarStore = create<CalendarState>((set, get) => ({
         events: [...currentEvents, response.event],
         isLoading: false,
       });
+      get().clearCache();
     } catch (error) {
       console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.CREATE_ERROR, error);
       set({
@@ -60,6 +119,7 @@ const useCalendarStore = create<CalendarState>((set, get) => ({
         ),
         isLoading: false,
       });
+      get().clearCache();
     } catch (error) {
       console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.UPDATE_ERROR, error);
       set({
@@ -78,6 +138,7 @@ const useCalendarStore = create<CalendarState>((set, get) => ({
         events: currentEvents.filter((event) => event.id !== eventId),
         isLoading: false,
       });
+      get().clearCache();
     } catch (error) {
       console.error(CALENDAR_CONSTANTS.LOG_PREFIXES.DELETE_ERROR, error);
       set({
