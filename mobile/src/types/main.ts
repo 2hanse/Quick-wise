@@ -110,6 +110,31 @@ interface UseRefreshControlProps {
   isRefreshing: boolean;
 }
 
+interface HomeCacheEntry {
+  todaySchedules: TodaySchedule[];
+  nextSchedule: NextSchedule | null;
+  dateInfo: DateInfo;
+  timestamp: number;
+  date: string;
+}
+
+interface HomeState {
+  todaySchedules: TodaySchedule[];
+  nextSchedule: NextSchedule | null;
+  dateInfo: DateInfo;
+  isLoading: boolean;
+  error: string | null;
+  cache: HomeCacheEntry | null;
+  fetchTodaySchedules: (forceRefresh?: boolean) => Promise<void>;
+  getCachedSchedules: () => HomeCacheEntry | null;
+  setCachedSchedules: (
+    schedules: TodaySchedule[],
+    next: NextSchedule | null,
+    dateInfo: DateInfo
+  ) => void;
+  clearCache: () => void;
+}
+
 export type { ScheduleStatus };
 
 export {
@@ -131,4 +156,6 @@ export {
   ScheduleGuideSectionProps,
   PomodoroTimerProps,
   UseRefreshControlProps,
+  HomeCacheEntry,
+  HomeState,
 };

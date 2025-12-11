@@ -147,6 +147,9 @@ const mainPageConstants = {
   RETRY: {
     MAX_ATTEMPTS: 3,
   },
+  CACHE: {
+    DURATION: 60 * 60 * 1000,
+  },
   TIMER: {
     COLORS: {
       GREEN: "#10b981",
