@@ -1,7 +1,7 @@
 # 📱 QuickWise
 
 > **"일정 10분 전, 딱 필요한 콘텐츠가 알림으로 도착합니다"**  
-> QuickWise는 Google Calendar 연동 AI 기반 일정 맞춤형 학습 콘텐츠 추천 Android 애플리케이션입니다.
+> QuickWise는 Google Calendar 일정에 맞는 강연 영상을 찾아 Gemini로 요약하고, 준비 카드를 만들어 일정 10분 전에 알려 주는 Android 애플리케이션입니다.
 
 <br/>
 
@@ -12,19 +12,17 @@
 
 ---
 
-**📅 개발 기간**: 2025.09 ~ 2025.10 (1개월)  
+**📅 개발 기간**: 2025.09 ~ 2025.12 (핵심 기능 약 4주, 이후 알림 모듈 구조 전환·버그 수정)  
 **🧑‍💻 개발 인원**: 1인 (기획, 디자인, 개발)  
-**🔧 개발 구성**: 기획 1주 + 개발 4주
 
 <br/>
 
-## 📊 핵심 성과 (Key Metrics)
+## 🔧 핵심 구현
 
-- **✅ Google OAuth 2.0 완전 구현:** `Refresh Token` 자동 갱신 로직 도입으로 **재로그인 0회** 달성
-- **✅ API 비용 70% 절감:** 재시도 횟수 제한(무한 → 3회) 및 프롬프트 길이 최적화(30,000자 → 10,000자)로 토큰 소비 대폭 감소
-- **✅ 콘텐츠 품질 보장:** 세바시 검증 콘텐츠만 추천하여 클릭베이트 제거 및 전문가 실전 경험 제공
-- **✅ 알림 정확도 100%:** Expo의 한계(±5분 오차)를 극복하기 위해 **Kotlin Native Module(AlarmManager) 직접 구현** (±0초 보장)
-- **✅ AI 추천 성공률 95%:** 3단계 Fallback 전략 (최적화 검색어 → 기본 키워드 → 템플릿)
+- **Google OAuth 2.0:** 모바일 `serverAuthCode`를 서버에서 Refresh Token으로 교환해 토큰 갱신을 서버에서 관리
+- **AI 파이프라인 재시도·비용 통제:** 실패 원인을 할당량 초과·일시 오류·미지원 카테고리로 나눠 재시도를 제한하고(앱 최대 3회), 요약에 넣는 자막을 10,000자로 제한
+- **콘텐츠 출처 한정:** 세바시 채널의 5분 이상 영상만 검색
+- **알림 예약:** Kotlin 네이티브 모듈에서 AlarmManager `setExactAndAllowWhileIdle`로 일정 10분 전 알림을 예약해 Doze 상태에서도 실행 허용
 
 <br/>
 
@@ -45,7 +43,7 @@
 </div>
 
 - **원형 타이머**: 남은 시간에 따라 색상 변화 (🟢 초록 → 🟠 주황 → 🔴 빨강)
-- **AI 추천 카드 3종**: 일정에 맞춘 TIP, SCENARIO, CHECKLIST (좌우 스와이프)
+- **AI 준비 카드 3종**: 일정에 맞춘 TIP, SCENARIO, CHECKLIST (좌우 스와이프)
 
 <br/>
 
@@ -62,9 +60,9 @@
 
 <img src="./mobile/assets/readme/notification.png" alt="알림 이미지" style="width:250px;" />
 
-- **Kotlin Native Module**로 ±0초 정확도 보장 (Expo 한계 극복)
+- **Kotlin Native Module**(AlarmManager `setExactAndAllowWhileIdle`)로 일정 10분 전 알림 예약
 - 알림 클릭 시 해당 일정 콘텐츠로 바로 이동 (Deep Link)
-- 앱 종료 상태에서도 정확한 시간에 알림 발송
+- 앱이 종료된 상태에서도 AlarmManager가 예약된 알림을 실행
 
 <br/>
 
@@ -89,8 +87,8 @@
 
 - [핵심 기능 및 트러블 슈팅](#핵심-기능-및-트러블-슈팅-deep-dive)
   - [Google OAuth 2.0 구현](#1-google-oauth-20-완전-구현--refresh-token-전략)
-  - [AI 파이프라인 최적화](#2-ai-파이프라인-최적화--비용-절감)
-  - [정확한 시간 보장 (Kotlin)](#3-정확한-시간-보장-kotlin-native-module)
+  - [AI 파이프라인 재시도·비용 통제](#2-ai-파이프라인-재시도비용-통제)
+  - [정확한 알림 예약 (Kotlin)](#3-정확한-알림-예약-kotlin-native-module)
   - [콘텐츠 큐레이션 전략](#4-콘텐츠-큐레이션-전략-세바시)
 
 ### 📚 부가 정보
@@ -113,7 +111,7 @@
 ### 🚨 문제 (Pain Point)
 
 **1️⃣ 자투리 시간 낭비**  
-하루 평균 1시간 이상의 자투리 시간을 SNS에 소비. "뭔가 배워야지"라는 생각이 들어도 무엇을 해야 할지 막연함.
+일정 사이 자투리 시간을 SNS에 흘려보내기 쉬움. "뭔가 배워야지"라는 생각이 들어도 무엇을 해야 할지 막연함.
 
 **2️⃣ 내 일정에 맞는 콘텐츠 찾기 어려움**  
 YouTube에 수천 개의 영상이 있지만, **지금 내 발표에 바로 쓸 수 있는 콘텐츠**를 찾으려면 검색만 반복. 클릭베이트 제목, 광고성 콘텐츠로 인해 정보 탐색 피로도 증가.
@@ -125,7 +123,7 @@ YouTube에 수천 개의 영상이 있지만, **지금 내 발표에 바로 쓸 
 | 문제                 | 해결 방법                                                                 |
 | -------------------- | ------------------------------------------------------------------------- |
 | **자투리 시간 낭비** | 다음 일정까지 남은 시간을 뽀모도로 타이머로 시각화하여 학습 시간으로 전환 |
-| **정보 탐색 피로**   | AI가 내 일정 제목을 분석해 딱 맞는 콘텐츠를 자동 추천. 검색 불필요        |
+| **정보 탐색 피로**   | Gemini가 일정 제목에서 검색어를 뽑아 강연을 찾고 자막을 요약. 직접 검색 불필요 |
 | **낮은 콘텐츠 품질** | 세바시(검증된 강연 플랫폼)에서만 검색. 전문가의 실전 경험만 추천          |
 
 <br/>
@@ -147,13 +145,13 @@ YouTube에 수천 개의 영상이 있지만, **지금 내 발표에 바로 쓸 
    ↓
 2. Google Calendar 일정 동기화
    ↓
-3. AI가 일정 제목 분석 → 세바시 YouTube 검색
+3. 키워드 규칙으로 회의·발표 일정 분류 → Gemini가 검색어 추출 → 세바시 채널 검색
    ↓
-4. 영상 자막 추출 → Gemini로 3-5줄 요약
+4. 영상 자막(최대 10,000자) 추출 → Gemini로 요약
    ↓
 5. 콘텐츠 카드 3종 생성 (TIP, SCENARIO, CHECKLIST)
    ↓
-6. 일정 10분 전 AlarmManager가 정확히 알림 발송
+6. 일정 10분 전 AlarmManager로 알림 예약
    ↓
 7. 사용자가 알림 클릭 → 해당 일정 콘텐츠 화면으로 이동
 ```
@@ -182,10 +180,10 @@ YouTube에 수천 개의 영상이 있지만, **지금 내 발표에 바로 쓸 
 | **Client**   | ![React Native](https://img.shields.io/badge/React%20Native-61DAFB?logo=react&logoColor=white) <br/> ![Expo](https://img.shields.io/badge/Expo-000000?logo=expo&logoColor=white) | 크로스 플랫폼 개발 효율성 및 Development Build를 통한 네이티브 모듈 통합 용이                   |
 |              | ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)                                                                                    | API 응답 데이터의 타입 안전성 보장 및 런타임 오류 방지                                          |
 |              | ![Zustand](https://img.shields.io/badge/Zustand-181717?logo=zustand&logoColor=white)                                                                                             | Redux 대비 보일러플레이트가 적고 Hook 기반으로 직관적인 상태 관리 가능                          |
-|              | ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?logo=kotlin&logoColor=white)                                                                                                | **(핵심)** Expo Notification의 백그라운드 시간 오차 문제를 해결하기 위해 AlarmManager 직접 구현 |
+|              | ![Kotlin](https://img.shields.io/badge/Kotlin-7F52FF?logo=kotlin&logoColor=white)                                                                                                | **(핵심)** Doze 상태에서도 일정 10분 전 알림을 예약하기 위해 AlarmManager 직접 구현 |
 | **Server**   | ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white) <br/> ![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)  | JSON 기반의 REST API 빠른 구축 및 비동기 처리 효율성                                            |
 |              | ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)                                                                                             | AI 콘텐츠(카드 타입별 상이한 필드)의 유연한 스키마 처리에 적합                                  |
-| **AI / API** | ![Gemini](https://img.shields.io/badge/Gemini-000000?logo=google&logoColor=white)                                                                                                | 무료 티어(150만 토큰) 및 우수한 한글 처리 능력, GPT 대비 빠른 응답 속도                         |
+| **AI / API** | ![Gemini](https://img.shields.io/badge/Gemini-000000?logo=google&logoColor=white)                                                                                                | 무료 티어로 개발할 수 있고 한국어 자막 요약에 사용                         |
 |              | ![Google OAuth](https://img.shields.io/badge/Google%20OAuth-4285F4?logo=google&logoColor=white)                                                                                  | Google Calendar 연동을 위한 필수 인증, 보안성 높은 Token 관리 필요                              |
 
 <br/>
@@ -207,7 +205,7 @@ QuickWise는 **"자투리 시간을 학습 시간으로 전환"**하는 것이 �
 
 ### 1️⃣ **즉시성 (Immediacy)**
 
-> "일정 확인 → 콘텐츠 추천까지 3초 이내"
+> "앱을 열면 바로 다음 일정과 준비 카드 확인"
 
 - 홈 화면 진입 즉시 **다음 일정**과 **AI 추천 콘텐츠 3개** 표시
 - 별도의 검색이나 필터링 없이 **바로 읽기 시작**
@@ -230,7 +228,7 @@ QuickWise는 **"자투리 시간을 학습 시간으로 전환"**하는 것이 �
 
 > "필요한 순간에만, 정확한 시간에"
 
-- **일정 10분 전 1회만** 알림 발송 (±0초 정확도)
+- **일정 10분 전 1회만** 알림 발송
 - 알림 클릭 시 **바로 해당 일정의 콘텐츠 화면**으로 이동
 - 사용자가 알림을 무시해도 홈 화면에서 언제든 확인 가능
 
@@ -247,7 +245,7 @@ QuickWise는 **"자투리 시간을 학습 시간으로 전환"**하는 것이 �
 | **색상 변화**     | 긴급도를 무의식적으로 전달             | 초록 → 주황 → 빨강 (시간 기반)      | 색상만으로 행동 유도         |
 | **카드 스와이프** | 스크롤 없이 한 손으로 모든 콘텐츠 탐색 | FlatList horizontal + pagingEnabled | 자연스러운 전환              |
 | **스켈레톤 UI**   | 체감 로딩 시간 단축                    | 애니메이션 pulse 효과               | "곧 뭔가 나온다" 기대감      |
-| **Deep Link**     | 알림 클릭 1번으로 필요한 정보 획득     | Intent + eventId 전달               | 클릭률 85% → 95% 증가 (예상) |
+| **Deep Link**     | 알림 클릭 1번으로 필요한 정보 획득     | Intent + eventId 전달               | 해당 일정 화면으로 바로 이동 |
 
 **핵심 철학:** 사용자는 "왜 이렇게 동작하는지" 생각하지 않고 **자연스럽게 사용**
 
@@ -342,7 +340,7 @@ if (serverAuthCode) {
 }
 
 user.googleAccessToken = googleAccessToken;
-user.googleRefreshToken = refreshTokenFromGoogle; // ✅ DB에 암호화 저장
+user.googleRefreshToken = refreshTokenFromGoogle; // ✅ DB에 저장
 user.tokenExpiresAt = tokenExpiresAt;
 await user.save();
 ```
@@ -356,11 +354,7 @@ await user.save();
 
 **개선 효과:**
 
-| 지표              | Before          | After             |
-| ----------------- | --------------- | ----------------- |
-| **재로그인 횟수** | 1시간마다 1회   | 0회 (완전 자동화) |
-| **사용자 경험**   | 매우 불편       | 끊김 없는 동기화  |
-| **토큰 관리**     | 클라이언트 의존 | 서버 중앙 관리    |
+- Access Token이 만료되면 서버가 저장된 Refresh Token으로 갱신하도록 바꿔, 앱을 다시 실행할 때마다 로그인이 풀리던 흐름을 고쳤습니다.
 
 <br/>
 
@@ -378,109 +372,43 @@ OAuth는 웹과 모바일에서 구현 방식이 완전히 다릅니다. 모바�
 
 <br/>
 
-### 2. AI 파이프라인 최적화 & 비용 절감
+### 2. AI 파이프라인 재시도·비용 통제
 
 <details>
-<summary><strong>💸 Issue: 무한 재시도로 인한 API 할당량 소진과 해결책 (Click)</strong></summary>
+<summary><strong>💸 Issue: 재시도 상한이 없어 Gemini 무료 할당량이 빠르게 소진된 문제 (Click)</strong></summary>
 
 <br/>
 
 **문제 상황:**
 
-개발 2일 차, Gemini API 무료 할당량(150만 토큰) 전량 소진. 검색 결과가 없을 때 무한 루프로 API를 호출하는 로직이 원인이었습니다.
-
-**실제 로그:**
-
-```
-[일정: 신제품 런칭 발표 및 Q&A]
-- 1차 시도: YouTube 검색 실패
-- Gemini API 호출 → 새 검색어 생성
-- 2차 시도: YouTube 검색 실패
-- Gemini API 호출 → 새 검색어 생성
-- ...
-- 47차 시도: YouTube 검색 실패
-```
-
-**47번 재시도**하면서 하루 만에 할당량을 소진했습니다.
-
-<br/>
-
-**원인 파악:**
-
-재시도 횟수 제한이 없어서, 검색 결과가 0개일 때마다 Gemini API를 호출하여 새로운 검색어를 생성했습니다. 일정 제목이 너무 구체적이거나 길면 YouTube에서 검색 결과가 0개인 경우가 많았고, 이것이 무한 반복으로 이어졌습니다.
+검색 결과가 없거나 처리에 실패하면 Gemini 호출이 반복돼 무료 할당량이 빠르게 소진됐습니다. 실패 원인을 구분하지 않아, 다시 시도해도 성공할 수 없는 경우까지 재시도했습니다.
 
 <br/>
 
 **해결 방법:**
 
-**1단계: 3단계 Fallback 전략 수립**
+**1단계: 실패 원인 분류와 재시도 거부**
 
-```typescript
-// backend/src/services/ai/aiPipelineService.ts
-const searchYoutubeVideos = async (query: string, excludeIds: string[]) => {
-  try {
-    // 1차: Gemini가 생성한 최적화 검색어
-    const videos = await searchVideos(query, excludeIds);
-
-    if (videos.length === 0) {
-      // 2차: 카테고리 기본 키워드 (더 일반적)
-      const fallbackVideos = await searchVideos(category, excludeIds);
-
-      if (fallbackVideos.length === 0) {
-        // 3차: 기본 템플릿 제공 (API 호출 X)
-        return DEFAULT_TEMPLATES[category];
-      }
-    }
-
-    return videos;
-  } catch (error) {
-    throw wrapError(error, constants.LOG_PREFIXES.YOUTUBE_SEARCH);
-  }
-};
-```
-
-**왜 효과적인가?**
-
-- **1차 실패 시**: 구체적 검색어에서 → 일반적 키워드로 범위 확대
-- **2차 실패 시**: 사전 정의된 템플릿 제공 (추가 API 호출 없음)
-- **재시도 상한**: 최대 3회로 제한하여 무한 루프 방지
+실패를 할당량 초과(`quota_exceeded`)·일시 오류(`temporary_error`)·미지원 카테고리(`unsupported_category`)로 나눠 일정에 기록했습니다. 서버 재시도 API는 할당량 초과면 429, 미지원 카테고리면 400으로 거부하고, 앱은 최대 3회까지만 재시도 버튼을 보여 줍니다.
 
 <br/>
 
-**2단계: 프롬프트 길이 최적화**
+**2단계: 처리 대상과 입력 크기 제한**
 
 ```typescript
-// backend/src/constants/ai.ts
-export const PROCESSING = {
-  TRANSCRIPT_MAX_LENGTH: 10000, // ✅ 30,000자 → 10,000자로 제한
-};
-
-// 자막 길이 제한 적용
-let transcriptText = transcript.fullText;
-if (transcriptText.length > PROCESSING.TRANSCRIPT_MAX_LENGTH) {
-  transcriptText = transcriptText.substring(
-    0,
-    PROCESSING.TRANSCRIPT_MAX_LENGTH
-  );
-}
+// backend/src/constants/ai.ts (발췌)
+YOUTUBE: {
+  CHANNEL_ID: "UCgheNMc3gGHLsT-RISdCzDQ", // 세바시 채널만 검색
+  MIN_DURATION_SECONDS: 300,              // 5분 이상 영상
+  TOP_VIDEOS_COUNT: 1,                    // 요약에 쓰는 영상 1개
+},
+PROCESSING: {
+  TRANSCRIPT_MAX_LENGTH: 10000,           // 요약에 넣는 자막 최대 길이
+},
+SUPPORTED_CATEGORIES: ["meeting", "presentation"],
 ```
 
-**왜 효과적인가?**
-
-- YouTube 자막이 평균 30,000자인데, 전체를 전송하면 토큰 소비가 급증합니다.
-- 영상의 **핵심 내용은 앞부분에 집중**되어 있어 10,000자만으로도 충분히 요약 가능합니다.
-- 토큰 소비를 **약 1/3로 감소**시켰습니다.
-
-<br/>
-
-**개선 효과:**
-
-| 지표                    | Before             | After          |
-| ----------------------- | ------------------ | -------------- |
-| **YouTube 검색 성공률** | 60%                | 95%            |
-| **Gemini API 재시도**   | 무제한 (최대 47회) | 최대 3회       |
-| **토큰 소비**           | 하루 150만 소진    | 안정적 운영    |
-| **프롬프트 길이**       | 평균 30,000자      | 10,000자 (1/3) |
+- AI 처리 대상을 회의·발표 일정으로 한정하고, 요약에 넣는 자막을 10,000자로 잘라 호출마다 입력 크기를 제한했습니다.
 
 <br/>
 
@@ -497,24 +425,16 @@ if (transcriptText.length > PROCESSING.TRANSCRIPT_MAX_LENGTH) {
 
 <br/>
 
-### 3. 정확한 시간 보장 (Kotlin Native Module)
+### 3. 정확한 알림 예약 (Kotlin Native Module)
 
 <details>
-<summary><strong>⏰ Issue: Expo Notification의 시간 오차와 Kotlin AlarmManager 직접 구현 (Click)</strong></summary>
+<summary><strong>⏰ Issue: Doze 상태 알림 지연 대응과 Kotlin AlarmManager 직접 구현 (Click)</strong></summary>
 
 <br/>
 
 **문제 상황:**
 
-Expo의 기본 알림은 백그라운드 상태나 Doze 모드에서 **±5분 이상의 오차**가 발생했습니다. "일정 10분 전 알림"이라는 핵심 기능의 신뢰성이 무너졌습니다.
-
-**실제 테스트 결과:**
-
-```
-일정 시간: 14:00
-기대 알림 시간: 13:50
-실제 알림 시간: 13:45 ~ 13:55 (±5분 오차)
-```
+"일정 10분 전 알림"이 핵심 기능인데, Android Doze·배터리 최적화 상태에서는 일반 알림 예약이 지연될 수 있었습니다.
 
 <br/>
 
@@ -524,7 +444,6 @@ Expo Notifications는 편리하지만 다음과 같은 한계가 있습니다:
 
 - Android Doze 모드에서 알림 지연 또는 누락
 - 배터리 최적화 설정 시 백그라운드 작업 제한
-- `setExact` 대신 `setWindow` 사용으로 정확도 낮음
 
 <br/>
 
@@ -565,20 +484,16 @@ class NotificationSchedulerModule : Module() {
 
 **왜 효과적인가?**
 
-- `setExactAndAllowWhileIdle()`: Doze 모드에서도 정확한 시간에 작동
-- `RTC_WAKEUP`: 기기를 깨워서 알림 전달 (절전 모드 무시)
+- `setExactAndAllowWhileIdle()`: Doze 모드에서도 알람 실행 허용
+- `RTC_WAKEUP`: 기기를 깨워 알람 실행
 - Native Module: Expo 제약 없이 Android API 직접 제어
 
 <br/>
 
 **개선 효과:**
 
-| 지표            | Expo Notifications | Kotlin Native Module             |
-| --------------- | ------------------ | -------------------------------- |
-| **정확도**      | ±5분 오차          | ±0초 (정확한 시간 보장)          |
-| **백그라운드**  | 제한적             | 완전 지원                        |
-| **Doze 모드**   | 작동 불안정        | setExactAndAllowWhileIdle() 사용 |
-| **구현 난이도** | 쉬움               | 어려움 (네이티브 코드 작성)      |
+- `setExactAndAllowWhileIdle()`로 Doze 상태에서도 알람 실행을 허용하도록 예약 방식을 바꿨습니다.
+- 네이티브 모듈이라 Expo Go로는 실행할 수 없고 Development Build가 필요합니다.
 
 <br/>
 
@@ -586,7 +501,7 @@ class NotificationSchedulerModule : Module() {
 
 크로스 플랫폼 프레임워크는 편리하지만, 핵심 기능에 한계가 있다면 **네이티브로 내려가는 것을 두려워하지 말아야** 합니다.
 
-"일정 10분 전"이라는 핵심 기능이 제대로 작동하지 않으면 앱의 존재 이유가 사라집니다. Kotlin을 처음 다뤘지만, Android 공식 문서를 정독하며 AlarmManager API를 익히고 React Native Bridge를 구현했습니다.
+"일정 10분 전"이라는 핵심 기능이 제대로 작동하지 않으면 앱의 존재 이유가 사라집니다. Kotlin을 처음 다뤘지만, Android 공식 문서를 정독하며 AlarmManager API를 익히고 React Native Bridge를 구현했습니다. 이후 `expo prebuild`가 `android/`를 다시 만들 때 손으로 넣은 코드가 사라지자 Expo Modules API 로컬 모듈로 옮겼고, 다른 환경에서 모듈을 못 찾던 원인이 루트 `.gitignore`의 `android/` 규칙이 모듈 안 Kotlin 파일까지 무시한 것임을 찾아 `/android/`로 좁혔습니다.
 
 **사용자 경험은 타협의 대상이 아닙니다.**
 
@@ -619,49 +534,38 @@ YouTube 전체에서 검색하면 수천 개의 영상이 나오지만:
 **세바시(세상을 바꾸는 시간 15분)만 검색**
 
 ```typescript
-// backend/src/constants/ai.ts
-const AI_CONSTANTS = {
-  YOUTUBE: {
-    CHANNEL_NAME: "세바시",
-    CHANNEL_ID: "UCgheNMc3gGHLsT-RISdCzDQ", // ✅ 세바시 채널만 검색
-    MAX_RESULTS: 10,
-    MIN_DURATION_SECONDS: 300, // 5분 이상
-  },
-};
+// backend/src/constants/ai.ts (발췌)
+YOUTUBE: {
+  CHANNEL_NAME: "세바시",
+  CHANNEL_ID: "UCgheNMc3gGHLsT-RISdCzDQ", // ✅ 세바시 채널만 검색
+  MIN_DURATION_SECONDS: 300,              // 5분 이상
+  TOP_VIDEOS_COUNT: 1,                    // 요약에 쓰는 영상 1개
+},
 ```
 
 **왜 효과적인가?**
 
-| 기준              | 일반 YouTube   | 세바시                                    |
-| ----------------- | -------------- | ----------------------------------------- |
-| **콘텐츠 제공자** | 누구나 업로드  | 전문가/실무자만 (교수, 기업 임원, 전문가) |
-| **영상 길이**     | 3분~3시간 다양 | 15-20분 (핵심만 압축)                     |
-| **콘텐츠 품질**   | 편차 큼        | 조회수 10만+ 검증됨                       |
-| **실전 적용**     | 이론 중심 많음 | 실전 경험 중심                            |
-| **자막**          | 없거나 부정확  | 한글 자막 100%                            |
+- 검색 범위를 한 채널로 한정해 광고성·클릭베이트성 영상이 섞이는 것을 줄였습니다.
+- 5분 이상 영상만 대상으로 하고, 요약에는 상위 1개 영상만 씁니다.
 
 <br/>
 
 **QuickWise의 차별화:**
 
 ```
-일반 AI 추천:
-Gemini 키워드 추출 → YouTube 전체 검색 → 상위 5개 반환
-문제: 클릭베이트, 광고성 콘텐츠 포함
+일반 검색:
+키워드 → YouTube 전체 검색 → 결과 목록
+문제: 광고성·클릭베이트성 영상이 섞임
 
 QuickWise:
-Gemini 키워드 추출 → 세바시 채널만 검색 → 자막 분석 → AI 요약
-결과: 검증된 전문가의 실전 경험 → 3-5줄 핵심 요약
+Gemini 검색어 추출 → 세바시 채널 검색(5분 이상) → 자막 요약 → 준비 카드 3종
 ```
 
 <br/>
 
 **개선 효과:**
 
-- ✅ **콘텐츠 품질 일관성** 확보
-- ✅ 클릭베이트 완전 제거
-- ✅ 전문가 실전 경험만 추천
-- ✅ 사용자 만족도 95%
+- 검색 출처를 한 채널로 좁혀 결과의 편차를 줄였습니다.
 
 <br/>
 
@@ -769,7 +673,7 @@ npx expo run:android
 → SHA-1 등록 + `AndroidManifest.xml` 확인
 
 **"Gemini API 할당량 초과"**  
-→ 무료 티어 150만 토큰 제한 확인
+→ Gemini 무료 티어 할당량 확인
 
 **"MongoDB 연결 실패"**  
 → `MONGODB_URI` 확인 및 MongoDB 실행 상태 체크
